@@ -22,6 +22,60 @@ sources:
   link_regex: view\('(\d+)'
   link_template: https://www.khu.ac.kr/kor/user/bbs/BMSR00040/view.do?menuNo=200316&boardId={0}
   detail_selector: .row.contents
+  note: 경희대 공지사항 > 일반
+- name: 학교 공지 - 장학
+  group: 경희대
+  type: board
+  enabled: true
+  note: 경희대 공지사항 > 장학 (전부)
+  list_url: https://www.khu.ac.kr/kor/user/bbs/BMSR00040/list.do?menuNo=200318&pageIndex={page}
+  pages: 2
+  row_selector: table.board01 tbody tr
+  title_selector: td.tal a
+  date_selector: td:nth-of-type(4)
+  remove_in_title: span
+  link_regex: view\('(\d+)'
+  link_template: https://www.khu.ac.kr/kor/user/bbs/BMSR00040/view.do?menuNo=200318&boardId={0}
+  detail_selector: .row.contents
+- name: 학교 공지 - 교내학점교류
+  group: 경희대
+  type: board
+  enabled: true
+  note: 경희대 공지사항 > 교내학점교류. 계절학기 중 서울대·연세대·고려대·서강대·성균관대·한양대(서울)와 해외 대학만
+  list_url: https://www.khu.ac.kr/kor/user/bbs/BMSR00040/list.do?menuNo=200320&pageIndex={page}
+  pages: 2
+  row_selector: table.board01 tbody tr
+  title_selector: td.tal a
+  date_selector: td:nth-of-type(4)
+  remove_in_title: span
+  link_regex: view\('(\d+)'
+  link_template: https://www.khu.ac.kr/kor/user/bbs/BMSR00040/view.do?menuNo=200320&boardId={0}
+  detail_selector: .row.contents
+  include:
+  - 서울대
+  - 연세대
+  - 고려대
+  - 서강대
+  - 성균관대
+  - 한양대
+  - 해외
+  - 국외
+  - 외국
+  exclude:
+  - ERICA
+  - 에리카
+  - 원주
+  - 미래캠퍼스
+  - 세종
+  - 경인지역
+  require:
+  - 계절학기
+  - 하계
+  - 동계
+  - 여름학기
+  - 겨울학기
+  - Summer
+  - Winter
 - name: 공과대학 공지
   group: 경희대
   type: board
@@ -608,6 +662,70 @@ sources:
   - 부고
   - 선거
   - 임원
+topics:
+- name: 채용·취업
+  groups:
+  - 경희대
+  keywords:
+  - 채용
+  - 인턴
+  - 취업
+  - 미래인재센터
+  - 직무
+  - Job
+  - 커리어
+  - 잡플래닛
+  - 현장실습
+- name: 심리상담·건강
+  groups:
+  - 경희대
+  keywords:
+  - 심리상담
+  - 상담센터
+  - 마음건강
+  - 성격검사
+  - 건강검진
+  - 보건
+  - 생명존중
+- name: 외국어 강좌·시험
+  groups:
+  - 경희대
+  keywords:
+  - 외국어 강좌
+  - 영어회화
+  - 국제교육원
+  - 토플
+  - TOEFL
+  - TOEIC
+  - 토익
+- name: 봉사·홍보단·서포터즈
+  groups:
+  - 경희대
+  keywords:
+  - 봉사
+  - 홍보단
+  - 서포터즈
+  - 기자단
+  - Ambassador
+  - 앰배서더
+- name: 창업
+  groups:
+  - 경희대
+  keywords:
+  - 창업
+- name: 시설·행정
+  groups:
+  - 경희대
+  keywords:
+  - 공사
+  - 주차
+  - 충전기
+  - 정전
+  - 단수
+  - 퇴직교원
+  - 교수초빙
+  - 입찰
+  - 정부포상
 links:
 - name: 한국강구조학회
   url: https://www.kssc.or.kr/home/kor/main.do

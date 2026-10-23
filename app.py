@@ -76,12 +76,17 @@ def auto_loop() -> None:
         stop_event.wait(60)
 
 
-def visible_counts(cfg: dict) -> dict:
-    """분류별 전체/안읽음 개수. 현재 필터에 걸러진 글은 세지 않는다."""
-    ok = crawler.visible_filter(cfg)
+def hidden_param(q: dict) -> set[str]:
+    """화면에서 끈 주제 (?hide=채용·취업|심리상담·건강)"""
+    return {x for x in q.get("hide", "").split("|") if x}
+
+
+def visible_counts(cfg: dict, hidden: set[str] | None = None) -> dict:
+    """분류별 전체/안읽음 개수. 현재 필터나 끈 주제에 걸린 글은 세지 않는다."""
+    ok = crawler.visible_filter(cfg, hidden)
     out: dict = {}
     with store.lock:
-        rows = store.db.execute("SELECT grp, source, title, kind, is_read FROM items").fetchall()
+        rows = store.db.execute("SELECT grp, source, title, title_ko, kind, is_read FROM items").fetchall()
     for r in rows:
         if ok(dict(r)):
             c = out.setdefault(r["grp"], {"total": 0, "unread": 0})
@@ -125,7 +130,7 @@ class Handler(BaseHTTPRequestHandler):
         if u.path in ("/", "/index.html"):
             return self.send_file(STATIC / "index.html", "text/html; charset=utf-8")
         if u.path == "/api/items":
-            ok = crawler.visible_filter(crawler.load_config())
+            ok = crawler.visible_filter(crawler.load_config(), hidden_param(q))
             return self.send_json([dict(it, summary=json.loads(it["summary"]) if it.get("summary") else [])
                                    for it in store.items(group=q.get("group", ""), q=q.get("q", ""),
                                                             unread=q.get("unread") == "1",
@@ -140,7 +145,8 @@ class Handler(BaseHTTPRequestHandler):
             with state_lock:
                 st = dict(state)
             return self.send_json({
-                "groups": groups, "links": cfg.get("links", []), "counts": visible_counts(cfg), "sources": store.sources(),
+                "groups": groups, "links": cfg.get("links", []), "topics": cfg.get("topics", []),
+                "counts": visible_counts(cfg, hidden_param(q)), "sources": store.sources(),
                 "configured": [{"name": s["name"], "group": s.get("group", ""),
                                 "kind": s.get("type", "board"),
                                 "url": s.get("url") or s.get("list_url", "").format(page=1)}

@@ -70,6 +70,7 @@ def main() -> int:
         "sources": cfg["sources"],
         "excluded": cfg.get("excluded", []),
         "links": cfg.get("links", []),
+        "topics": cfg.get("topics", []),
         "status": store.sources(),
         "items": items,
     }

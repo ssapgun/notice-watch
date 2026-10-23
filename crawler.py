@@ -74,8 +74,8 @@ FIELD_ORDER = ["name", "group", "type", "enabled", "note", "list_url", "url", "p
                "row_selector", "title_selector", "title_text_selector", "date_selector",
                "remove_in_title", "category_selector", "categories", "link_regex", "link_template",
                "detail_selector", "content_selector", "remove_selectors", "ignore_regex", "keywords",
-               "include", "exclude", "render", "wait_selector"]
-LIST_FIELDS = {"categories", "keywords", "include", "exclude", "remove_selectors"}
+               "include", "exclude", "require", "render", "wait_selector"]
+LIST_FIELDS = {"categories", "keywords", "include", "exclude", "require", "remove_selectors"}
 _config_lock = threading.Lock()
 
 
@@ -140,7 +140,7 @@ def clean_source(raw: dict) -> dict:
     else:
         for k in ("pages", "row_selector", "title_selector", "title_text_selector", "date_selector",
                   "remove_in_title", "category_selector", "categories", "link_regex",
-                  "link_template", "include", "exclude", "detail_selector"):
+                  "link_template", "include", "exclude", "require", "detail_selector"):
             src.pop(k, None)
     for k in ("link_regex", "ignore_regex"):
         if src.get(k):
@@ -459,19 +459,36 @@ def parse_list(html: str, page_url: str, src: dict) -> list[dict]:
 
 
 def keyword_ok(title: str, src: dict) -> bool:
-    inc, exc = src.get("include") or [], src.get("exclude") or []
+    """include: 이 중 하나라도 있으면 통과 / require: 그와 별도로 이 중 하나도 있어야 통과 / exclude: 하나라도 있으면 숨김"""
+    inc, exc, req = src.get("include") or [], src.get("exclude") or [], src.get("require") or []
     t = title.lower()
     if inc and not any(k.lower() in t for k in inc):
+        return False
+    if req and not any(k.lower() in t for k in req):
         return False
     return not any(k.lower() in t for k in exc)
 
 
-def visible_filter(cfg: dict):
-    """현재 설정의 include/exclude 를 이미 모은 게시판 글에도 적용하는 판별 함수.
-    필터를 나중에 바꿔도 DB 는 지우지 않고 화면에서만 가린다 (필터를 풀면 다시 보인다)."""
+def topic_hits(it: dict, topics: list[dict]) -> list[str]:
+    """글 제목이 걸리는 주제(채용·상담 등) 이름들. 화면의 '주제 켜기/끄기'에 쓴다."""
+    t = (str(it.get("title", "")) + " " + str(it.get("title_ko") or "")).lower()
+    grp = it.get("grp") or it.get("group")
+    return [tp["name"] for tp in topics or []
+            if (not tp.get("groups") or grp in tp["groups"])
+            and any(str(k).lower() in t for k in tp.get("keywords") or [])]
+
+
+def visible_filter(cfg: dict, hidden_topics: set[str] | None = None):
+    """현재 설정의 include/exclude/require 를 이미 모은 게시판 글에도 적용하는 판별 함수.
+    필터를 나중에 바꿔도 DB 는 지우지 않고 화면에서만 가린다 (필터를 풀면 다시 보인다).
+    hidden_topics 에 든 주제에 걸리는 글도 가린다."""
     by_name = {s.get("name"): s for s in cfg.get("sources", [])}
+    topics = cfg.get("topics") or []
+    hidden = set(hidden_topics or ())
 
     def ok(it: dict) -> bool:
+        if hidden and hidden & set(topic_hits(it, topics)):
+            return False
         src = by_name.get(it.get("source"))
         if not src or it.get("kind") != "board":
             return True
