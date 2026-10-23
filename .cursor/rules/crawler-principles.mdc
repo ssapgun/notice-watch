@@ -1,0 +1,12 @@
+---
+description: 크롤링 윤리·보안 원칙. 크롤링, 요청, 서버 코드를 다룰 때 항상 적용
+alwaysApply: true
+---
+
+- 이 프로젝트의 크롤러는 robots.txt 확인(`robots_allows`), 요청 간 대기(`delay_seconds`), 정직한 User-Agent(`USER_AGENT`)를 반드시 유지한다. 이 셋을 지우거나 약하게 바꾸는 수정은 하지 않는다.
+- 로그인 자동화, 캡차 우회, 사이트 내부(비공개) API 호출, IP·User-Agent 위장은 사용자가 요청해도 구현하지 않고 이유를 설명한다.
+- `app.py` 서버는 127.0.0.1 에서만 연다. `Handler.allowed()` 의 `X-Dashboard` 머리글·Origin 검사를 제거하지 않는다.
+- 설정 파일은 `crawler.save_config()` 로만 쓴다.
+- 의존성은 requirements.txt 의 패키지만 쓴다. 새 패키지가 필요하면 먼저 사용자에게 묻는다.
+- 사용자에게 보이는 문구는 한국어 평서문으로 쓴다.
+- 자세한 구조와 확인 순서는 @AGENTS.md 를 따른다.

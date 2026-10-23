@@ -1,0 +1,11 @@
+---
+description: 대시보드 화면(static/index.html) 수정 규칙
+globs: static/**
+alwaysApply: false
+---
+
+- 화면은 `static/index.html` 한 파일(HTML+CSS+JS)이다. 빌드 도구, 프레임워크, npm 패키지를 들이지 않는다.
+- 디자인은 건축 도면 표제란·리비전 표시(Δ) 컨셉이다. 색은 `:root` 의 토큰(--ink, --markup 등)만 쓰고, 다크 모드는 청사진 색이다. 새 색을 하드코딩하지 않는다.
+- POST 요청은 반드시 기존 `api()` 함수를 쓴다 (`X-Dashboard: 1` 머리글이 붙는다).
+- 서버에서 받은 문자열은 `esc()` 로 감싼 뒤 innerHTML 에 넣는다.
+- 모바일 폭(390px)에서 가로 스크롤이 생기지 않게 한다. 키보드 포커스 표시를 지우지 않는다.
