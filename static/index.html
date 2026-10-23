@@ -601,7 +601,7 @@ async function loadManage() {
       const state = !r.last_checked ? "아직 확인 전" : r.last_error ? `<span class="err">오류: ${esc(r.last_error.slice(0, 80))}</span>` : `정상 ${short(r.last_ok)}`;
       return `<div class="srow ${on ? "" : "off"}" data-name="${esc(s.name)}">
         <label class="switch" title="${on ? "켜짐" : "꺼짐"}"><input type="checkbox" data-act="toggle" ${on ? "checked" : ""} aria-label="${esc(s.name)} 켜기"><span></span></label>
-        <div><a class="sname" href="${esc(s.list_url ? s.list_url.replace("{page}", "1") : s.url)}" target="_blank" rel="noopener">${esc(s.name)}</a>${s.note ? `<span class="snote">${esc(s.note)}</span>` : ""}</div>
+        <div><a class="sname" href="${esc(s.list_url ? s.list_url.replace("{page}", "1").replace("{offset}", "0") : s.url)}" target="_blank" rel="noopener">${esc(s.name)}</a>${s.note ? `<span class="snote">${esc(s.note)}</span>` : ""}</div>
         <div class="skind">${s.type === "watch" ? "페이지 변경" : "게시판"}<br>${state}</div>
         <div class="sact"><button type="button" data-act="up" aria-label="위로">↑</button><button type="button" data-act="down" aria-label="아래로">↓</button>
           <button type="button" data-act="edit">수정</button><button type="button" data-act="del">삭제</button></div>

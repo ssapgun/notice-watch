@@ -69,6 +69,8 @@ page_snapshots/   페이지 변경 감지용 사본 (자동 생성)
 | detail_selector | 글 상세 페이지의 본문 칸 (정리할 때 읽는 부분) |
 | content_selector, keywords | (watch) 본문 영역, 이 단어가 든 변경만 알림 |
 | enabled, note | 켜짐 여부, 메모 |
+| max_age_months, max_pages (맨 위 단계) | 이 개월 수(기본 8)보다 오래된 글은 모으지도 보여주지도 않는다. 그 기간 글을 빠짐없이 모으려고 게시판 페이지를 max_pages(기본 25)까지 넘긴다 |
+| page_size | 주소에 {offset}(글 순번)을 쓰는 게시판의 한 페이지 글 수 |
 | links (맨 위 단계) | 자동 확인하지 않고 화면 왼쪽에 바로가기로만 두는 곳 (robots.txt·이용약관상 수집 불가한 사이트) |
 
 ## 지키는 원칙

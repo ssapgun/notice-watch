@@ -500,7 +500,7 @@ function renderSummary() {
   $("#srcTable").innerHTML = enabled.map(s => {
     const r = by[s.name] || {};
     const st = !r.last_checked ? "다음 확인 때 처음 확인" : r.last_error ? `<span class="err">${esc(r.last_error)}</span>` : "정상";
-    const url = (s.list_url || s.url || "").replace("{page}", "1");
+    const url = (s.list_url || s.url || "").replace("{page}", "1").replace("{offset}", "0");
     return `<tr><td>${esc(s.group)}</td><td><a href="${esc(url)}" target="_blank" rel="noopener">${esc(s.name)}</a></td><td>${s.type === "watch" ? "페이지 변경" : "게시판"}</td><td>${short(r.last_ok)}</td><td>${st}</td></tr>`;
   }).join("");
   if (errs.length) $("#statusBox").open = true;
@@ -694,7 +694,7 @@ const LIST_KEYS = ["include", "exclude", "require", "keywords", "categories", "r
 const FORM_KEYS = ["name", "group", "sub", "note", "include", "exclude", "require", "detail_selector", "pages", "keywords", "row_selector", "title_selector",
   "title_text_selector", "date_selector", "remove_in_title", "category_selector", "categories", "link_regex",
   "link_template", "content_selector", "remove_selectors", "ignore_regex"];
-const ORDER = ["name","group","sub","type","enabled","note","list_url","url","pages","row_selector","title_selector","title_text_selector","date_selector","remove_in_title","category_selector","categories","link_regex","link_template","detail_selector","content_selector","remove_selectors","ignore_regex","keywords","include","exclude","require","render","wait_selector"];
+const ORDER = ["name","group","sub","type","enabled","note","list_url","url","pages","page_size","row_selector","title_selector","title_text_selector","date_selector","remove_in_title","category_selector","categories","link_regex","link_template","detail_selector","content_selector","remove_selectors","ignore_regex","keywords","include","exclude","require","render","wait_selector"];
 
 function renderManage() {
   $("#manageLock").hidden = ghReady();
@@ -705,7 +705,7 @@ function renderManage() {
     DATA.sources.filter(s => s.group === g).map(s => {
       const r = st[s.name] || {}, on = s.enabled !== false;
       const state = !r.last_checked ? "아직 확인 전" : r.last_error ? `<span class="err">오류: ${esc(r.last_error.slice(0, 80))}</span>` : `정상 ${short(r.last_ok)}`;
-      const url = (s.list_url || s.url || "").replace("{page}", "1");
+      const url = (s.list_url || s.url || "").replace("{page}", "1").replace("{offset}", "0");
       return `<div class="srow ${on ? "" : "off"}" data-name="${esc(s.name)}">
         <label class="switch"><input type="checkbox" data-act="toggle" ${on ? "checked" : ""} aria-label="${esc(s.name)} 켜기"><span></span></label>
         <div><a class="sname" href="${esc(url)}" target="_blank" rel="noopener">${esc(s.name)}</a>${s.note ? `<span class="snote">${esc(s.note)}</span>` : ""}</div>
@@ -772,7 +772,8 @@ $("#addBtn").addEventListener("click", () => openEditor(null));
 
 function collect() {   // crawler.clean_source 와 같은 검사
   const t = currentType(), src = {name: "", group: "", type: t, enabled: true};
-  if (editingOld) { const old = DATA.sources.find(s => s.name === editingOld); if (old) src.enabled = old.enabled !== false; }
+  if (editingOld) { const old = DATA.sources.find(s => s.name === editingOld); if (old) { src.enabled = old.enabled !== false;
+    for (const k of ["page_size", "render", "wait_selector"]) if (k in old) src[k] = old[k]; } }   // 폼에 없는 값은 유지
   src[t === "board" ? "list_url" : "url"] = form.elements.url.value.trim();
   FORM_KEYS.forEach(k => {
     const el = form.elements[k], box = el && el.closest("[data-for]"); if (!el || (box && box.dataset.for !== t)) return;

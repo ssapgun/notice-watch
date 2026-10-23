@@ -4,10 +4,12 @@
 # 저장할 때마다 바로 이전 내용이 config.yaml.bak 에 남는다.
 delay_seconds: 2
 auto_check_hours: 6
+max_age_months: 8
+max_pages: 25
 summary:
   enabled: true
   model: claude-haiku-5-5
-  per_run: 80
+  per_run: 150
 sources:
 - name: 학교 공지
   group: 경희대
@@ -184,8 +186,9 @@ sources:
   type: board
   enabled: true
   note: 연세대 건설환경공학과 대학원 공지 — 학문분야 '지반공학 및 지반환경공학', 지반공학연구실(이준환) (연세대 건축공학과는 구조 연구실은 있으나 기초·지반·모듈러 연구실이 없어 교체)
-  list_url: https://civil.yonsei.ac.kr/civil/community/board_3.do
+  list_url: https://civil.yonsei.ac.kr/civil/community/board_3.do?mode=list&articleLimit=10&article.offset={offset}
   pages: 1
+  page_size: 10
   row_selector: table tbody tr
   title_selector: a.c-board-title
   date_selector: .c-board-info-m span:last-of-type

@@ -205,7 +205,7 @@ def summarize_item(it: dict, src: dict, session: requests.Session, delay: float,
         body, images = it.get("change") or "", []
     else:
         url = it["url"]
-        list_url = (src.get("list_url") or "").format(page=1)
+        list_url = crawler.page_url(src, 1) if src.get("list_url") else ""
         if not url or url == list_url:
             return {"mode": "extract", "points": [], "state": "no_detail"}
         if not crawler.robots_allows(url, session):

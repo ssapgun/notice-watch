@@ -164,7 +164,7 @@ class Handler(BaseHTTPRequestHandler):
                 "counts": counts, "sub_counts": sub_counts, "sources": store.sources(),
                 "configured": [{"name": s["name"], "group": s.get("group", ""), "sub": s.get("sub") or s["name"],
                                 "kind": s.get("type", "board"),
-                                "url": s.get("url") or s.get("list_url", "").format(page=1)}
+                                "url": s.get("url") or crawler.page_url(s, 1)}
                                for s in cfg["sources"] if s.get("enabled", True) is not False],
                 "last_run": store.get_meta("last_run"), "auto_hours": cfg.get("auto_check_hours", 6),
                 "state": st})

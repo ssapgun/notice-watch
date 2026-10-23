@@ -22,7 +22,7 @@ import sqlite3
 import sys
 import threading
 import time
-from datetime import datetime
+from datetime import datetime, timedelta
 from pathlib import Path
 from typing import Callable
 from urllib.parse import urljoin, urlparse
@@ -70,7 +70,7 @@ CONFIG_HEADER = """# 공지·입시 감시 설정 파일
 # 직접 고쳐도 되지만, 화면에서 저장하면 이 파일의 주석은 이 머리말만 남는다. 설명은 각 대상의 note 칸에 적는다.
 # 저장할 때마다 바로 이전 내용이 config.yaml.bak 에 남는다.
 """
-FIELD_ORDER = ["name", "group", "sub", "type", "enabled", "note", "list_url", "url", "pages",
+FIELD_ORDER = ["name", "group", "sub", "type", "enabled", "note", "list_url", "url", "pages", "page_size",
                "row_selector", "title_selector", "title_text_selector", "date_selector",
                "remove_in_title", "category_selector", "categories", "link_regex", "link_template",
                "detail_selector", "content_selector", "remove_selectors", "ignore_regex", "keywords",
@@ -133,12 +133,17 @@ def clean_source(raw: dict) -> dict:
         src.setdefault("row_selector", "table tbody tr")
         src.setdefault("title_selector", "a")
         src.setdefault("pages", 1)
-        if src["pages"] > 1 and "{page}" not in u:
-            raise ValueError("2페이지 이상 보려면 주소의 페이지 번호 자리에 {page} 를 넣어야 한다")
+        if src["pages"] > 1 and "{page}" not in u and "{offset}" not in u:
+            raise ValueError("2페이지 이상 보려면 주소의 페이지 번호 자리에 {page} (또는 글 순번 자리에 {offset}) 를 넣어야 한다")
+        if "page_size" in src:
+            try:
+                src["page_size"] = max(1, min(200, int(src["page_size"])))
+            except (TypeError, ValueError):
+                raise ValueError("page_size 는 숫자여야 한다")
         for k in ("content_selector", "remove_selectors", "ignore_regex", "keywords"):
             src.pop(k, None)
     else:
-        for k in ("pages", "row_selector", "title_selector", "title_text_selector", "date_selector",
+        for k in ("pages", "page_size", "row_selector", "title_selector", "title_text_selector", "date_selector",
                   "remove_in_title", "category_selector", "categories", "link_regex",
                   "link_template", "include", "exclude", "require", "detail_selector"):
             src.pop(k, None)
@@ -160,9 +165,15 @@ def clean_source(raw: dict) -> dict:
     return {k: src[k] for k in FIELD_ORDER if k in src}
 
 
+KEEP_ON_EDIT = ("page_size", "render", "wait_selector")   # 화면 폼에 없는 값: 수정해도 지우지 않는다
+
+
 def upsert_source(raw: dict, old_name: str | None) -> dict:
-    src = clean_source(raw)
     cfg = load_config()
+    old = next((s for s in cfg["sources"] if s["name"] == old_name), None) if old_name else None
+    if old:
+        raw = {**{k: old[k] for k in KEEP_ON_EDIT if k in old and k not in raw}, **raw}
+    src = clean_source(raw)
     names = [s["name"] for s in cfg["sources"]]
     if src["name"] != old_name and src["name"] in names:
         raise ValueError(f"'{src['name']}' 이름이 이미 있다. 다른 이름을 쓸 것")
@@ -485,8 +496,11 @@ def visible_filter(cfg: dict, hidden_topics: set[str] | None = None):
     by_name = {s.get("name"): s for s in cfg.get("sources", [])}
     topics = cfg.get("topics") or []
     hidden = set(hidden_topics or ())
+    cutoff = cutoff_date(cfg)
 
     def ok(it: dict) -> bool:
+        if cutoff and it.get("date") and it["date"] < cutoff:   # max_age_months 보다 오래된 글
+            return False
         if hidden and hidden & set(topic_hits(it, topics)):
             return False
         src = by_name.get(it.get("source"))
@@ -496,17 +510,48 @@ def visible_filter(cfg: dict, hidden_topics: set[str] | None = None):
     return ok
 
 
-def crawl_board(src: dict, session: requests.Session, delay: float) -> list[dict]:
+def page_url(src: dict, i: int) -> str:
+    """i 번째 목록 페이지 주소. {page}=페이지 번호, {offset}=(i-1)*page_size (글 순번으로 넘기는 사이트용)."""
+    return src["list_url"].replace("{page}", str(i)).replace("{offset}", str((i - 1) * int(src.get("page_size", 10))))
+
+
+def cutoff_date(cfg: dict) -> str:
+    """max_age_months(기본 8)개월 전 날짜 'YYYY-MM-DD'. 0 이면 '' (제한 없음)."""
+    months = int(cfg.get("max_age_months", 8) or 0)
+    if months <= 0:
+        return ""
+    t = datetime.now()
+    y, m = divmod(t.month - 1 - months, 12)
+    y, m = t.year + y, m + 1
+    last_day = [31, 29 if y % 4 == 0 and (y % 100 or y % 400 == 0) else 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31][m - 1]
+    return f"{y}-{m:02d}-{min(t.day, last_day):02d}"
+
+
+def crawl_board(src: dict, session: requests.Session, delay: float,
+                cutoff: str = "", max_pages: int = 25) -> list[dict]:
+    """게시판 목록을 읽는다. cutoff 가 있으면 그 날짜까지 페이지를 더 넘겨 빠짐없이 모으고,
+    그보다 오래된 글은 버린다. 페이지 수는 max_pages 를 넘지 않는다 (서버 부담 제한)."""
     found, seen = [], set()
-    for i in range(1, int(src.get("pages", 1)) + 1):
-        url = src["list_url"].format(page=i)
+    min_pages = int(src.get("pages", 1))
+    can_page = "{page}" in src["list_url"] or "{offset}" in src["list_url"]
+    limit = max(min_pages, max_pages) if (cutoff and can_page) else min_pages
+    prev_keys: set = set()
+    earlier: set = set()   # 앞 페이지에서 본 글 (상단 고정글은 매 페이지 반복된다)
+    for i in range(1, limit + 1):
+        url = page_url(src, i)
         if not robots_allows(url, session):
             raise PermissionError(f"robots.txt 가 수집을 막고 있다: {url}")
         page_items = parse_list(fetch(url, src, session), url, src)
         time.sleep(delay)
         if not page_items:
             break
+        keys = {it["url"] if it["url"] != url else it["title"] for it in page_items}
+        if keys == prev_keys:  # 페이지 번호를 무시하고 같은 목록을 주는 사이트
+            break
+        prev_keys = keys
         for it in page_items:
+            if cutoff and it["date"] and it["date"] < cutoff:
+                continue
             if not keyword_ok(it["title"], src):
                 continue
             key = it["url"] if it["url"] != url else it["title"]
@@ -515,6 +560,13 @@ def crawl_board(src: dict, session: requests.Session, delay: float) -> list[dict
             seen.add(key)
             found.append({**it, "key": key, "tkey": f"T|{it['title']}|{it['date']}",
                           "change": "", "kind": "board"})
+        fresh = [it for it in page_items if (it["url"] if it["url"] != url else it["title"]) not in earlier]
+        earlier |= keys
+        # 고정글은 첫 페이지에서 이미 봤으므로, 이 페이지에 처음 나온 글의 날짜로 판단한다
+        dates = [it["date"] for it in (fresh if i > 1 else page_items) if it["date"]]
+        # 이 페이지 글이 전부 기준일보다 오래됐으면 그만
+        if i >= min_pages and (not cutoff or not dates or max(dates) < cutoff):
+            break
     return found
 
 
@@ -591,7 +643,7 @@ def test_source(raw: dict) -> dict:
     src = clean_source(raw)
     session = new_session()
     _robots_cache.clear()
-    url = src["list_url"].format(page=1) if src["type"] == "board" else src["url"]
+    url = page_url(src, 1) if src["type"] == "board" else src["url"]
     if not robots_allows(url, session):
         return {"ok": False, "error": "이 사이트의 robots.txt 가 수집을 금지한다. 추가하지 않는 것이 맞다."}
     try:
@@ -628,7 +680,7 @@ def guess_board(url: str) -> dict:
     if not robots_allows(url, session):
         return {"ok": False, "error": "이 사이트의 robots.txt 가 수집을 금지한다."}
     try:
-        html = fetch_static(url.format(page=1), session)
+        html = fetch_static(url.replace("{page}", "1").replace("{offset}", "0"), session)
     except Exception as e:
         return {"ok": False, "error": f"페이지를 열지 못했다: {type(e).__name__}: {e}"[:300]}
     soup = BeautifulSoup(html, "html.parser")
@@ -680,6 +732,9 @@ def run_crawl(store: Store, cfg: dict, group: str | None = None,
     session.headers["User-Agent"] = USER_AGENT
     _robots_cache.clear()
 
+    cutoff = cutoff_date(cfg)
+    max_pages = int(cfg.get("max_pages", 25))
+    recent = (datetime.now() - timedelta(days=14)).strftime("%Y-%m-%d")
     targets = [s for s in cfg["sources"]
                if s.get("enabled", True) is not False and (not group or s.get("group") == group)]
     total_new = 0
@@ -694,16 +749,17 @@ def run_crawl(store: Store, cfg: dict, group: str | None = None,
                 raw = crawl_watch(src, session)
                 time.sleep(delay)
             else:
-                raw = crawl_board(src, session, delay)
+                raw = crawl_board(src, session, delay, cutoff, max_pages)
         except Exception as e:  # 한 사이트가 실패해도 나머지는 계속
             store.set_source(src, ok=False, error=f"{type(e).__name__}: {e}"[:300])
             continue
         new = 0
         for it in raw:
             it.update(group=src.get("group", ""), source=src["name"])
-            # 처음 확인하는 대상의 기존 글은 '읽음'으로 넣는다. 첫날부터 수백 건이 쌓이지 않게.
-            if store.add_item(it, mark_read=first_time):
-                new += 0 if first_time else 1
+            # 처음 확인하는 대상의 기존 글, 그리고 범위를 넓혀 뒤늦게 채운 2주 넘은 글은 '읽음'으로 넣는다.
+            old = bool(it.get("date")) and it["date"] < recent
+            if store.add_item(it, mark_read=first_time or old):
+                new += 0 if (first_time or old) else 1
         store.set_source(src, ok=True, new=new)
         total_new += new
     store.set_meta("last_run", now_str())
