@@ -69,6 +69,7 @@ def main() -> int:
         "auto_check_hours": cfg.get("auto_check_hours", 6),
         "sources": cfg["sources"],
         "excluded": cfg.get("excluded", []),
+        "links": cfg.get("links", []),
         "status": store.sources(),
         "items": items,
     }

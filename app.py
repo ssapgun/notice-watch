@@ -140,7 +140,7 @@ class Handler(BaseHTTPRequestHandler):
             with state_lock:
                 st = dict(state)
             return self.send_json({
-                "groups": groups, "counts": visible_counts(cfg), "sources": store.sources(),
+                "groups": groups, "links": cfg.get("links", []), "counts": visible_counts(cfg), "sources": store.sources(),
                 "configured": [{"name": s["name"], "group": s.get("group", ""),
                                 "kind": s.get("type", "board"),
                                 "url": s.get("url") or s.get("list_url", "").format(page=1)}

@@ -69,6 +69,7 @@ page_snapshots/   페이지 변경 감지용 사본 (자동 생성)
 | detail_selector | 글 상세 페이지의 본문 칸 (정리할 때 읽는 부분) |
 | content_selector, keywords | (watch) 본문 영역, 이 단어가 든 변경만 알림 |
 | enabled, note | 켜짐 여부, 메모 |
+| links (맨 위 단계) | 자동 확인하지 않고 화면 왼쪽에 바로가기로만 두는 곳 (robots.txt·이용약관상 수집 불가한 사이트) |
 
 ## 지키는 원칙
 매번 robots.txt 확인, 요청 간 2초 대기, 크롤러임을 밝히는 User-Agent, 로그인·우회·비공개 API 호출 없음, 개인 용도로만 사용.

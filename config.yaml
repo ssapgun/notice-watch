@@ -373,6 +373,251 @@ sources:
   enabled: true
   url: https://www.ntu.edu.sg/cee/admissions/graduate/detail/cee-master-of-engineering-(m.eng)-(by-research)
   content_selector: article
+- name: 대한건축학회 학회소식
+  group: 학회
+  type: board
+  enabled: true
+  note: 대한건축학회 공지. 학술발표대회·논문 모집·학생 행사. 건축구조(강구조·모듈러) 논문 발표처
+  list_url: https://www.aik.or.kr/board/?ncode=a001&page={page}
+  pages: 1
+  row_selector: table tbody tr
+  title_selector: td.board-title a
+  date_selector: td.date
+  detail_selector: tr.board-contents
+  include:
+  - 학술대회
+  - 학술발표
+  - 발표대회
+  - 논문 모집
+  - 논문모집
+  - 초록
+  - 공모전
+  - 공모
+  - 경진대회
+  - 대학생
+  - 학생
+  - 장학
+  - 캡스톤
+  - 콘테스트
+  - 세미나
+  - 워크숍
+  - 심포지엄
+  - 강구조
+  - 철골
+  - 접합
+  - 모듈러
+  - OSC
+  - 탈현장
+  - 프리캐스트
+  - PC
+  exclude:
+  - 회비
+  - 연회비
+  - 총회
+  - 인사
+  - 골프
+  - 동호회
+  - 후기
+  - 인스타그램
+  - 부고
+  - 선거
+  - 임원
+- name: 대한건축학회 건축계소식
+  group: 학회
+  type: board
+  enabled: true
+  note: 대한건축학회에 올라오는 외부 기관 공지(공모전·세미나·연구진 모집). 양이 많아 공모전·학생·강구조 관련만
+  list_url: https://www.aik.or.kr/board/?ncode=d001&page={page}
+  pages: 1
+  row_selector: table tbody tr
+  title_selector: td.board-title a
+  date_selector: td.date
+  detail_selector: tr.board-contents
+  include:
+  - 공모전
+  - 경진대회
+  - 대학생
+  - 학생
+  - 장학
+  - 인턴
+  - 연구원 모집
+  - 연구진
+  - 강구조
+  - 철골
+  - 접합
+  - 모듈러
+  - OSC
+  - 탈현장
+  - 프리캐스트
+  - PC
+  exclude:
+  - 회비
+  - 연회비
+  - 총회
+  - 인사
+  - 골프
+  - 동호회
+  - 후기
+  - 인스타그램
+  - 부고
+  - 선거
+  - 임원
+- name: 한국건설관리학회 공지
+  group: 학회
+  type: board
+  enabled: true
+  note: 한국건설관리학회 공지. 정기·전국대학생 학술발표대회, OSC·모듈러·공기 단축
+  list_url: https://www.kicem.or.kr/board/?ncode=a0001&page={page}
+  pages: 1
+  row_selector: table tbody tr
+  title_selector: td.ta-left a
+  date_selector: td:nth-of-type(4)
+  detail_selector: tr.board-contents
+  include:
+  - 학술대회
+  - 학술발표
+  - 발표대회
+  - 논문 모집
+  - 논문모집
+  - 초록
+  - 공모전
+  - 공모
+  - 경진대회
+  - 대학생
+  - 학생
+  - 장학
+  - 캡스톤
+  - 콘테스트
+  - 세미나
+  - 워크숍
+  - 심포지엄
+  - 강구조
+  - 철골
+  - 접합
+  - 모듈러
+  - OSC
+  - 탈현장
+  - 프리캐스트
+  - PC
+  exclude:
+  - 회비
+  - 연회비
+  - 총회
+  - 인사
+  - 골프
+  - 동호회
+  - 후기
+  - 인스타그램
+  - 부고
+  - 선거
+  - 임원
+- name: 한국건설관리학회 학회행사
+  group: 학회
+  type: board
+  enabled: true
+  note: 한국건설관리학회 세미나·행사
+  list_url: https://www.kicem.or.kr/board/?ncode=c0025&page={page}
+  pages: 1
+  row_selector: table tbody tr
+  title_selector: td.ta-left a
+  detail_selector: tr.board-contents
+  include:
+  - 학술대회
+  - 학술발표
+  - 발표대회
+  - 논문 모집
+  - 논문모집
+  - 초록
+  - 공모전
+  - 공모
+  - 경진대회
+  - 대학생
+  - 학생
+  - 장학
+  - 캡스톤
+  - 콘테스트
+  - 세미나
+  - 워크숍
+  - 심포지엄
+  - 강구조
+  - 철골
+  - 접합
+  - 모듈러
+  - OSC
+  - 탈현장
+  - 프리캐스트
+  - PC
+  exclude:
+  - 회비
+  - 연회비
+  - 총회
+  - 인사
+  - 골프
+  - 동호회
+  - 후기
+  - 인스타그램
+  - 부고
+  - 선거
+  - 임원
+- name: 한국콘크리트학회 학회소식
+  group: 학회
+  type: board
+  enabled: true
+  note: 한국콘크리트학회 공지. 학술대회·캡스톤디자인 공모·학생 행사. 합성구조·프리캐스트 접합부
+  list_url: https://www.kci.or.kr/board/?ncode=a001&page={page}
+  pages: 1
+  row_selector: table tbody tr
+  title_selector: td.ta-left a
+  date_selector: td:nth-of-type(5)
+  detail_selector: tr.board-contents
+  include:
+  - 학술대회
+  - 학술발표
+  - 발표대회
+  - 논문 모집
+  - 논문모집
+  - 초록
+  - 공모전
+  - 공모
+  - 경진대회
+  - 대학생
+  - 학생
+  - 장학
+  - 캡스톤
+  - 콘테스트
+  - 세미나
+  - 워크숍
+  - 심포지엄
+  - 강구조
+  - 철골
+  - 접합
+  - 모듈러
+  - OSC
+  - 탈현장
+  - 프리캐스트
+  - PC
+  exclude:
+  - 회비
+  - 연회비
+  - 총회
+  - 인사
+  - 골프
+  - 동호회
+  - 후기
+  - 인스타그램
+  - 부고
+  - 선거
+  - 임원
+links:
+- name: 한국강구조학회
+  url: https://www.kssc.or.kr/home/kor/main.do
+  note: 'robots.txt 가 전체 수집 금지(Disallow: /)라 자동 확인하지 않는다. 직접 열어서 볼 것'
+- name: 한국강구조학회 학술대회
+  url: https://science.kssc.or.kr
+  note: 강구조학회 학술대회 사이트
+- name: McKinsey 건설·건자재 인사이트
+  url: https://www.mckinsey.com/industries/engineering-construction-and-building-materials/our-insights
+  note: 이용약관이 수집·AI 이용·재게시를 금지해 자동 확인·정리하지 않는다. 직접 열어서 볼 것
 excluded:
 - 'POSTECH: 건축·토목·구조 학과가 없음 (학과 목록 확인. 가장 가까운 곳이 친환경소재대학원·환경공학부)'
 - 연세대 건축공학과 -> 연세대 건설환경공학과로 교체 (지반 연구실은 건설환경공학과에 있음)
@@ -380,3 +625,6 @@ excluded:
 - 교토대 건축학전공 -> 교토대 도시사회공학전공으로 교체
 - '서울대 건축학과(architecture.snu.ac.kr): robots.txt 가 "Disallow: /" 로 전체 수집을 금지 -> 넣지 않음'
 - '서울대 입학본부 대학원 공지: 최근 글이 2023년이라 사실상 쓰지 않는 게시판'
+- '한국강구조학회 — robots.txt 전체 수집 금지(Disallow: /). 바로가기(links)로만 둔다'
+- McKinsey 보고서 — 이용약관 3조가 크롤링·AI 이용·재게시 금지. 바로가기(links)로만 둔다
+- 한국지반공학회 — 관심 분야가 지반보다 강구조라 보류
