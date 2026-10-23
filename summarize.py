@@ -30,6 +30,9 @@ MAX_TEXT = 6000          # 모델에 보내는 본문 최대 글자 수
 MAX_IMAGES = 3           # 본문이 짧을 때 함께 보내는 이미지 수
 MAX_IMAGE_BYTES = 3_500_000
 MAX_TRIES = 3            # 실패한 글을 다시 시도하는 횟수
+EXTRACT_VERSION = "2"    # 본문 뽑는 방식을 바꾸면 올린다 → 발췌해 둔 글을 새 방식으로 다시 뽑는다
+BLOCKS = ["p", "div", "li", "tr", "h1", "h2", "h3", "h4", "h5", "h6", "table", "ul", "ol", "dd", "dt",
+          "section", "article", "blockquote", "pre"]
 
 # 상세 페이지 본문 칸 (설정의 detail_selector 가 없을 때 차례로 찾는다)
 DETAIL_FALLBACK = [".bbs-view_c", ".row.contents", "#bo_v_con", ".fr-view", ".border-view-con",
@@ -62,8 +65,16 @@ def extract_detail(html: str, url: str, src: dict) -> tuple[str, list[str]]:
         s = img.get("src") or img.get("data-src") or ""
         if s and not s.startswith("data:") and not SKIP_IMG.search(s):
             images.append(urljoin(url, s))
+    # 줄은 문단·목록 같은 블록 단위로만 나눈다 (글자 꾸밈 태그에서 문장이 끊기지 않게)
+    for br in root.find_all("br"):
+        br.replace_with("\n")
+    for el in root.find_all(BLOCKS):
+        el.insert_before("\n")
+        el.append("\n")
+    for el in root.find_all(["td", "th"]):
+        el.append(" | ")
     lines, seen = [], set()
-    for raw in root.get_text("\n").split("\n"):
+    for raw in root.get_text("").replace("\xa0", " ").split("\n"):
         line = crawler.clean(raw)
         if len(line) < 2 or line in seen or ATTACH_LINE.search(line):
             continue
@@ -162,6 +173,12 @@ def summarize_pending(store: crawler.Store, cfg: dict, limit: int | None = None,
     delay = float(cfg.get("delay_seconds", 2))
     srcs = {s["name"]: s for s in cfg["sources"]}
     visible = crawler.visible_filter(cfg)
+
+    if store.get_meta("extract_version") != EXTRACT_VERSION:
+        with store.lock:
+            store.db.execute("UPDATE items SET sum_mode=NULL, sum_state=NULL, summary=NULL WHERE sum_mode='extract'")
+            store.db.commit()
+        store.set_meta("extract_version", EXTRACT_VERSION)
 
     session = requests.Session()
     session.headers["User-Agent"] = crawler.USER_AGENT
