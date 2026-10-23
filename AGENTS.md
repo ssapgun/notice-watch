@@ -10,6 +10,7 @@
 | 파일 | 역할 |
 |---|---|
 | `crawler.py` | 크롤링 엔진. 저장소(`Store`, SQLite), 게시판 파싱(`parse_list`), 페이지 변경 감지(`crawl_watch`), 설정 편집(`upsert_source` 등), 미리보기(`test_source`), 구조 추정(`guess_board`) |
+| `summarize.py` | 공지 정리·번역. 상세 페이지 본문(`detail_selector`)을 뽑아 Claude API(`ANTHROPIC_API_KEY`)로 한국어 정리, 키가 없으면 발췌. 첨부파일은 읽지 않는다 |
 | `app.py` | 파이썬 표준 라이브러리 웹서버(`ThreadingHTTPServer`). `127.0.0.1:8765`. API 와 자동 확인 스레드 |
 | `static/index.html` | 화면 전체 (HTML+CSS+JS 한 파일, 빌드 도구 없음) |
 | `config.yaml` | 감시 대상 목록. 화면에서 저장하면 `crawler.save_config` 가 다시 쓴다 |
@@ -31,7 +32,8 @@ python crawler.py --export # 엑셀로 내보내기
 3. User-Agent 에 크롤러임을 밝힌다(`USER_AGENT`). 브라우저로 위장하지 않는다.
 4. 로그인, 캡차 우회, 비공개·내부 API 호출, IP 우회를 하지 않는다. 공개 목록 페이지만 읽는다.
 5. 서버는 `127.0.0.1` 에만 연다. POST 는 `X-Dashboard: 1` 머리글과 Origin 검사(`Handler.allowed`)를 통과해야 한다. 이 검사를 지우지 않는다.
-6. 개인 용도. 수집한 내용을 재배포하는 기능을 넣지 않는다.
+6. 개인 용도. 수집한 내용을 재배포하는 기능을 넣지 않는다. 웹 버전에는 원문 전문이 아니라 짧은 정리와 원문 링크만 올린다.
+7. API 키는 환경변수·GitHub Secret 으로만 받는다. 코드·config.yaml·data.json 에 쓰지 않는다.
 
 ## 코드 규칙
 - 의존성은 `requirements.txt` 의 4개만 쓴다. 새 패키지가 꼭 필요하면 이유를 적고 사용자에게 먼저 묻는다.

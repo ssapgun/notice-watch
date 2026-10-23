@@ -4,6 +4,10 @@
 # 저장할 때마다 바로 이전 내용이 config.yaml.bak 에 남는다.
 delay_seconds: 2
 auto_check_hours: 6
+summary:
+  enabled: true
+  model: claude-haiku-5-5
+  per_run: 80
 sources:
 - name: 학교 공지
   group: 경희대
@@ -17,6 +21,7 @@ sources:
   remove_in_title: span
   link_regex: view\('(\d+)'
   link_template: https://www.khu.ac.kr/kor/user/bbs/BMSR00040/view.do?menuNo=200316&boardId={0}
+  detail_selector: .row.contents
 - name: 공과대학 공지
   group: 경희대
   type: board
@@ -29,6 +34,7 @@ sources:
   remove_in_title: span
   link_regex: view\('(\d+)'
   link_template: https://eng.khu.ac.kr/eng_kor/user/bbs/BMSR00040/view.do?menuNo=17100020&boardId={0}
+  detail_selector: .bbs-view_c
 - name: 건축공학과 공지
   group: 경희대
   type: board
@@ -41,6 +47,7 @@ sources:
   remove_in_title: span
   link_regex: view\('(\d+)'
   link_template: https://archieng.khu.ac.kr/archieng/user/bbs/BMSR00040/view.do?menuNo=17900015&boardId={0}
+  detail_selector: .bbs-view_c
 - name: 국제처 공지
   group: 경희대
   type: board
@@ -53,6 +60,7 @@ sources:
   remove_in_title: span
   link_regex: view\('(\d+)'
   link_template: https://oia.khu.ac.kr/oiak_kor/user/bbs/BMSR00040/view.do?menuNo=5800010&boardId={0}
+  detail_selector: .bbs-view_c
 - name: 국제처 해외파견
   group: 경희대
   type: board
@@ -65,6 +73,7 @@ sources:
   remove_in_title: span
   link_regex: view\('(\d+)'
   link_template: https://oia.khu.ac.kr/oiak_kor/user/bbs/BMSR00040/view.do?menuNo=5800012&boardId={0}
+  detail_selector: .bbs-view_c
 - name: 서울대 건설환경도시공학부
   group: 국내 대학원
   type: board
@@ -79,6 +88,7 @@ sources:
   categories:
   - 입시
   - 대학원
+  detail_selector: '#bo_v_con'
   include:
   - 입학
   - 입시
@@ -117,6 +127,7 @@ sources:
   title_selector: a.c-board-title
   date_selector: .c-board-info-m span:last-of-type
   remove_in_title: span.c-board-top-num-m
+  detail_selector: .fr-view
   include:
   - 입학
   - 입시
@@ -154,6 +165,7 @@ sources:
   row_selector: table tbody tr
   title_selector: div.bo_tit a
   date_selector: td.td_datetime
+  detail_selector: '#bo_v_con'
   include:
   - 입학
   - 입시
@@ -191,6 +203,7 @@ sources:
   row_selector: table tbody tr
   title_selector: td.bod-tit a
   date_selector: td.date
+  detail_selector: .border-view-con
   include:
   - 입학
   - 입시
@@ -249,6 +262,7 @@ sources:
   row_selector: ul.c-newslist li
   title_selector: a
   date_selector: span
+  detail_selector: .c-post
   include:
   - 大学院
   - 博士
@@ -289,6 +303,7 @@ sources:
   row_selector: ul.ul_admissions01 li
   title_selector: dd a
   date_selector: p.date
+  detail_selector: .contentArea
   include:
   - 大学院
   - 博士
@@ -304,6 +319,7 @@ sources:
   row_selector: ul.ul_admissions01 li
   title_selector: dd a
   date_selector: p.date
+  detail_selector: .contentArea
   include:
   - 大学院
   - 博士
@@ -320,6 +336,7 @@ sources:
   title_selector: a
   title_text_selector: .c-entryList__text
   date_selector: time
+  detail_selector: .contentArea
   include:
   - 理工学系
   exclude:

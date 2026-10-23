@@ -19,6 +19,7 @@ from pathlib import Path
 from urllib.parse import parse_qs, urlparse
 
 import crawler
+import summarize
 
 HOST, PORT = "127.0.0.1", 8765
 STATIC = Path(__file__).resolve().parent / "static"
@@ -43,9 +44,12 @@ def start_crawl(group: str = "") -> bool:
 
     def work() -> None:
         try:
-            n = crawler.run_crawl(store, crawler.load_config(), group or None, progress, stop_event)
+            cfg = crawler.load_config()
+            n = crawler.run_crawl(store, cfg, group or None, progress, stop_event)
             with state_lock:
                 state["new"] = n
+            # 새 글 정리·번역 (환경변수 ANTHROPIC_API_KEY 가 있으면 Claude, 없으면 본문 발췌)
+            summarize.summarize_pending(store, cfg, progress=lambda m: progress({"current": m}))
         except Exception as e:  # 설정 파일 오류 등
             with state_lock:
                 state["error"] = f"{type(e).__name__}: {e}"
@@ -122,7 +126,8 @@ class Handler(BaseHTTPRequestHandler):
             return self.send_file(STATIC / "index.html", "text/html; charset=utf-8")
         if u.path == "/api/items":
             ok = crawler.visible_filter(crawler.load_config())
-            return self.send_json([it for it in store.items(group=q.get("group", ""), q=q.get("q", ""),
+            return self.send_json([dict(it, summary=json.loads(it["summary"]) if it.get("summary") else [])
+                                   for it in store.items(group=q.get("group", ""), q=q.get("q", ""),
                                                             unread=q.get("unread") == "1",
                                                             starred=q.get("starred") == "1") if ok(it)])
         if u.path == "/api/summary":

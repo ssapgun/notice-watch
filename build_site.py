@@ -15,6 +15,7 @@ from datetime import datetime
 from pathlib import Path
 
 import crawler
+import summarize
 
 BASE = Path(__file__).resolve().parent
 DATA = BASE / "data"
@@ -47,16 +48,24 @@ def main() -> int:
     new = crawler.run_crawl(store, run_cfg, progress=progress)
     print(f"새 항목 {new}건")
 
+    # 공지 정리·번역 (ANTHROPIC_API_KEY 비밀값이 있으면 Claude, 없으면 본문 발췌)
+    st = summarize.summarize_pending(store, cfg, progress=lambda m: print("  " + m, flush=True))
+    print(f"공지 정리 {st['done']}건, 실패 {st.get('failed', 0)}건, 남은 글 {st.get('left', 0)}건 ({st['mode']})")
+
     ok = crawler.visible_filter(cfg)   # 필터를 바꾸기 전에 모인 글도 현재 필터로 가린다
     with store.lock:
         rows = [dict(r) for r in store.db.execute(
-            "SELECT id, grp, source, date, title, url, change, kind, found_at, is_read FROM items "
+            "SELECT id, grp, source, date, title, url, change, kind, found_at, is_read,"
+            " summary, title_ko, sum_mode, sum_state FROM items "
             "ORDER BY COALESCE(NULLIF(date,''), substr(found_at,1,10)) DESC, id DESC").fetchall()]
     items = [r for r in rows if ok(r)][:MAX_ITEMS]
+    for r in items:
+        r["summary"] = json.loads(r["summary"]) if r["summary"] else []
     payload = {
         "generated_at": crawler.now_str(),
         "last_run": store.get_meta("last_run"),
         "new_this_run": new,
+        "summary_mode": st["mode"],
         "auto_check_hours": cfg.get("auto_check_hours", 6),
         "sources": cfg["sources"],
         "excluded": cfg.get("excluded", []),

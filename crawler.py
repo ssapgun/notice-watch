@@ -16,6 +16,7 @@ from __future__ import annotations
 
 import argparse
 import hashlib
+import json
 import re
 import sqlite3
 import sys
@@ -72,7 +73,7 @@ CONFIG_HEADER = """# 공지·입시 감시 설정 파일
 FIELD_ORDER = ["name", "group", "type", "enabled", "note", "list_url", "url", "pages",
                "row_selector", "title_selector", "title_text_selector", "date_selector",
                "remove_in_title", "category_selector", "categories", "link_regex", "link_template",
-               "content_selector", "remove_selectors", "ignore_regex", "keywords",
+               "detail_selector", "content_selector", "remove_selectors", "ignore_regex", "keywords",
                "include", "exclude", "render", "wait_selector"]
 LIST_FIELDS = {"categories", "keywords", "include", "exclude", "remove_selectors"}
 _config_lock = threading.Lock()
@@ -139,7 +140,7 @@ def clean_source(raw: dict) -> dict:
     else:
         for k in ("pages", "row_selector", "title_selector", "title_text_selector", "date_selector",
                   "remove_in_title", "category_selector", "categories", "link_regex",
-                  "link_template", "include", "exclude"):
+                  "link_template", "include", "exclude", "detail_selector"):
             src.pop(k, None)
     for k in ("link_regex", "ignore_regex"):
         if src.get(k):
@@ -148,7 +149,7 @@ def clean_source(raw: dict) -> dict:
             except re.error as e:
                 raise ValueError(f"{k} 정규식 오류: {e}")
     sel_keys = ("row_selector", "title_selector", "title_text_selector", "date_selector",
-                "remove_in_title", "category_selector", "content_selector")
+                "remove_in_title", "category_selector", "content_selector", "detail_selector")
     probe = BeautifulSoup("<div></div>", "html.parser")
     for k in sel_keys:
         if src.get(k):
@@ -221,7 +222,37 @@ class Store:
             last_checked TEXT, last_ok TEXT, last_error TEXT, last_new INTEGER DEFAULT 0);
         CREATE TABLE IF NOT EXISTS meta (k TEXT PRIMARY KEY, v TEXT);
         """)
+        # 공지 정리·번역 칸 (예전 DB 에는 없으므로 없으면 추가)
+        have = {r["name"] for r in self.db.execute("PRAGMA table_info(items)")}
+        for col, typ in [("summary", "TEXT"), ("title_ko", "TEXT"), ("sum_mode", "TEXT"),
+                         ("sum_state", "TEXT"), ("sum_tries", "INTEGER DEFAULT 0"),
+                         ("sum_error", "TEXT"), ("sum_at", "TEXT")]:
+            if col not in have:
+                self.db.execute(f"ALTER TABLE items ADD COLUMN {col} {typ}")
         self.db.commit()
+
+    # ---- 공지 정리
+    def pending_summaries(self, mode: str, max_tries: int) -> list[dict]:
+        """정리할 글. 키 없이 발췌만 해 둔 글은 키가 생기면(mode=llm) 다시 정리한다."""
+        sql = ("SELECT * FROM items WHERE (sum_mode IS NULL AND COALESCE(sum_tries,0) < ?)"
+               + (" OR sum_mode='extract'" if mode == "llm" else "")
+               + " ORDER BY COALESCE(NULLIF(date,''), substr(found_at,1,10)) DESC, id DESC")
+        with self.lock:
+            return [dict(r) for r in self.db.execute(sql, (max_tries,)).fetchall()]
+
+    def set_summary(self, item_id: int, mode: str, title_ko: str, points: list[str], state: str) -> None:
+        with self.lock:
+            self.db.execute(
+                "UPDATE items SET summary=?, title_ko=?, sum_mode=?, sum_state=?, sum_error=NULL, sum_at=?"
+                " WHERE id=?",
+                (json.dumps(points, ensure_ascii=False), title_ko or None, mode, state, now_str(), item_id))
+            self.db.commit()
+
+    def summary_failed(self, item_id: int, error: str) -> None:
+        with self.lock:
+            self.db.execute("UPDATE items SET sum_tries=COALESCE(sum_tries,0)+1, sum_error=? WHERE id=?",
+                            (error, item_id))
+            self.db.commit()
 
     # ---- 크롤 결과 기록
     def source_seen_before(self, name: str) -> bool:
@@ -278,8 +309,9 @@ class Store:
         if group:
             sql += " AND grp=?"; args.append(group)
         if q:
-            sql += " AND (title LIKE ? OR source LIKE ? OR change LIKE ?)"
-            args += [f"%{q}%"] * 3
+            sql += (" AND (title LIKE ? OR source LIKE ? OR change LIKE ?"
+                    " OR COALESCE(title_ko,'') LIKE ? OR COALESCE(summary,'') LIKE ?)")
+            args += [f"%{q}%"] * 5
         if unread:
             sql += " AND is_read=0"
         if starred:
@@ -670,15 +702,18 @@ def export_xlsx(store: Store, path: Path = XLSX_PATH) -> Path:
     wb = Workbook()
     ws = wb.active
     ws.title = "공지"
-    header = ["발견일시", "분류", "출처", "등록일", "제목", "링크", "변경 내용", "읽음", "별표"]
+    header = ["발견일시", "분류", "출처", "등록일", "제목", "링크", "정리 / 변경 내용", "읽음", "별표"]
     ws.append(header)
     for c in ws[1]:
         c.font = Font(bold=True)
     for col, w in zip("ABCDEFGHI", [17, 12, 24, 12, 70, 45, 60, 6, 6]):
         ws.column_dimensions[col].width = w
     for it in store.items(limit=100000):
-        ws.append([it["found_at"], it["grp"], it["source"], it["date"], it["title"], it["url"],
-                   it["change"], "O" if it["is_read"] else "", "★" if it["starred"] else ""])
+        pts = json.loads(it["summary"]) if it.get("summary") else []
+        body = "\n".join("• " + p for p in pts) if pts else it["change"]
+        title = f'{it["title_ko"]} ({it["title"]})' if it.get("title_ko") else it["title"]
+        ws.append([it["found_at"], it["grp"], it["source"], it["date"], title, it["url"],
+                   body, "O" if it["is_read"] else "", "★" if it["starred"] else ""])
         ws.cell(row=ws.max_row, column=6).hyperlink = it["url"]
         ws.cell(row=ws.max_row, column=6).style = "Hyperlink"
         ws.cell(row=ws.max_row, column=7).alignment = Alignment(wrap_text=True, vertical="top")
@@ -701,6 +736,9 @@ def main() -> int:
     n = run_crawl(store, cfg, args.group,
                   progress=lambda p: p["current"] and print(f"  확인 중 {p['done'] + 1}/{p['total']}  {p['current']}"))
     print(f"\n새 항목 {n}건")
+    import summarize
+    st = summarize.summarize_pending(store, cfg, progress=lambda m: print("  " + m))
+    print(f"공지 정리 {st['done']}건 ({'Claude 정리·번역' if st['mode'] == 'llm' else '본문 발췌'})")
     for it in store.items(unread=True, limit=50):
         print(f"  [{it['grp']}] {it['date']}  {it['title']}\n      {it['url']}")
     for s in store.sources():

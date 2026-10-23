@@ -22,12 +22,16 @@ python app.py
 - **자동 확인**: 켜 둔 동안 `config.yaml`의 `auto_check_hours`(기본 6시간)마다 스스로 확인한다.
 - **처음 확인**: 지금 올라와 있는 글은 '읽음'으로 쌓인다. 그 뒤 새로 올라온 글에만 빨간 삼각형이 붙는다.
 - **페이지 변경 감지** 대상(교토대·도호쿠대·독일·싱가포르 등)은 첫 확인 때 기준만 저장하고, 다음 확인부터 새로 생긴 문장을 보여준다.
+- **공지 정리 보기**: 새 글은 상세 페이지를 한 번 읽어 정리해 둔다. 맨 끝에는 항상 원문 링크가 붙는다. 첨부파일은 읽지 않는다.
+  - `ANTHROPIC_API_KEY` 환경변수가 있으면 Claude 가 항목별로 정리하고 외국어 글은 한국어로 번역한다. 없으면 본문 앞부분 발췌만 한다.
+  - Windows: `setx ANTHROPIC_API_KEY "sk-ant-..."` 실행 후 터미널을 새로 열고 `python app.py`. 키 발급과 비용은 WEB_SETUP.md 7번.
 - 제목을 누르면 원문이 새 탭으로 열리고 읽음 처리된다. ☆로 별표, 왼쪽 아래에서 엑셀로 내보내기.
 
 ## 폴더 구성
 ```
 app.py            웹 대시보드 서버
 crawler.py        크롤링 엔진 (python crawler.py 로 화면 없이도 실행 가능)
+summarize.py      공지 정리·번역 (상세 페이지 본문 → 한국어 요약)
 config.yaml       감시 대상 목록
 static/index.html 대시보드 화면
 notices.db        수집 결과 (자동 생성)
@@ -62,6 +66,7 @@ page_snapshots/   페이지 변경 감지용 사본 (자동 생성)
 | category_selector, categories | 말머리 칸과 수집할 말머리 |
 | link_regex, link_template | 링크가 javascript:view('123') 형태일 때 상세 주소 만드는 규칙 |
 | include, exclude | 제목 키워드 필터 |
+| detail_selector | 글 상세 페이지의 본문 칸 (정리할 때 읽는 부분) |
 | content_selector, keywords | (watch) 본문 영역, 이 단어가 든 변경만 알림 |
 | enabled, note | 켜짐 여부, 메모 |
 
