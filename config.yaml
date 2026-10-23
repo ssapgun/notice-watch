@@ -11,8 +11,10 @@ summary:
 sources:
 - name: 학교 공지
   group: 경희대
+  sub: 일반
   type: board
   enabled: true
+  note: 경희대 공지사항 > 일반
   list_url: https://www.khu.ac.kr/kor/user/bbs/BMSR00040/list.do?menuNo=200316&pageIndex={page}
   pages: 2
   row_selector: table.board01 tbody tr
@@ -22,9 +24,9 @@ sources:
   link_regex: view\('(\d+)'
   link_template: https://www.khu.ac.kr/kor/user/bbs/BMSR00040/view.do?menuNo=200316&boardId={0}
   detail_selector: .row.contents
-  note: 경희대 공지사항 > 일반
 - name: 학교 공지 - 장학
   group: 경희대
+  sub: 장학
   type: board
   enabled: true
   note: 경희대 공지사항 > 장학 (전부)
@@ -39,6 +41,7 @@ sources:
   detail_selector: .row.contents
 - name: 학교 공지 - 교내학점교류
   group: 경희대
+  sub: 교내학점교류
   type: board
   enabled: true
   note: 경희대 공지사항 > 교내학점교류. 계절학기 중 서울대·연세대·고려대·서강대·성균관대·한양대(서울)와 해외 대학만
@@ -78,6 +81,7 @@ sources:
   - Winter
 - name: 공과대학 공지
   group: 경희대
+  sub: 공과대학
   type: board
   enabled: true
   list_url: https://eng.khu.ac.kr/eng_kor/user/bbs/BMSR00040/list.do?menuNo=17100020&pageIndex={page}
@@ -91,6 +95,7 @@ sources:
   detail_selector: .bbs-view_c
 - name: 건축공학과 공지
   group: 경희대
+  sub: 건축공학과
   type: board
   enabled: true
   list_url: https://archieng.khu.ac.kr/archieng/user/bbs/BMSR00040/list.do?menuNo=17900015&pageIndex={page}
@@ -104,6 +109,7 @@ sources:
   detail_selector: .bbs-view_c
 - name: 국제처 공지
   group: 경희대
+  sub: 국제처
   type: board
   enabled: true
   list_url: https://oia.khu.ac.kr/oiak_kor/user/bbs/BMSR00040/list.do?menuNo=5800010&pageIndex={page}
@@ -117,6 +123,7 @@ sources:
   detail_selector: .bbs-view_c
 - name: 국제처 해외파견
   group: 경희대
+  sub: 국제처 해외파견
   type: board
   enabled: true
   list_url: https://oia.khu.ac.kr/oiak_kor/user/bbs/BMSR00040/list.do?menuNo=5800012&pageIndex={page}
@@ -130,6 +137,7 @@ sources:
   detail_selector: .bbs-view_c
 - name: 서울대 건설환경도시공학부
   group: 국내 대학원
+  sub: 서울대
   type: board
   enabled: true
   note: 서울대 건설환경도시공학부 — 지반공학연구실(김성렬), 지반환경공학연구실(박준범), 지반역학연구실(주진현) 말머리 입시·대학원 중 입시·연구실 관련 제목만
@@ -172,6 +180,7 @@ sources:
   - 입학자부터
 - name: 연세대 건설환경공학과 대학원
   group: 국내 대학원
+  sub: 연세대
   type: board
   enabled: true
   note: 연세대 건설환경공학과 대학원 공지 — 학문분야 '지반공학 및 지반환경공학', 지반공학연구실(이준환) (연세대 건축공학과는 구조 연구실은 있으나 기초·지반·모듈러 연구실이 없어 교체)
@@ -211,6 +220,7 @@ sources:
   - 입학자부터
 - name: 고려대 건축사회환경공학부 대학원
   group: 국내 대학원
+  sub: 고려대
   type: board
   enabled: true
   note: 고려대 건축사회환경공학부 — 지반공학연구실(이종섭), 지반시스템연구실(최항석), 지속가능 AI 지반공학연구실(원종묵) 대학원공지
@@ -249,6 +259,7 @@ sources:
   - 입학자부터
 - name: KAIST 건설및환경공학과
   group: 국내 대학원
+  sub: KAIST
   type: board
   enabled: true
   note: KAIST 건설및환경공학과 — 지반시스템(조계춘), 지반에너지공학(권태혁), 지반역학(주진현), 지반지진공학(고길완) 공지 첫 페이지 20건
@@ -287,6 +298,7 @@ sources:
   - 입학자부터
 - name: 도쿄대 사회기반학전공 대학원입시
   group: 일본
+  sub: 도쿄대
   type: watch
   enabled: true
   note: 도쿄대 사회기반학전공 — 지반공학(古関 潤一 교수 등) (도쿄대 건축학전공 구조 연구실은 철골·RC·내진·리스크 위주로 기초·지반 연구실이 없어 교체)
@@ -294,6 +306,7 @@ sources:
   content_selector: main
 - name: 교토대 도시사회공학전공 대학원입시
   group: 일본
+  sub: 교토대
   type: watch
   enabled: true
   note: 교토대 도시사회공학전공 — ジオマネジメント工学, ジオフロントシステム工学, 耐震基礎(防災研究所) (교토대 건축학전공은 기초·지반 연구실이 없어 교체)
@@ -301,6 +314,7 @@ sources:
   content_selector: '#content'
 - name: 도호쿠대 공학연구과 석사 입시
   group: 일본
+  sub: 도호쿠대
   type: watch
   enabled: true
   note: 도호쿠대 — 토목공학전공 地圏・地盤工学 연구실
@@ -308,6 +322,7 @@ sources:
   content_selector: '#main'
 - name: 오사카대 공학연구과 입시정보
   group: 일본
+  sub: 오사카대
   type: board
   enabled: true
   note: 오사카대 — 지구종합공학전공 사회기반공학강좌 지반공학영역, 건축공학코스 건축지진지반학영역
@@ -328,6 +343,7 @@ sources:
   - 科目等履修生
 - name: 나고야대 공학연구과 대학원 수험생
   group: 일본
+  sub: 나고야대
   type: watch
   enabled: true
   note: 나고야대 — 토목공학 지반계 연구실
@@ -335,6 +351,7 @@ sources:
   content_selector: '#graduate'
 - name: 규슈대 공학부 대학원 입시
   group: 일본
+  sub: 규슈대
   type: watch
   enabled: true
   note: 규슈대 — 토목공학 지반공학, 방재지반공학 연구실
@@ -342,6 +359,7 @@ sources:
   content_selector: main
 - name: 홋카이도대 공학원 입시정보
   group: 일본
+  sub: 홋카이도대
   type: watch
   enabled: true
   note: 홋카이도대 — 환경필드공학전공 지반물성학 연구실
@@ -349,6 +367,7 @@ sources:
   content_selector: div.common_section
 - name: 도쿄과학대 건축학계 입학안내
   group: 일본
+  sub: 도쿄과학대
   type: board
   enabled: true
   note: '도쿄과학대(옛 도쿄공업대, 2024년 도쿄의과치과대와 통합) 건축학계 — 田村修次 연구실(건축 지반·기초구조 전문: 말뚝기초·직접기초·액상화), 中野 연구실(지반-구조물 상호작용) 토목환경공학계 — 澤田 연구실, 高橋 연구실(지반공학) 건축학계·토목환경공학계의 입학안내 목록 + 대학 입시사이트의 대학원 공지(이공학계만)'
@@ -366,6 +385,7 @@ sources:
   - 研究室
 - name: 도쿄과학대 토목환경공학계 입학안내
   group: 일본
+  sub: 도쿄과학대
   type: board
   enabled: true
   list_url: https://educ.titech.ac.jp/cv/admissions/
@@ -382,6 +402,7 @@ sources:
   - 研究室
 - name: 도쿄과학대 대학원 입시 공지
   group: 일본
+  sub: 도쿄과학대
   type: board
   enabled: true
   list_url: https://admissions.isct.ac.jp/ja/013/graduate
@@ -397,6 +418,7 @@ sources:
   - 技術経営
 - name: TUM Civil Engineering M.Sc.
   group: 독일
+  sub: TUM
   type: watch
   enabled: true
   note: TUM — Chair of Soil Mechanics and Foundation Engineering (Zentrum Geotechnik) Stuttgart — Institut für Geotechnik (IGS) RWTH — Chair of Geotechnical Engineering (GUT)
@@ -404,18 +426,21 @@ sources:
   content_selector: main
 - name: Stuttgart Civil Engineering M.Sc. 지원
   group: 독일
+  sub: Stuttgart
   type: watch
   enabled: true
   url: https://www.uni-stuttgart.de/en/study/master-programs/civil-engineering-m.sc./application/
   content_selector: main
 - name: RWTH Resilient Civil Engineering (DAAD)
   group: 독일
+  sub: RWTH
   type: watch
   enabled: true
   url: https://www2.daad.de/deutschland/studienangebote/international-programmes/en/detail/8967/
   content_selector: '#content'
 - name: NUS CEE 연구과정(PhD/M.Eng)
   group: 싱가포르
+  sub: NUS
   type: watch
   enabled: true
   note: 'NUS CEE — PPVC(조립식 모듈러) 연구: 모듈러 접합부, PPVC 양중 프레임 등 NTU CEE — Geotechnical Engineering, 건설생산성 연구 테마'
@@ -423,12 +448,14 @@ sources:
   content_selector: main
 - name: NTU CEE M.Eng (Research)
   group: 싱가포르
+  sub: NTU
   type: watch
   enabled: true
   url: https://www.ntu.edu.sg/cee/admissions/graduate/detail/cee-master-of-engineering-(m.eng)-(by-research)
   content_selector: article
 - name: 대한건축학회 학회소식
   group: 학회
+  sub: 대한건축학회
   type: board
   enabled: true
   note: 대한건축학회 공지. 학술발표대회·논문 모집·학생 행사. 건축구조(강구조·모듈러) 논문 발표처
@@ -478,6 +505,7 @@ sources:
   - 임원
 - name: 대한건축학회 건축계소식
   group: 학회
+  sub: 대한건축학회
   type: board
   enabled: true
   note: 대한건축학회에 올라오는 외부 기관 공지(공모전·세미나·연구진 모집). 양이 많아 공모전·학생·강구조 관련만
@@ -518,6 +546,7 @@ sources:
   - 임원
 - name: 한국건설관리학회 공지
   group: 학회
+  sub: 한국건설관리학회
   type: board
   enabled: true
   note: 한국건설관리학회 공지. 정기·전국대학생 학술발표대회, OSC·모듈러·공기 단축
@@ -567,6 +596,7 @@ sources:
   - 임원
 - name: 한국건설관리학회 학회행사
   group: 학회
+  sub: 한국건설관리학회
   type: board
   enabled: true
   note: 한국건설관리학회 세미나·행사
@@ -615,6 +645,7 @@ sources:
   - 임원
 - name: 한국콘크리트학회 학회소식
   group: 학회
+  sub: 한국콘크리트학회
   type: board
   enabled: true
   note: 한국콘크리트학회 공지. 학술대회·캡스톤디자인 공모·학생 행사. 합성구조·프리캐스트 접합부

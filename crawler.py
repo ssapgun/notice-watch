@@ -70,7 +70,7 @@ CONFIG_HEADER = """# 공지·입시 감시 설정 파일
 # 직접 고쳐도 되지만, 화면에서 저장하면 이 파일의 주석은 이 머리말만 남는다. 설명은 각 대상의 note 칸에 적는다.
 # 저장할 때마다 바로 이전 내용이 config.yaml.bak 에 남는다.
 """
-FIELD_ORDER = ["name", "group", "type", "enabled", "note", "list_url", "url", "pages",
+FIELD_ORDER = ["name", "group", "sub", "type", "enabled", "note", "list_url", "url", "pages",
                "row_selector", "title_selector", "title_text_selector", "date_selector",
                "remove_in_title", "category_selector", "categories", "link_regex", "link_template",
                "detail_selector", "content_selector", "remove_selectors", "ignore_regex", "keywords",

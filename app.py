@@ -81,18 +81,29 @@ def hidden_param(q: dict) -> set[str]:
     return {x for x in q.get("hide", "").split("|") if x}
 
 
-def visible_counts(cfg: dict, hidden: set[str] | None = None) -> dict:
-    """분류별 전체/안읽음 개수. 현재 필터나 끈 주제에 걸린 글은 세지 않는다."""
+def sub_of(cfg: dict) -> dict:
+    """대상 이름 → 소분류(학교·학회·게시판). sub 가 없으면 대상 이름을 그대로 쓴다."""
+    return {s["name"]: s.get("sub") or s["name"] for s in cfg["sources"]}
+
+
+def visible_counts(cfg: dict, hidden: set[str] | None = None) -> tuple[dict, dict]:
+    """분류별, 소분류별 전체/안읽음 개수. 현재 필터나 끈 주제에 걸린 글은 세지 않는다."""
     ok = crawler.visible_filter(cfg, hidden)
+    subs = sub_of(cfg)
     out: dict = {}
+    by_sub: dict = {}
     with store.lock:
         rows = store.db.execute("SELECT grp, source, title, title_ko, kind, is_read FROM items").fetchall()
     for r in rows:
         if ok(dict(r)):
+            unread = 0 if r["is_read"] else 1
             c = out.setdefault(r["grp"], {"total": 0, "unread": 0})
             c["total"] += 1
-            c["unread"] += 0 if r["is_read"] else 1
-    return out
+            c["unread"] += unread
+            sc = by_sub.setdefault(r["grp"], {}).setdefault(subs.get(r["source"], r["source"]), {"total": 0, "unread": 0})
+            sc["total"] += 1
+            sc["unread"] += unread
+    return out, by_sub
 
 
 class Handler(BaseHTTPRequestHandler):
@@ -130,11 +141,14 @@ class Handler(BaseHTTPRequestHandler):
         if u.path in ("/", "/index.html"):
             return self.send_file(STATIC / "index.html", "text/html; charset=utf-8")
         if u.path == "/api/items":
-            ok = crawler.visible_filter(crawler.load_config(), hidden_param(q))
+            cfg = crawler.load_config()
+            ok = crawler.visible_filter(cfg, hidden_param(q))
+            sub, subs = q.get("sub", ""), sub_of(cfg)
+            rows = store.items(group=q.get("group", ""), q=q.get("q", ""), unread=q.get("unread") == "1",
+                               starred=q.get("starred") == "1", limit=3000 if sub else 400)
+            rows = [it for it in rows if ok(it) and (not sub or subs.get(it["source"], it["source"]) == sub)]
             return self.send_json([dict(it, summary=json.loads(it["summary"]) if it.get("summary") else [])
-                                   for it in store.items(group=q.get("group", ""), q=q.get("q", ""),
-                                                            unread=q.get("unread") == "1",
-                                                            starred=q.get("starred") == "1") if ok(it)])
+                                   for it in rows[:400]])
         if u.path == "/api/summary":
             cfg = crawler.load_config()
             groups = []
@@ -144,10 +158,11 @@ class Handler(BaseHTTPRequestHandler):
                     groups.append(g)
             with state_lock:
                 st = dict(state)
+            counts, sub_counts = visible_counts(cfg, hidden_param(q))
             return self.send_json({
                 "groups": groups, "links": cfg.get("links", []), "topics": cfg.get("topics", []),
-                "counts": visible_counts(cfg, hidden_param(q)), "sources": store.sources(),
-                "configured": [{"name": s["name"], "group": s.get("group", ""),
+                "counts": counts, "sub_counts": sub_counts, "sources": store.sources(),
+                "configured": [{"name": s["name"], "group": s.get("group", ""), "sub": s.get("sub") or s["name"],
                                 "kind": s.get("type", "board"),
                                 "url": s.get("url") or s.get("list_url", "").format(page=1)}
                                for s in cfg["sources"] if s.get("enabled", True) is not False],
@@ -188,6 +203,16 @@ class Handler(BaseHTTPRequestHandler):
             store.mark([int(i) for i in b["ids"]], field, int(b["value"]))
             return self.send_json({"ok": True})
         if u.path == "/api/read_all":
+            if b.get("sub"):   # 소분류만 읽음 처리
+                subs = sub_of(crawler.load_config())
+                names = [n for n, sb in subs.items() if sb == b["sub"]]
+                if not names:
+                    return self.send_json({"ok": True})
+                with store.lock:
+                    store.db.execute(f"UPDATE items SET is_read=1 WHERE grp=? AND source IN ({','.join('?' * len(names))})",
+                                     [b.get("group", ""), *names])
+                    store.db.commit()
+                return self.send_json({"ok": True})
             store.mark_all_read(b.get("group", ""))
             return self.send_json({"ok": True})
         self.send_json({"error": "not found"}, 404)
