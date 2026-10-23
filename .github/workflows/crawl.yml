@@ -19,7 +19,7 @@ concurrency:
 jobs:
   crawl:
     runs-on: ubuntu-latest
-    timeout-minutes: 30
+    timeout-minutes: 45
     env:
       TZ: Asia/Seoul
       # 공지 정리·번역용. 저장소 Settings → Secrets and variables → Actions 에 넣는다. 없으면 본문 발췌만 한다

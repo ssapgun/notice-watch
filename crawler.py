@@ -242,6 +242,10 @@ class Store:
                 self.db.execute(f"ALTER TABLE items ADD COLUMN {col} {typ}")
         self.db.commit()
 
+    def has_key(self, key: str) -> bool:
+        with self.lock:
+            return self.db.execute("SELECT 1 FROM items WHERE key=?", (key,)).fetchone() is not None
+
     # ---- 공지 정리
     def pending_summaries(self, mode: str, max_tries: int) -> list[dict]:
         """정리할 글. 키 없이 발췌만 해 둔 글은 키가 생기면(mode=llm) 다시 정리한다."""
@@ -528,7 +532,8 @@ def cutoff_date(cfg: dict) -> str:
 
 
 def crawl_board(src: dict, session: requests.Session, delay: float,
-                cutoff: str = "", max_pages: int = 25) -> list[dict]:
+                cutoff: str = "", max_pages: int = 25,
+                is_known: Callable[[str], bool] | None = None) -> list[dict]:
     """게시판 목록을 읽는다. cutoff 가 있으면 그 날짜까지 페이지를 더 넘겨 빠짐없이 모으고,
     그보다 오래된 글은 버린다. 페이지 수는 max_pages 를 넘지 않는다 (서버 부담 제한)."""
     found, seen = [], set()
@@ -566,6 +571,11 @@ def crawl_board(src: dict, session: requests.Session, delay: float,
         dates = [it["date"] for it in (fresh if i > 1 else page_items) if it["date"]]
         # 이 페이지 글이 전부 기준일보다 오래됐으면 그만
         if i >= min_pages and (not cutoff or not dates or max(dates) < cutoff):
+            break
+        # 이 페이지에 새로 나온 글을 이미 다 모아 뒀으면 그 뒤도 모아 둔 것이다 → 그만 (매번 8개월치를 다시 읽지 않게)
+        check = fresh if i > 1 else page_items
+        if i >= min_pages and is_known and check and all(
+                is_known(it["url"] if it["url"] != url else it["title"]) for it in check):
             break
     return found
 
@@ -749,7 +759,8 @@ def run_crawl(store: Store, cfg: dict, group: str | None = None,
                 raw = crawl_watch(src, session)
                 time.sleep(delay)
             else:
-                raw = crawl_board(src, session, delay, cutoff, max_pages)
+                raw = crawl_board(src, session, delay, cutoff, max_pages,
+                                  None if first_time else store.has_key)
         except Exception as e:  # 한 사이트가 실패해도 나머지는 계속
             store.set_source(src, ok=False, error=f"{type(e).__name__}: {e}"[:300])
             continue
