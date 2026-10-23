@@ -1,0 +1,49 @@
+name: 공지·입시 확인
+
+on:
+  schedule:
+    # 한국 시간 6시, 12시, 18시, 24시 (UTC 기준 21, 3, 9, 15시). 정각은 GitHub 서버가 붐벼 7분에 돈다
+    - cron: "7 3,9,15,21 * * *"
+  workflow_dispatch: {}   # 웹 화면의 '지금 확인' 버튼이 이것을 실행한다
+  push:
+    branches: [main]
+    paths: ["config.yaml"]   # 웹에서 감시 대상을 수정하면 바로 한 번 돈다
+
+permissions:
+  contents: write
+
+concurrency:
+  group: crawl
+  cancel-in-progress: false
+
+jobs:
+  crawl:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    env:
+      TZ: Asia/Seoul
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          cache: pip
+
+      - run: pip install -r requirements.txt
+
+      - name: 확인 실행
+        run: python build_site.py
+
+      - name: 결과 저장
+        run: |
+          git config user.name "notice-bot"
+          git config user.email "notice-bot@users.noreply.github.com"
+          git add data docs/data
+          if git diff --cached --quiet; then
+            echo "바뀐 내용 없음"
+          else
+            git commit -m "확인 결과 $(date '+%Y-%m-%d %H:%M')"
+            git pull --rebase
+            git push
+          fi
