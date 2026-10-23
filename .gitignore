@@ -1,0 +1,9 @@
+# PC 대시보드(app.py) 데이터 — 웹 버전 데이터(data/)와 별개
+/notices.db
+/notices.xlsx
+/notices_old.xlsx
+/page_snapshots/
+config.yaml.bak
+config.yaml.tmp
+__pycache__/
+.venv/

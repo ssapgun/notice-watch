@@ -1,0 +1,235 @@
+# 공지·입시 감시 설정 파일
+# 대시보드의 '감시 대상 관리' 화면에서 추가·수정·삭제하면 이 파일이 자동으로 다시 쓰인다.
+# 직접 고쳐도 되지만, 화면에서 저장하면 이 파일의 주석은 이 머리말만 남는다. 설명은 각 대상의 note 칸에 적는다.
+# 저장할 때마다 바로 이전 내용이 config.yaml.bak 에 남는다.
+delay_seconds: 2
+auto_check_hours: 6
+sources:
+- name: 학교 공지
+  group: 경희대
+  type: board
+  enabled: true
+  list_url: https://www.khu.ac.kr/kor/user/bbs/BMSR00040/list.do?menuNo=200316&pageIndex={page}
+  pages: 2
+  row_selector: table.board01 tbody tr
+  title_selector: td.tal a
+  date_selector: td:nth-of-type(4)
+  remove_in_title: span
+  link_regex: view\('(\d+)'
+  link_template: https://www.khu.ac.kr/kor/user/bbs/BMSR00040/view.do?menuNo=200316&boardId={0}
+- name: 공과대학 공지
+  group: 경희대
+  type: board
+  enabled: true
+  list_url: https://eng.khu.ac.kr/eng_kor/user/bbs/BMSR00040/list.do?menuNo=17100020&pageIndex={page}
+  pages: 2
+  row_selector: table tbody tr
+  title_selector: td.tal a
+  date_selector: td:last-of-type
+  remove_in_title: span
+  link_regex: view\('(\d+)'
+  link_template: https://eng.khu.ac.kr/eng_kor/user/bbs/BMSR00040/view.do?menuNo=17100020&boardId={0}
+- name: 건축공학과 공지
+  group: 경희대
+  type: board
+  enabled: true
+  list_url: https://archieng.khu.ac.kr/archieng/user/bbs/BMSR00040/list.do?menuNo=17900015&pageIndex={page}
+  pages: 2
+  row_selector: table tbody tr
+  title_selector: td.tal a
+  date_selector: td:last-of-type
+  remove_in_title: span
+  link_regex: view\('(\d+)'
+  link_template: https://archieng.khu.ac.kr/archieng/user/bbs/BMSR00040/view.do?menuNo=17900015&boardId={0}
+- name: 국제처 공지
+  group: 경희대
+  type: board
+  enabled: true
+  list_url: https://oia.khu.ac.kr/oiak_kor/user/bbs/BMSR00040/list.do?menuNo=5800010&pageIndex={page}
+  pages: 1
+  row_selector: table tbody tr
+  title_selector: td.tal a
+  date_selector: td:last-of-type
+  remove_in_title: span
+  link_regex: view\('(\d+)'
+  link_template: https://oia.khu.ac.kr/oiak_kor/user/bbs/BMSR00040/view.do?menuNo=5800010&boardId={0}
+- name: 국제처 해외파견
+  group: 경희대
+  type: board
+  enabled: true
+  list_url: https://oia.khu.ac.kr/oiak_kor/user/bbs/BMSR00040/list.do?menuNo=5800012&pageIndex={page}
+  pages: 1
+  row_selector: table tbody tr
+  title_selector: td.tal a
+  date_selector: td:last-of-type
+  remove_in_title: span
+  link_regex: view\('(\d+)'
+  link_template: https://oia.khu.ac.kr/oiak_kor/user/bbs/BMSR00040/view.do?menuNo=5800012&boardId={0}
+- name: 서울대 건설환경도시공학부
+  group: 국내 대학원
+  type: board
+  enabled: true
+  note: 서울대 건설환경도시공학부 — 지반공학연구실(김성렬), 지반환경공학연구실(박준범), 지반역학연구실(주진현) 말머리 중 입시·대학원 관련만
+  list_url: https://cuee.snu.ac.kr/bbs/board.php?bo_table=sub5_1&page={page}
+  pages: 2
+  row_selector: table tbody tr
+  title_selector: div.bo_tit a
+  date_selector: td.td_datetime
+  category_selector: a.bo_cate_link
+  categories:
+  - 입시
+  - 대학원
+  - 교환학생
+- name: 연세대 건설환경공학과 대학원
+  group: 국내 대학원
+  type: board
+  enabled: true
+  note: 연세대 건설환경공학과 대학원 공지 — 학문분야 '지반공학 및 지반환경공학', 지반공학연구실(이준환) (연세대 건축공학과는 구조 연구실은 있으나 기초·지반·모듈러 연구실이 없어 교체)
+  list_url: https://civil.yonsei.ac.kr/civil/community/board_3.do
+  pages: 1
+  row_selector: table tbody tr
+  title_selector: a.c-board-title
+  date_selector: .c-board-info-m span:last-of-type
+  remove_in_title: span.c-board-top-num-m
+- name: 고려대 건축사회환경공학부 대학원
+  group: 국내 대학원
+  type: board
+  enabled: true
+  note: 고려대 건축사회환경공학부 — 지반공학연구실(이종섭), 지반시스템연구실(최항석), 지속가능 AI 지반공학연구실(원종묵) 대학원공지
+  list_url: https://ace.korea.ac.kr/bbs/board.php?bo_table=sub5_3&page={page}
+  pages: 1
+  row_selector: table tbody tr
+  title_selector: div.bo_tit a
+  date_selector: td.td_datetime
+- name: KAIST 건설및환경공학과
+  group: 국내 대학원
+  type: board
+  enabled: true
+  note: KAIST 건설및환경공학과 — 지반시스템(조계춘), 지반에너지공학(권태혁), 지반역학(주진현), 지반지진공학(고길완) 공지 첫 페이지 20건
+  list_url: https://cee.kaist.ac.kr/boards/lists/notice
+  pages: 1
+  row_selector: table tbody tr
+  title_selector: td.bod-tit a
+  date_selector: td.date
+- name: 도쿄대 사회기반학전공 대학원입시
+  group: 일본
+  type: watch
+  enabled: true
+  note: 도쿄대 사회기반학전공 — 지반공학(古関 潤一 교수 등) (도쿄대 건축학전공 구조 연구실은 철골·RC·내진·리스크 위주로 기초·지반 연구실이 없어 교체)
+  url: https://www.civil.t.u-tokyo.ac.jp/graduate_school
+  content_selector: main
+- name: 교토대 도시사회공학전공 대학원입시
+  group: 일본
+  type: watch
+  enabled: true
+  note: 교토대 도시사회공학전공 — ジオマネジメント工学, ジオフロントシステム工学, 耐震基礎(防災研究所) (교토대 건축학전공은 기초·지반 연구실이 없어 교체)
+  url: https://www.um.t.kyoto-u.ac.jp/ja/admission/exam
+  content_selector: '#content'
+- name: 도호쿠대 공학연구과 석사 입시
+  group: 일본
+  type: watch
+  enabled: true
+  note: 도호쿠대 — 토목공학전공 地圏・地盤工学 연구실
+  url: https://www.eng.tohoku.ac.jp/admission/grad/master.html
+  content_selector: '#main'
+- name: 오사카대 공학연구과 입시정보
+  group: 일본
+  type: board
+  enabled: true
+  note: 오사카대 — 지구종합공학전공 사회기반공학강좌 지반공학영역, 건축공학코스 건축지진지반학영역
+  list_url: https://www.eng.osaka-u.ac.jp/ja/topics/examination/page/{page}/
+  pages: 1
+  row_selector: ul.c-newslist li
+  title_selector: a
+  date_selector: span
+- name: 나고야대 공학연구과 대학원 수험생
+  group: 일본
+  type: watch
+  enabled: true
+  note: 나고야대 — 토목공학 지반계 연구실
+  url: https://www.engg.nagoya-u.ac.jp/prospective/
+  content_selector: '#graduate'
+- name: 규슈대 공학부 대학원 입시
+  group: 일본
+  type: watch
+  enabled: true
+  note: 규슈대 — 토목공학 지반공학, 방재지반공학 연구실
+  url: https://www.eng.kyushu-u.ac.jp/admissions/graduate-admissions/
+  content_selector: main
+- name: 홋카이도대 공학원 입시정보
+  group: 일본
+  type: watch
+  enabled: true
+  note: 홋카이도대 — 환경필드공학전공 지반물성학 연구실
+  url: https://www.eng.hokudai.ac.jp/graduate/examinfo/
+  content_selector: div.common_section
+- name: 도쿄과학대 건축학계 입학안내
+  group: 일본
+  type: board
+  enabled: true
+  note: '도쿄과학대(옛 도쿄공업대, 2024년 도쿄의과치과대와 통합) 건축학계 — 田村修次 연구실(건축 지반·기초구조 전문: 말뚝기초·직접기초·액상화), 中野 연구실(지반-구조물 상호작용) 토목환경공학계 — 澤田 연구실, 高橋 연구실(지반공학) 건축학계·토목환경공학계의 입학안내 목록 + 대학 입시사이트의 대학원 공지(이공학계만)'
+  list_url: https://educ.titech.ac.jp/arch/admissions/
+  pages: 1
+  row_selector: ul.ul_admissions01 li
+  title_selector: dd a
+  date_selector: p.date
+- name: 도쿄과학대 토목환경공학계 입학안내
+  group: 일본
+  type: board
+  enabled: true
+  list_url: https://educ.titech.ac.jp/cv/admissions/
+  pages: 1
+  row_selector: ul.ul_admissions01 li
+  title_selector: dd a
+  date_selector: p.date
+- name: 도쿄과학대 대학원 입시 공지
+  group: 일본
+  type: board
+  enabled: true
+  list_url: https://admissions.isct.ac.jp/ja/013/graduate
+  pages: 1
+  row_selector: ul.c-entryList li.c-entryList__item
+  title_selector: a
+  title_text_selector: .c-entryList__text
+  date_selector: time
+  include:
+  - 理工学系
+- name: TUM Civil Engineering M.Sc.
+  group: 독일
+  type: watch
+  enabled: true
+  note: TUM — Chair of Soil Mechanics and Foundation Engineering (Zentrum Geotechnik) Stuttgart — Institut für Geotechnik (IGS) RWTH — Chair of Geotechnical Engineering (GUT)
+  url: https://www.tum.de/en/studies/degree-programs/detail/civil-engineering-master-of-science-msc
+  content_selector: main
+- name: Stuttgart Civil Engineering M.Sc. 지원
+  group: 독일
+  type: watch
+  enabled: true
+  url: https://www.uni-stuttgart.de/en/study/master-programs/civil-engineering-m.sc./application/
+  content_selector: main
+- name: RWTH Resilient Civil Engineering (DAAD)
+  group: 독일
+  type: watch
+  enabled: true
+  url: https://www2.daad.de/deutschland/studienangebote/international-programmes/en/detail/8967/
+  content_selector: '#content'
+- name: NUS CEE 연구과정(PhD/M.Eng)
+  group: 싱가포르
+  type: watch
+  enabled: true
+  note: 'NUS CEE — PPVC(조립식 모듈러) 연구: 모듈러 접합부, PPVC 양중 프레임 등 NTU CEE — Geotechnical Engineering, 건설생산성 연구 테마'
+  url: https://cde.nus.edu.sg/cee/graduate/research-based-programmes/
+  content_selector: main
+- name: NTU CEE M.Eng (Research)
+  group: 싱가포르
+  type: watch
+  enabled: true
+  url: https://www.ntu.edu.sg/cee/admissions/graduate/detail/cee-master-of-engineering-(m.eng)-(by-research)
+  content_selector: article
+excluded:
+- 'POSTECH: 건축·토목·구조 학과가 없음 (학과 목록 확인. 가장 가까운 곳이 친환경소재대학원·환경공학부)'
+- 연세대 건축공학과 -> 연세대 건설환경공학과로 교체 (지반 연구실은 건설환경공학과에 있음)
+- 도쿄대 건축학전공 -> 도쿄대 사회기반학전공으로 교체
+- 교토대 건축학전공 -> 교토대 도시사회공학전공으로 교체
+- '서울대 건축학과(architecture.snu.ac.kr): robots.txt 가 "Disallow: /" 로 전체 수집을 금지 -> 넣지 않음'
+- '서울대 입학본부 대학원 공지: 최근 글이 2023년이라 사실상 쓰지 않는 게시판'
