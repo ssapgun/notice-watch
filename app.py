@@ -72,6 +72,20 @@ def auto_loop() -> None:
         stop_event.wait(60)
 
 
+def visible_counts(cfg: dict) -> dict:
+    """분류별 전체/안읽음 개수. 현재 필터에 걸러진 글은 세지 않는다."""
+    ok = crawler.visible_filter(cfg)
+    out: dict = {}
+    with store.lock:
+        rows = store.db.execute("SELECT grp, source, title, kind, is_read FROM items").fetchall()
+    for r in rows:
+        if ok(dict(r)):
+            c = out.setdefault(r["grp"], {"total": 0, "unread": 0})
+            c["total"] += 1
+            c["unread"] += 0 if r["is_read"] else 1
+    return out
+
+
 class Handler(BaseHTTPRequestHandler):
     def log_message(self, *a):  # 콘솔을 조용히
         pass
@@ -107,9 +121,10 @@ class Handler(BaseHTTPRequestHandler):
         if u.path in ("/", "/index.html"):
             return self.send_file(STATIC / "index.html", "text/html; charset=utf-8")
         if u.path == "/api/items":
-            return self.send_json(store.items(group=q.get("group", ""), q=q.get("q", ""),
-                                              unread=q.get("unread") == "1",
-                                              starred=q.get("starred") == "1"))
+            ok = crawler.visible_filter(crawler.load_config())
+            return self.send_json([it for it in store.items(group=q.get("group", ""), q=q.get("q", ""),
+                                                            unread=q.get("unread") == "1",
+                                                            starred=q.get("starred") == "1") if ok(it)])
         if u.path == "/api/summary":
             cfg = crawler.load_config()
             groups = []
@@ -120,7 +135,7 @@ class Handler(BaseHTTPRequestHandler):
             with state_lock:
                 st = dict(state)
             return self.send_json({
-                "groups": groups, "counts": store.counts(), "sources": store.sources(),
+                "groups": groups, "counts": visible_counts(cfg), "sources": store.sources(),
                 "configured": [{"name": s["name"], "group": s.get("group", ""),
                                 "kind": s.get("type", "board"),
                                 "url": s.get("url") or s.get("list_url", "").format(page=1)}

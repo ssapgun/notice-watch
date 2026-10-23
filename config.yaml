@@ -69,7 +69,7 @@ sources:
   group: 국내 대학원
   type: board
   enabled: true
-  note: 서울대 건설환경도시공학부 — 지반공학연구실(김성렬), 지반환경공학연구실(박준범), 지반역학연구실(주진현) 말머리 중 입시·대학원 관련만
+  note: 서울대 건설환경도시공학부 — 지반공학연구실(김성렬), 지반환경공학연구실(박준범), 지반역학연구실(주진현) 말머리 입시·대학원 중 입시·연구실 관련 제목만
   list_url: https://cuee.snu.ac.kr/bbs/board.php?bo_table=sub5_1&page={page}
   pages: 2
   row_selector: table tbody tr
@@ -79,7 +79,33 @@ sources:
   categories:
   - 입시
   - 대학원
+  include:
+  - 입학
+  - 입시
+  - 신입생
+  - 모집요강
+  - 전형
+  - 진학
+  - 연구실
+  - 연구원 모집
+  - 학생연구원
+  - 학부연구생
+  - 연구인턴
+  - 인턴십
+  - Lab
+  - 석사과정 모집
+  - 박사과정 모집
+  - 석·박사과정 연구
+  exclude:
+  - 재입학
+  - 오리엔테이션
   - 교환학생
+  - 등록금
+  - 수강신청
+  - 종합시험
+  - 내규
+  - 입학생부터
+  - 입학자부터
 - name: 연세대 건설환경공학과 대학원
   group: 국내 대학원
   type: board
@@ -91,6 +117,33 @@ sources:
   title_selector: a.c-board-title
   date_selector: .c-board-info-m span:last-of-type
   remove_in_title: span.c-board-top-num-m
+  include:
+  - 입학
+  - 입시
+  - 신입생
+  - 모집요강
+  - 전형
+  - 진학
+  - 연구실
+  - 연구원 모집
+  - 학생연구원
+  - 학부연구생
+  - 연구인턴
+  - 인턴십
+  - Lab
+  - 석사과정 모집
+  - 박사과정 모집
+  - 석·박사과정 연구
+  exclude:
+  - 재입학
+  - 오리엔테이션
+  - 교환학생
+  - 등록금
+  - 수강신청
+  - 종합시험
+  - 내규
+  - 입학생부터
+  - 입학자부터
 - name: 고려대 건축사회환경공학부 대학원
   group: 국내 대학원
   type: board
@@ -101,6 +154,33 @@ sources:
   row_selector: table tbody tr
   title_selector: div.bo_tit a
   date_selector: td.td_datetime
+  include:
+  - 입학
+  - 입시
+  - 신입생
+  - 모집요강
+  - 전형
+  - 진학
+  - 연구실
+  - 연구원 모집
+  - 학생연구원
+  - 학부연구생
+  - 연구인턴
+  - 인턴십
+  - Lab
+  - 석사과정 모집
+  - 박사과정 모집
+  - 석·박사과정 연구
+  exclude:
+  - 재입학
+  - 오리엔테이션
+  - 교환학생
+  - 등록금
+  - 수강신청
+  - 종합시험
+  - 내규
+  - 입학생부터
+  - 입학자부터
 - name: KAIST 건설및환경공학과
   group: 국내 대학원
   type: board
@@ -111,6 +191,33 @@ sources:
   row_selector: table tbody tr
   title_selector: td.bod-tit a
   date_selector: td.date
+  include:
+  - 입학
+  - 입시
+  - 신입생
+  - 모집요강
+  - 전형
+  - 진학
+  - 연구실
+  - 연구원 모집
+  - 학생연구원
+  - 학부연구생
+  - 연구인턴
+  - 인턴십
+  - Lab
+  - 석사과정 모집
+  - 박사과정 모집
+  - 석·박사과정 연구
+  exclude:
+  - 재입학
+  - 오리엔테이션
+  - 교환학생
+  - 등록금
+  - 수강신청
+  - 종합시험
+  - 내규
+  - 입학생부터
+  - 입학자부터
 - name: 도쿄대 사회기반학전공 대학원입시
   group: 일본
   type: watch
@@ -142,6 +249,15 @@ sources:
   row_selector: ul.c-newslist li
   title_selector: a
   date_selector: span
+  include:
+  - 大学院
+  - 博士
+  - 修士
+  - 研究生
+  - 研究室
+  exclude:
+  - 編入学
+  - 科目等履修生
 - name: 나고야대 공학연구과 대학원 수험생
   group: 일본
   type: watch
@@ -173,6 +289,12 @@ sources:
   row_selector: ul.ul_admissions01 li
   title_selector: dd a
   date_selector: p.date
+  include:
+  - 大学院
+  - 博士
+  - 修士
+  - 研究生
+  - 研究室
 - name: 도쿄과학대 토목환경공학계 입학안내
   group: 일본
   type: board
@@ -182,6 +304,12 @@ sources:
   row_selector: ul.ul_admissions01 li
   title_selector: dd a
   date_selector: p.date
+  include:
+  - 大学院
+  - 博士
+  - 修士
+  - 研究生
+  - 研究室
 - name: 도쿄과학대 대학원 입시 공지
   group: 일본
   type: board
@@ -194,6 +322,8 @@ sources:
   date_selector: time
   include:
   - 理工学系
+  exclude:
+  - 技術経営
 - name: TUM Civil Engineering M.Sc.
   group: 독일
   type: watch

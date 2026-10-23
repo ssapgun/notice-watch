@@ -47,11 +47,12 @@ def main() -> int:
     new = crawler.run_crawl(store, run_cfg, progress=progress)
     print(f"새 항목 {new}건")
 
+    ok = crawler.visible_filter(cfg)   # 필터를 바꾸기 전에 모인 글도 현재 필터로 가린다
     with store.lock:
-        items = [dict(r) for r in store.db.execute(
+        rows = [dict(r) for r in store.db.execute(
             "SELECT id, grp, source, date, title, url, change, kind, found_at, is_read FROM items "
-            "ORDER BY COALESCE(NULLIF(date,''), substr(found_at,1,10)) DESC, id DESC LIMIT ?",
-            (MAX_ITEMS,)).fetchall()]
+            "ORDER BY COALESCE(NULLIF(date,''), substr(found_at,1,10)) DESC, id DESC").fetchall()]
+    items = [r for r in rows if ok(r)][:MAX_ITEMS]
     payload = {
         "generated_at": crawler.now_str(),
         "last_run": store.get_meta("last_run"),

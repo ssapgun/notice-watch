@@ -434,6 +434,19 @@ def keyword_ok(title: str, src: dict) -> bool:
     return not any(k.lower() in t for k in exc)
 
 
+def visible_filter(cfg: dict):
+    """현재 설정의 include/exclude 를 이미 모은 게시판 글에도 적용하는 판별 함수.
+    필터를 나중에 바꿔도 DB 는 지우지 않고 화면에서만 가린다 (필터를 풀면 다시 보인다)."""
+    by_name = {s.get("name"): s for s in cfg.get("sources", [])}
+
+    def ok(it: dict) -> bool:
+        src = by_name.get(it.get("source"))
+        if not src or it.get("kind") != "board":
+            return True
+        return keyword_ok(it.get("title", ""), src)
+    return ok
+
+
 def crawl_board(src: dict, session: requests.Session, delay: float) -> list[dict]:
     found, seen = [], set()
     for i in range(1, int(src.get("pages", 1)) + 1):
