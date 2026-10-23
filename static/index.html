@@ -1,0 +1,582 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>공지·입시 감시</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+KR:wght@400;500;600;700&family=Noto+Sans+JP:wght@400;500&display=swap" rel="stylesheet">
+<style>
+:root{
+  --sheet:#F6F7F4; --paper:#FFFFFF; --ink:#1E2B3C; --ink-2:#4A5666; --pencil:#7A8390;
+  --grid:#E3E7E2; --rule:#1E2B3C; --markup:#C62D25; --markup-bg:#FBEDEB; --amber:#A86A12;
+  --focus:#2F6FB5;
+}
+@media (prefers-color-scheme: dark){
+  :root{ /* 다크 모드는 청사진 */
+    --sheet:#0E2236; --paper:#12293F; --ink:#EAF1F7; --ink-2:#B9C8D6; --pencil:#8AA0B5;
+    --grid:#183552; --rule:#D5E2EE; --markup:#FF8A7A; --markup-bg:#3A2630; --amber:#F2B65A;
+    --focus:#8CC4FF;
+  }
+}
+*{box-sizing:border-box}
+[hidden]{display:none!important}
+html{-webkit-text-size-adjust:100%}
+body{
+  margin:0; color:var(--ink); background:var(--sheet);
+  background-image:
+    linear-gradient(var(--grid) 1px, transparent 1px),
+    linear-gradient(90deg, var(--grid) 1px, transparent 1px);
+  background-size:24px 24px;
+  font:15px/1.6 "IBM Plex Sans KR","Noto Sans JP",system-ui,sans-serif;
+  font-feature-settings:"tnum";
+}
+a{color:inherit}
+button{font:inherit;color:inherit;cursor:pointer}
+:focus-visible{outline:2px solid var(--focus);outline-offset:2px}
+
+/* ── 도면 테두리 ── */
+.frame{max-width:1240px;margin:20px auto;border:2px solid var(--rule);background:var(--paper)}
+@media (max-width:700px){.frame{margin:0;border-width:0 0 2px}}
+
+/* ── 표제란 ── */
+.head{display:grid;grid-template-columns:1fr auto;border-bottom:2px solid var(--rule)}
+.title{padding:22px 24px 18px}
+.title h1{margin:0;font-size:30px;line-height:1.15;font-weight:700;letter-spacing:-.01em}
+.title p{margin:6px 0 0;color:var(--ink-2);font-size:14px}
+.block{display:grid;grid-template-columns:repeat(3,minmax(110px,auto));border-left:2px solid var(--rule)}
+.cell{padding:8px 14px;border-left:1px solid var(--rule);border-bottom:1px solid var(--rule);min-width:0}
+.cell:nth-child(3n+1){border-left:0}
+.cell small{display:block;color:var(--pencil);font-size:11.5px}
+.cell b{display:block;font-weight:600;font-size:15px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.cell.wide{grid-column:span 3;border-bottom:0;display:flex;gap:10px;align-items:center;justify-content:space-between}
+#newCount{color:var(--markup)}
+.check{border:2px solid var(--ink);background:var(--ink);color:var(--paper);padding:7px 16px;font-weight:600}
+.check:disabled{opacity:.55;cursor:progress}
+.progress{flex:1;min-width:0;font-size:13px;color:var(--ink-2);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.bar{height:3px;background:var(--grid);margin-top:4px}
+.bar i{display:block;height:100%;width:0;background:var(--markup);transition:width .3s}
+@media (max-width:900px){.head{grid-template-columns:1fr}.block{border-left:0;border-top:1px solid var(--rule)}}
+@media (max-width:520px){.block{grid-template-columns:1fr 1fr}.cell:nth-child(3n+1){border-left:1px solid var(--rule)}.cell:nth-child(odd){border-left:0}.cell.wide{grid-column:span 2}}
+
+/* ── 본문 배치 ── */
+.body{display:grid;grid-template-columns:220px 1fr}
+@media (max-width:820px){.body{grid-template-columns:1fr}}
+
+/* 도면목록 */
+.index{border-right:1px solid var(--rule);padding:16px 0}
+.index h2{font-size:12.5px;font-weight:600;color:var(--pencil);margin:0 18px 6px}
+.groups{list-style:none;margin:0 0 18px;padding:0}
+.groups button{width:100%;display:flex;justify-content:space-between;gap:8px;align-items:baseline;
+  background:none;border:0;border-left:4px solid transparent;padding:7px 18px 7px 14px;text-align:left}
+.groups button[aria-current="true"]{border-left-color:var(--ink);background:var(--sheet);font-weight:600}
+.groups .n{font-size:13px;color:var(--pencil)}
+.groups .n.has{color:var(--markup);font-weight:600}
+.opts{padding:0 18px;display:grid;gap:8px;font-size:14px}
+.opts label{display:flex;gap:8px;align-items:center;cursor:pointer}
+.opts input{accent-color:var(--ink);width:16px;height:16px}
+.linkbtn{background:none;border:0;padding:0;text-align:left;text-decoration:underline;text-underline-offset:3px;color:var(--ink-2);font-size:14px}
+@media (max-width:820px){
+  .index{border-right:0;border-bottom:1px solid var(--rule);padding:10px 0}
+  .index h2{display:none}
+  .groups{display:flex;overflow-x:auto;margin:0 0 8px}
+  .groups button{border-left:0;border-bottom:3px solid transparent;padding:6px 14px;white-space:nowrap}
+  .groups button[aria-current="true"]{border-bottom-color:var(--ink);background:none}
+  .opts{grid-auto-flow:column;justify-content:start;gap:16px;overflow-x:auto}
+}
+
+/* 목록 */
+.main{min-width:0}
+.searchbar{padding:14px 20px;border-bottom:1px solid var(--rule)}
+.searchbar input{width:100%;max-width:520px;padding:8px 12px;border:1px solid var(--ink-2);background:var(--paper);color:var(--ink);font:inherit}
+.list{list-style:none;margin:0;padding:0}
+.row{display:grid;grid-template-columns:34px 92px 1fr 38px;gap:0 10px;padding:12px 20px 12px 14px;border-bottom:1px solid var(--grid);align-items:start}
+.row.unread{background:linear-gradient(90deg,var(--markup-bg),transparent 60%)}
+.rev{width:22px;height:20px;margin-top:2px}
+.rev polygon{fill:none;stroke:var(--markup);stroke-width:1.6}
+.rev text{fill:var(--markup);font-size:10px;font-weight:700}
+.date{color:var(--ink-2);font-size:13.5px;padding-top:1px}
+.what{min-width:0}
+.src{font-size:12.5px;color:var(--pencil)}
+.ttl{display:block;text-decoration:none;font-weight:500;line-height:1.45;overflow-wrap:anywhere}
+.ttl:hover{text-decoration:underline;text-underline-offset:3px}
+.row.unread .ttl{font-weight:700}
+.change{margin-top:6px;font-size:13.5px}
+.change summary{cursor:pointer;color:var(--ink-2)}
+.change pre{white-space:pre-wrap;margin:6px 0 0;padding:8px 10px;border-left:3px solid var(--markup);background:var(--sheet);font:inherit;font-size:13.5px}
+.star{background:none;border:0;font-size:18px;line-height:1;color:var(--pencil);padding:2px}
+.star[aria-pressed="true"]{color:var(--amber)}
+@media (max-width:560px){.row{grid-template-columns:28px 1fr 34px;padding:12px 12px 12px 8px}.date{grid-column:2;grid-row:1;font-size:12.5px}.what{grid-column:2}.star{grid-row:1/3;grid-column:3}.rev{grid-row:1/3}}
+.empty{padding:40px 20px;color:var(--ink-2)}
+.empty b{display:block;color:var(--ink);font-size:17px;margin-bottom:4px}
+
+/* 대상 상태 */
+.status{border-top:2px solid var(--rule)}
+.status summary{padding:12px 20px;cursor:pointer;font-weight:600}
+.status table{width:100%;min-width:680px;border-collapse:collapse;font-size:13.5px}
+.status td:last-child{min-width:220px}
+.status th,.status td{text-align:left;padding:7px 12px;border-top:1px solid var(--grid);vertical-align:top}
+.status th{color:var(--pencil);font-weight:500}
+.status .err{color:var(--markup)}
+.status .wrap{overflow-x:auto;padding:0 8px 12px}
+/* ── 화면 전환 탭 (도면 시트 탭) ── */
+.views{display:flex;border-bottom:2px solid var(--rule);background:var(--sheet)}
+.views button{background:none;border:0;border-right:1px solid var(--rule);padding:10px 22px;font-weight:500;color:var(--ink-2)}
+.views button[aria-selected="true"]{background:var(--paper);color:var(--ink);font-weight:700;box-shadow:inset 0 3px 0 var(--ink)}
+
+/* ── 감시 대상 관리 ── */
+.manage{padding:18px 20px 28px}
+.mbar{display:flex;flex-wrap:wrap;gap:12px;align-items:center;justify-content:space-between;margin-bottom:14px}
+.mbar p{margin:0;color:var(--ink-2);font-size:14px;max-width:62ch}
+.btn{border:1.5px solid var(--ink);background:var(--paper);padding:6px 14px;font-weight:600}
+.btn.primary{background:var(--ink);color:var(--paper)}
+.btn.danger{border-color:var(--markup);color:var(--markup)}
+.btn:disabled{opacity:.5;cursor:progress}
+.mgroup{margin:18px 0 0}
+.mgroup h3{font-size:15px;margin:0 0 6px;padding-bottom:4px;border-bottom:1px solid var(--rule)}
+.srow{display:grid;grid-template-columns:52px 1fr 110px auto;gap:10px;align-items:center;padding:9px 0;border-bottom:1px solid var(--grid)}
+.srow.off .sname{color:var(--pencil);text-decoration:line-through}
+.sname{font-weight:600;overflow-wrap:anywhere}
+.snote{display:block;font-size:12.5px;color:var(--pencil);font-weight:400;margin-top:2px}
+.skind{font-size:13px;color:var(--ink-2)}
+.skind .err{color:var(--markup);display:block}
+.sact{display:flex;gap:4px}
+.sact button{background:none;border:1px solid var(--grid);padding:4px 9px;font-size:13px}
+.sact button:hover{border-color:var(--ink)}
+.switch{position:relative;width:42px;height:24px;display:inline-block}
+.switch input{opacity:0;width:100%;height:100%;position:absolute;margin:0;cursor:pointer}
+.switch span{position:absolute;inset:0;border:1.5px solid var(--ink);background:var(--paper);pointer-events:none}
+.switch span::after{content:"";position:absolute;top:3px;left:3px;width:15px;height:15px;background:var(--pencil);transition:transform .15s}
+.switch input:checked + span{background:var(--ink)}
+.switch input:checked + span::after{transform:translateX(18px);background:var(--paper)}
+.switch input:focus-visible + span{outline:2px solid var(--focus);outline-offset:2px}
+.excl{margin-top:26px}
+.excl textarea{width:100%;min-height:110px;font:inherit;font-size:13.5px;padding:8px;border:1px solid var(--ink-2);background:var(--paper);color:var(--ink)}
+@media (max-width:620px){.srow{grid-template-columns:48px 1fr}.skind{grid-column:2}.sact{grid-column:2}}
+
+/* 편집 창 */
+dialog{border:2px solid var(--rule);background:var(--paper);color:var(--ink);padding:0;width:min(860px,96vw);max-height:92vh}
+dialog::backdrop{background:rgba(14,34,54,.45)}
+.dhead{display:flex;justify-content:space-between;align-items:center;padding:12px 18px;border-bottom:2px solid var(--rule)}
+.dhead h2{margin:0;font-size:18px}
+.dbody{padding:14px 18px;overflow:auto;max-height:calc(92vh - 120px)}
+.dfoot{display:flex;gap:8px;justify-content:flex-end;padding:12px 18px;border-top:1px solid var(--rule);flex-wrap:wrap}
+.fgrid{display:grid;grid-template-columns:1fr 1fr;gap:10px 16px}
+.f{display:flex;flex-direction:column;gap:3px;font-size:13.5px}
+.f.full{grid-column:1/-1}
+.f > span{color:var(--ink-2);font-weight:500}
+.f small{color:var(--pencil);font-size:12px}
+.f input,.f textarea,.f select{font:inherit;font-size:14px;padding:6px 9px;border:1px solid var(--ink-2);background:var(--paper);color:var(--ink)}
+.f textarea{min-height:56px}
+.kind{display:flex;gap:18px;font-size:14px}
+.kind label{display:flex;gap:6px;align-items:center;cursor:pointer}
+.adv{grid-column:1/-1;border:1px dashed var(--pencil);padding:8px 12px}
+.adv summary{cursor:pointer;font-weight:600;font-size:13.5px}
+.adv .fgrid{margin-top:10px}
+.msg{margin:10px 0 0;padding:8px 12px;font-size:13.5px;border-left:3px solid var(--ink-2);background:var(--sheet)}
+.msg.bad{border-left-color:var(--markup);color:var(--markup)}
+.preview{margin-top:12px}
+.preview h4{margin:0 0 6px;font-size:14px}
+.preview ol{margin:0;padding-left:22px;font-size:13.5px}
+.preview li{padding:3px 0}
+.preview li small{color:var(--pencil)}
+@media (max-width:620px){.fgrid{grid-template-columns:1fr}}
+@media (prefers-reduced-motion:reduce){*{transition:none!important}}
+</style>
+</head>
+<body>
+<div class="frame">
+  <header class="head">
+    <div class="title">
+      <h1>공지·입시 감시</h1>
+      <p>학교 공지와 국내외 대학원 입시 페이지를 한곳에서 확인한다. 빨간 삼각형은 아직 열어보지 않은 항목이다.</p>
+    </div>
+    <div class="block" aria-live="polite">
+      <div class="cell"><small>새 항목</small><b id="newCount">–</b></div>
+      <div class="cell"><small>최종 확인</small><b id="lastRun">–</b></div>
+      <div class="cell"><small>자동 확인</small><b id="auto">–</b></div>
+      <div class="cell"><small>감시 대상</small><b id="srcCount">–</b></div>
+      <div class="cell"><small>오류</small><b id="errCount">–</b></div>
+      <div class="cell"><small>보는 중</small><b id="viewing">전체</b></div>
+      <div class="cell wide">
+        <div class="progress"><span id="progText">대기 중</span><div class="bar"><i id="bar"></i></div></div>
+        <button class="check" id="checkBtn" type="button">지금 확인</button>
+      </div>
+    </div>
+  </header>
+
+  <nav class="views" role="tablist" aria-label="화면">
+    <button type="button" role="tab" id="tabNotices" aria-selected="true">공지 보기</button>
+    <button type="button" role="tab" id="tabManage" aria-selected="false">감시 대상 관리</button>
+  </nav>
+
+  <div id="viewNotices">
+  <div class="body">
+    <nav class="index" aria-label="분류">
+      <h2>분류</h2>
+      <ul class="groups" id="groups"></ul>
+      <div class="opts">
+        <label><input type="checkbox" id="fUnread"> 안 읽은 것만</label>
+        <label><input type="checkbox" id="fStar"> 별표만</label>
+        <button class="linkbtn" id="readAll" type="button">보이는 분류 모두 읽음 처리</button>
+        <a class="linkbtn" href="/api/export">엑셀로 내보내기</a>
+      </div>
+    </nav>
+
+    <main class="main">
+      <div class="searchbar">
+        <input id="q" type="search" placeholder="제목·출처 검색 (예: 募集要項, 대학원, deadline)" aria-label="검색">
+      </div>
+      <ul class="list" id="list"></ul>
+    </main>
+  </div>
+
+  <details class="status" id="statusBox">
+    <summary>감시 대상별 상태</summary>
+    <div class="wrap"><table>
+      <thead><tr><th>분류</th><th>대상</th><th>방식</th><th>최종 성공</th><th>상태</th></tr></thead>
+      <tbody id="srcTable"></tbody>
+    </table></div>
+  </details>
+  </div>
+
+  <section id="viewManage" class="manage" hidden>
+    <div class="mbar">
+      <p>스위치로 잠시 끄거나, 수정·삭제·순서 변경을 할 수 있다. 저장하면 다음 확인부터 바로 반영된다.</p>
+      <button class="btn primary" id="addBtn" type="button">새 대상 추가</button>
+    </div>
+    <div id="mlist"></div>
+    <div class="excl">
+      <h3 style="font-size:15px;margin:0 0 6px">제외한 곳 메모</h3>
+      <p style="margin:0 0 6px;color:var(--ink-2);font-size:13.5px">왜 뺐는지 한 줄에 하나씩 적어 둔다. 나중에 다시 넣을지 판단할 때 쓴다.</p>
+      <textarea id="exclText" aria-label="제외한 곳 메모"></textarea>
+      <div style="margin-top:6px"><button class="btn" id="exclSave" type="button">메모 저장</button> <span id="exclMsg" style="font-size:13px;color:var(--ink-2)"></span></div>
+    </div>
+  </section>
+</div>
+
+<dialog id="editDlg" aria-labelledby="editTitle">
+  <form id="editForm" method="dialog">
+    <div class="dhead"><h2 id="editTitle">새 대상 추가</h2><button class="btn" type="button" data-close>닫기</button></div>
+    <div class="dbody">
+      <div class="fgrid">
+        <label class="f"><span>이름</span><input name="name" required placeholder="예: 도쿄과학대 건축학계 입학안내"></label>
+        <label class="f"><span>분류</span><input name="group" list="groupList" required placeholder="예: 일본"><datalist id="groupList"></datalist></label>
+        <div class="f full"><span>방식</span>
+          <div class="kind">
+            <label><input type="radio" name="type" value="board" checked> 게시판 (새 글만 알림)</label>
+            <label><input type="radio" name="type" value="watch"> 페이지 변경 감지 (게시판이 없는 안내 페이지)</label>
+          </div>
+        </div>
+        <label class="f full"><span>주소</span><input name="url" required placeholder="https://..." inputmode="url">
+          <small data-for="board">게시판 목록 첫 페이지 주소. 2페이지 이상 보려면 페이지 번호 자리를 {page} 로 바꾼다.</small>
+          <small data-for="watch">감시할 안내 페이지 주소.</small></label>
+        <label class="f full"><span>메모</span><input name="note" placeholder="왜 넣었는지 (예: 지반공학 연구실 있음)"></label>
+
+        <label class="f" data-for="board"><span>포함 키워드</span><input name="include" placeholder="쉼표로 구분 (비우면 전부)"></label>
+        <label class="f" data-for="board"><span>제외 키워드</span><input name="exclude" placeholder="쉼표로 구분"></label>
+        <label class="f" data-for="board"><span>볼 페이지 수</span><input name="pages" type="number" min="1" max="10" value="1"></label>
+        <label class="f" data-for="watch"><span>알림 키워드</span><input name="keywords" placeholder="이 단어가 들어간 변경만 알림 (비우면 모든 변경)"></label>
+
+        <details class="adv" data-for="board"><summary>고급: 게시판 구조 (자동 추정으로 채워진다)</summary>
+          <div class="fgrid">
+            <label class="f"><span>글 한 줄</span><input name="row_selector" placeholder="table tbody tr"></label>
+            <label class="f"><span>제목 링크</span><input name="title_selector" placeholder="a"></label>
+            <label class="f"><span>링크 안 제목 부분</span><input name="title_text_selector"></label>
+            <label class="f"><span>날짜 칸</span><input name="date_selector" placeholder="비우면 줄 전체에서 찾음"></label>
+            <label class="f"><span>제목에서 지울 요소</span><input name="remove_in_title" placeholder="예: span"></label>
+            <label class="f"><span>말머리 칸</span><input name="category_selector"></label>
+            <label class="f full"><span>수집할 말머리</span><input name="categories" placeholder="쉼표로 구분 (예: 대학원, 입시)"></label>
+            <label class="f"><span>링크 정규식</span><input name="link_regex" placeholder="view\('(\d+)'"></label>
+            <label class="f"><span>상세 주소 규칙</span><input name="link_template" placeholder="https://.../view.do?boardId={0}"></label>
+          </div>
+        </details>
+        <details class="adv" data-for="watch"><summary>고급: 본문 범위</summary>
+          <div class="fgrid">
+            <label class="f"><span>본문 영역</span><input name="content_selector" placeholder="비우면 main → article → body 순으로 찾음"></label>
+            <label class="f"><span>뺄 영역</span><input name="remove_selectors" placeholder="쉼표로 구분 (예: .sidebar, .banner)"></label>
+            <label class="f full"><span>무시할 문장 정규식</span><input name="ignore_regex" placeholder="예: 最終更新|조회수"></label>
+          </div>
+        </details>
+      </div>
+      <div id="editMsg"></div>
+      <div id="editPreview" class="preview"></div>
+    </div>
+    <div class="dfoot">
+      <button class="btn" type="button" id="guessBtn" data-for="board">구조 자동 추정</button>
+      <button class="btn" type="button" id="testBtn">미리보기</button>
+      <button class="btn primary" type="submit" id="saveBtn">저장</button>
+    </div>
+  </form>
+</dialog>
+
+<dialog id="delDlg" aria-labelledby="delTitle">
+  <div class="dhead"><h2 id="delTitle">대상 삭제</h2></div>
+  <div class="dbody">
+    <p id="delText" style="margin:0 0 10px"></p>
+    <label style="display:flex;gap:8px;align-items:center;font-size:14px"><input type="checkbox" id="delPurge"> 그동안 모은 글도 목록에서 지운다</label>
+    <p style="margin:10px 0 0;font-size:13px;color:var(--ink-2)">잠시 쉬게 하려면 삭제 대신 스위치를 끄는 게 낫다. 설정 파일의 바로 이전 상태는 config.yaml.bak 에 남는다.</p>
+  </div>
+  <div class="dfoot"><button class="btn" type="button" data-close>취소</button><button class="btn danger" type="button" id="delOk">삭제</button></div>
+</dialog>
+
+<script>
+const $ = s => document.querySelector(s);
+const ui = { group: "", q: "", unread: false, star: false };
+let summary = null, pollTimer = null;
+try { Object.assign(ui, JSON.parse(localStorage.getItem("ui") || "{}")); } catch (e) {}
+const save = () => { try { localStorage.setItem("ui", JSON.stringify({group: ui.group, unread: ui.unread, star: ui.star})); } catch (e) {} };
+
+const api = (p, body) => fetch(p, body ? {method: "POST", headers: {"Content-Type": "application/json", "X-Dashboard": "1"}, body: JSON.stringify(body)} : {})
+  .then(r => r.json());
+const esc = s => String(s ?? "").replace(/[&<>"]/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
+const short = t => t ? t.slice(5, 16).replace("-", ".") : "–";
+
+function revMark(on) {
+  return on ? `<svg class="rev" viewBox="0 0 22 20" role="img" aria-label="안 읽음"><polygon points="11,1.5 20.5,18.5 1.5,18.5"/><text x="11" y="15.5" text-anchor="middle">N</text></svg>` : `<span class="rev" aria-hidden="true"></span>`;
+}
+
+async function loadSummary() {
+  summary = await api("/api/summary");
+  const c = summary.counts, st = summary.state;
+  const unreadAll = Object.values(c).reduce((a, x) => a + x.unread, 0);
+  $("#newCount").textContent = unreadAll + "건";
+  $("#lastRun").textContent = short(summary.last_run);
+  $("#auto").textContent = summary.auto_hours > 0 ? summary.auto_hours + "시간마다" : "끔";
+  $("#srcCount").textContent = summary.configured.length + "곳";
+  const errs = summary.sources.filter(s => s.last_error && summary.configured.some(x => x.name === s.name));
+  $("#errCount").textContent = errs.length ? errs.length + "곳" : "없음";
+  $("#errCount").style.color = errs.length ? "var(--markup)" : "";
+  $("#viewing").textContent = ui.group || "전체";
+
+  // 분류 목록
+  const groups = ["", ...summary.groups];
+  $("#groups").innerHTML = groups.map(g => {
+    const n = g ? (c[g]?.unread || 0) : unreadAll;
+    return `<li><button type="button" data-g="${esc(g)}" aria-current="${g === ui.group}">
+      <span>${esc(g || "전체")}</span><span class="n ${n ? "has" : ""}">${n ? n + " 새 항목" : ""}</span></button></li>`;
+  }).join("");
+
+  // 진행 상태
+  const btn = $("#checkBtn");
+  btn.disabled = st.running;
+  btn.textContent = st.running ? "확인 중" : "지금 확인";
+  if (st.running) {
+    $("#progText").textContent = st.total ? `${st.done + 1}/${st.total} 확인 중: ${st.current}` : "준비 중";
+    $("#bar").style.width = st.total ? (st.done / st.total * 100) + "%" : "4%";
+  } else {
+    $("#bar").style.width = "0";
+    $("#progText").textContent = st.error ? "설정 오류: " + st.error
+      : st.finished ? `${short(st.finished)} 확인 끝, 새 항목 ${st.new}건` : "대기 중";
+  }
+
+  // 대상 상태 표
+  const by = Object.fromEntries(summary.sources.map(s => [s.name, s]));
+  $("#srcTable").innerHTML = summary.configured.map(s => {
+    const r = by[s.name] || {};
+    const state = !r.last_checked ? "아직 확인 전" : r.last_error ? `<span class="err">${esc(r.last_error)}</span>` : "정상";
+    return `<tr><td>${esc(s.group)}</td><td><a href="${esc(s.url)}" target="_blank" rel="noopener">${esc(s.name)}</a></td>
+      <td>${s.kind === "watch" ? "페이지 변경" : "게시판"}</td><td>${short(r.last_ok)}</td><td>${state}</td></tr>`;
+  }).join("");
+  if (errs.length) $("#statusBox").open = true;
+  return st.running;
+}
+
+async function loadItems() {
+  const p = new URLSearchParams({group: ui.group, q: ui.q, unread: ui.unread ? 1 : "", starred: ui.star ? 1 : ""});
+  const items = await api("/api/items?" + p);
+  if (!items.length) {
+    const never = summary && !summary.last_run;
+    $("#list").innerHTML = `<li class="empty"><b>${never ? "아직 한 번도 확인하지 않았다" : "조건에 맞는 항목이 없다"}</b>
+      ${never ? "오른쪽 위 '지금 확인'을 누르면 등록된 모든 대상을 확인한다. 처음 확인한 글은 읽음으로 쌓이고, 그 뒤 새로 올라온 글만 빨간 표시가 붙는다."
+              : "검색어를 지우거나 '안 읽은 것만'을 끄면 더 보인다."}</li>`;
+    return;
+  }
+  $("#list").innerHTML = items.map(it => `
+    <li class="row ${it.is_read ? "" : "unread"}" data-id="${it.id}">
+      ${revMark(!it.is_read)}
+      <span class="date">${esc(it.date ? it.date.slice(2).replaceAll("-", ".") : "")}</span>
+      <div class="what">
+        <span class="src">${esc(it.grp)} / ${esc(it.source)}</span>
+        <a class="ttl" href="${esc(it.url)}" target="_blank" rel="noopener">${esc(it.title)}</a>
+        ${it.change ? `<details class="change"><summary>새로 생긴 문장 보기</summary><pre>${esc(it.change)}</pre></details>` : ""}
+      </div>
+      <button class="star" type="button" aria-pressed="${!!it.starred}" aria-label="별표">${it.starred ? "★" : "☆"}</button>
+    </li>`).join("");
+}
+
+async function refresh() { const running = await loadSummary(); await loadItems(); return running; }
+
+function poll() {
+  clearTimeout(pollTimer);
+  pollTimer = setTimeout(async () => { if (await refresh()) poll(); }, 1500);
+}
+
+// ── 이벤트
+$("#groups").addEventListener("click", e => {
+  const b = e.target.closest("button"); if (!b) return;
+  ui.group = b.dataset.g; save(); refresh();
+});
+$("#fUnread").addEventListener("change", e => { ui.unread = e.target.checked; save(); loadItems(); });
+$("#fStar").addEventListener("change", e => { ui.star = e.target.checked; save(); loadItems(); });
+let qt; $("#q").addEventListener("input", e => { clearTimeout(qt); qt = setTimeout(() => { ui.q = e.target.value.trim(); loadItems(); }, 200); });
+$("#checkBtn").addEventListener("click", async () => {
+  await api("/api/check", {group: ""}); await loadSummary(); poll();
+});
+$("#readAll").addEventListener("click", async () => {
+  await api("/api/read_all", {group: ui.group}); refresh();
+});
+$("#list").addEventListener("click", async e => {
+  const row = e.target.closest(".row"); if (!row) return;
+  const id = +row.dataset.id;
+  if (e.target.closest(".star")) {
+    const b = e.target.closest(".star"), on = b.getAttribute("aria-pressed") !== "true";
+    b.setAttribute("aria-pressed", on); b.textContent = on ? "★" : "☆";
+    api("/api/mark", {field: "star", ids: [id], value: on ? 1 : 0});
+  } else if (e.target.closest(".ttl, summary") && row.classList.contains("unread")) {
+    row.classList.remove("unread"); row.querySelector(".rev").outerHTML = revMark(false);
+    await api("/api/mark", {field: "read", ids: [id], value: 1}); loadSummary();
+  }
+});
+
+$("#fUnread").checked = ui.unread; $("#fStar").checked = ui.star;
+refresh().then(running => { if (running) poll(); });
+setInterval(async () => { if (!document.hidden && await refresh()) poll(); }, 60000);
+
+// ════════════════ 감시 대상 관리 ════════════════
+let mdata = null, editingOld = null, deleting = null;
+const LIST_KEYS = ["include", "exclude", "keywords", "categories", "remove_selectors"];
+const FORM_KEYS = ["name", "group", "note", "include", "exclude", "pages", "keywords", "row_selector", "title_selector",
+  "title_text_selector", "date_selector", "remove_in_title", "category_selector", "categories", "link_regex",
+  "link_template", "content_selector", "remove_selectors", "ignore_regex"];
+
+function showView(v) {
+  $("#tabNotices").setAttribute("aria-selected", v === "notices");
+  $("#tabManage").setAttribute("aria-selected", v === "manage");
+  $("#viewNotices").hidden = v !== "notices";
+  $("#viewManage").hidden = v !== "manage";
+  if (v === "manage") loadManage(); else refresh();
+}
+$("#tabNotices").addEventListener("click", () => showView("notices"));
+$("#tabManage").addEventListener("click", () => showView("manage"));
+
+async function loadManage() {
+  mdata = await api("/api/sources");
+  const st = Object.fromEntries(mdata.status.map(s => [s.name, s]));
+  const groups = [...new Set(mdata.sources.map(s => s.group))];
+  $("#groupList").innerHTML = groups.map(g => `<option value="${esc(g)}">`).join("");
+  $("#mlist").innerHTML = groups.map(g => `<div class="mgroup"><h3>${esc(g)}</h3>${
+    mdata.sources.filter(s => s.group === g).map(s => {
+      const r = st[s.name] || {}, on = s.enabled !== false;
+      const state = !r.last_checked ? "아직 확인 전" : r.last_error ? `<span class="err">오류: ${esc(r.last_error.slice(0, 80))}</span>` : `정상 ${short(r.last_ok)}`;
+      return `<div class="srow ${on ? "" : "off"}" data-name="${esc(s.name)}">
+        <label class="switch" title="${on ? "켜짐" : "꺼짐"}"><input type="checkbox" data-act="toggle" ${on ? "checked" : ""} aria-label="${esc(s.name)} 켜기"><span></span></label>
+        <div><a class="sname" href="${esc(s.list_url ? s.list_url.replace("{page}", "1") : s.url)}" target="_blank" rel="noopener">${esc(s.name)}</a>${s.note ? `<span class="snote">${esc(s.note)}</span>` : ""}</div>
+        <div class="skind">${s.type === "watch" ? "페이지 변경" : "게시판"}<br>${state}</div>
+        <div class="sact"><button type="button" data-act="up" aria-label="위로">↑</button><button type="button" data-act="down" aria-label="아래로">↓</button>
+          <button type="button" data-act="edit">수정</button><button type="button" data-act="del">삭제</button></div>
+      </div>`;
+    }).join("")}</div>`).join("") || `<p class="empty"><b>감시 대상이 없다</b>'새 대상 추가'로 시작한다.</p>`;
+  $("#exclText").value = (mdata.excluded || []).join("\n");
+}
+
+$("#mlist").addEventListener("click", async e => {
+  const b = e.target.closest("[data-act]"); if (!b || b.dataset.act === "toggle") return;
+  const name = b.closest(".srow").dataset.name;
+  if (b.dataset.act === "up" || b.dataset.act === "down") {
+    await api("/api/sources/move", {name, delta: b.dataset.act === "up" ? -1 : 1}); loadManage();
+  } else if (b.dataset.act === "edit") {
+    openEditor(mdata.sources.find(s => s.name === name));
+  } else if (b.dataset.act === "del") {
+    deleting = name; $("#delText").textContent = `'${name}'을(를) 감시 대상에서 뺀다.`; $("#delPurge").checked = false;
+    $("#delDlg").showModal();
+  }
+});
+$("#mlist").addEventListener("change", async e => {
+  if (e.target.dataset.act !== "toggle") return;
+  const row = e.target.closest(".srow");
+  await api("/api/sources/toggle", {name: row.dataset.name, enabled: e.target.checked});
+  row.classList.toggle("off", !e.target.checked);
+});
+$("#delOk").addEventListener("click", async () => {
+  const r = await api("/api/sources/delete", {name: deleting, purge: $("#delPurge").checked});
+  $("#delDlg").close(); if (r.ok === false) alert(r.error); loadManage();
+});
+$("#exclSave").addEventListener("click", async () => {
+  const r = await api("/api/sources/excluded", {items: $("#exclText").value.split("\n")});
+  $("#exclMsg").textContent = r.ok ? "저장했다" : r.error;
+});
+document.querySelectorAll("dialog [data-close]").forEach(b => b.addEventListener("click", () => b.closest("dialog").close()));
+
+// ── 편집 창
+const form = $("#editForm");
+function currentType() { return form.querySelector("[name=type]:checked").value; }
+function syncType() {
+  const t = currentType();
+  form.querySelectorAll("[data-for]").forEach(el => el.hidden = el.dataset.for !== t);
+  document.querySelectorAll(".dfoot [data-for]").forEach(el => el.hidden = el.dataset.for !== t);
+}
+form.querySelectorAll("[name=type]").forEach(r => r.addEventListener("change", syncType));
+
+function setMsg(text, bad) { $("#editMsg").innerHTML = text ? `<p class="msg ${bad ? "bad" : ""}">${text}</p>` : ""; }
+
+function openEditor(src) {
+  editingOld = src ? src.name : null;
+  form.reset();
+  $("#editTitle").textContent = src ? "대상 수정" : "새 대상 추가";
+  const s = src || {type: "board", group: ui.group || ""};
+  form.querySelector(`[name=type][value=${s.type || "board"}]`).checked = true;
+  form.elements.url.value = s.list_url || s.url || "";
+  FORM_KEYS.forEach(k => { if (form.elements[k]) form.elements[k].value = Array.isArray(s[k]) ? s[k].join(", ") : (s[k] ?? (k === "pages" ? 1 : "")); });
+  setMsg(""); $("#editPreview").innerHTML = "";
+  syncType();
+  $("#editDlg").showModal();
+}
+$("#addBtn").addEventListener("click", () => openEditor(null));
+
+function collect() {
+  const t = currentType(), src = {type: t, enabled: true};
+  if (editingOld) { const old = mdata.sources.find(s => s.name === editingOld); if (old) src.enabled = old.enabled !== false; }
+  src[t === "board" ? "list_url" : "url"] = form.elements.url.value.trim();
+  FORM_KEYS.forEach(k => {
+    const el = form.elements[k]; if (!el || el.closest("[data-for]")?.dataset.for && el.closest("[data-for]").dataset.for !== t) return;
+    const v = el.value.trim(); if (v === "") return;
+    src[k] = LIST_KEYS.includes(k) ? v.split(/[,\n]/).map(x => x.trim()).filter(Boolean) : v;
+  });
+  return src;
+}
+
+function renderPreview(r) {
+  const warn = (r.warnings || []).map(w => `<p class="msg bad">${esc(w)}</p>`).join("");
+  if (r.error) { setMsg(esc(r.error), true); $("#editPreview").innerHTML = ""; return; }
+  setMsg(r.ok ? (r.kind === "board" ? `글 ${r.count}개를 읽었다. 아래가 실제로 저장될 모습이다.` : `본문 ${r.count}줄을 읽었다. 이 내용이 기준 사본이 된다.`) : "", !r.ok);
+  $("#editPreview").innerHTML = warn + (r.kind === "board"
+    ? `<h4>미리보기 (최대 15개)</h4><ol>${r.items.map(it => `<li><a href="${esc(it.url)}" target="_blank" rel="noopener">${esc(it.title)}</a> <small>${esc(it.date || "날짜 없음")}</small></li>`).join("")}</ol>`
+    : `<h4>본문 첫 부분 (최대 25줄)</h4><ol>${(r.lines || []).map(l => `<li>${esc(l)}</li>`).join("")}</ol>`);
+  $("#editMsg").scrollIntoView({block: "nearest", behavior: matchMedia("(prefers-reduced-motion: reduce)").matches ? "auto" : "smooth"});
+}
+
+async function busy(btn, fn) { btn.disabled = true; const t = btn.textContent; btn.textContent = t + " 중"; try { await fn(); } finally { btn.disabled = false; btn.textContent = t; } }
+
+$("#testBtn").addEventListener("click", e => busy(e.target, async () => renderPreview(await api("/api/sources/test", {source: collect()}))));
+$("#guessBtn").addEventListener("click", e => busy(e.target, async () => {
+  const url = form.elements.url.value.trim(); if (!url) return setMsg("주소를 먼저 넣을 것", true);
+  const r = await api("/api/sources/guess", {url});
+  if (!r.ok) return setMsg(esc(r.error), true);
+  ["row_selector", "title_selector", "link_regex", "link_template"].forEach(k => { if (r.guess[k] !== undefined) form.elements[k].value = r.guess[k]; });
+  ["title_text_selector", "date_selector", "remove_in_title"].forEach(k => form.elements[k].value = "");
+  form.querySelector("details.adv[data-for=board]").open = true;
+  setMsg(esc(r.notes.join(" ")) + " 미리보기로 이어서 확인한다.");
+  renderPreview(await api("/api/sources/test", {source: collect()}));
+}));
+form.addEventListener("submit", async e => {
+  e.preventDefault();
+  await busy($("#saveBtn"), async () => {
+    const r = await api("/api/sources/save", {source: collect(), old_name: editingOld});
+    if (r.ok === false) return setMsg(esc(r.error), true);
+    $("#editDlg").close(); loadManage();
+  });
+});
+</script>
+</body>
+</html>
