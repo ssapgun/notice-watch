@@ -67,9 +67,10 @@ def main() -> int:
             "SELECT id, grp, source, date, title, url, change, kind, found_at, is_read,"
             " summary, title_ko, sum_mode, sum_state FROM items "
             "ORDER BY COALESCE(NULLIF(date,''), substr(found_at,1,10)) DESC, id DESC").fetchall()]
-    items = [r for r in rows if ok(r)][:MAX_ITEMS]
+    items = [r for r in rows if ok(r)]
     for r in items:
-        r["summary"] = json.loads(r["summary"]) if r["summary"] else []
+        r["summary"] = summarize.clean_points(json.loads(r["summary"])) if r["summary"] else []
+    items = crawler.collapse_reposts(items)[:MAX_ITEMS]   # 같은 게시판 재공지는 하나로
     payload = {
         "generated_at": crawler.now_str(),
         "last_run": store.get_meta("last_run"),

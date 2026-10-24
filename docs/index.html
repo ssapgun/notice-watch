@@ -163,6 +163,9 @@ button{font:inherit;color:inherit;cursor:pointer}
 .pager button[disabled]{opacity:.4;cursor:default}
 .pager .gap{color:var(--pencil);padding:0 2px}
 .pager .pinfo{width:100%;text-align:center;font-size:12.5px;color:var(--pencil)}
+.sum .box,.sum li,.sum pre{overflow-wrap:anywhere;word-break:break-word}
+.rep{display:block;font-size:12px;color:var(--pencil);margin-top:2px}
+.rep a{color:inherit}
 .star{background:none;border:0;font-size:18px;line-height:1;color:var(--pencil);padding:2px}
 .star[aria-pressed="true"]{color:var(--amber)}
 @media (max-width:560px){.row{grid-template-columns:28px 1fr 34px;padding:12px 12px 12px 8px}.date{grid-column:2;grid-row:1;font-size:12.5px}.what{grid-column:2}.star{grid-row:1/3;grid-column:3}.rev{grid-row:1/3}}
@@ -259,7 +262,7 @@ dialog::backdrop{background:rgba(14,34,54,.45)}
     <div class="block" aria-live="polite">
       <div class="cell"><small>새 항목</small><b id="newCount">–</b></div>
       <div class="cell"><small>최종 확인</small><b id="lastRun">–</b></div>
-      <div class="cell"><small>다음 자동 확인</small><b id="nextRun">–</b></div>
+      <div class="cell" title="GitHub 예약 실행은 서버 사정으로 수십 분~몇 시간 늦게 돌기도 한다"><small>다음 자동 확인</small><b id="nextRun">–</b></div>
       <div class="cell"><small>감시 대상</small><b id="srcCount">–</b></div>
       <div class="cell"><small>오류</small><b id="errCount">–</b></div>
       <div class="cell"><small>보는 중</small><b id="viewing">전체</b></div>
@@ -482,7 +485,7 @@ function nextSlot() {   // 한국 시간 0·6·12·18시 7분
   const now = new Date(), kst = new Date(now.getTime() + (9 * 60 + now.getTimezoneOffset()) * 60000);
   const t = new Date(kst); t.setSeconds(0, 0); t.setMinutes(7);
   t.setHours(Math.ceil((kst.getHours() * 60 + kst.getMinutes() - 7 + 1) / 360) * 6);
-  return `${String(t.getMonth() + 1).padStart(2, "0")}.${String(t.getDate()).padStart(2, "0")} ${String(t.getHours()).padStart(2, "0")}:07 경`;
+  return `${String(t.getMonth() + 1).padStart(2, "0")}.${String(t.getDate()).padStart(2, "0")} ${String(t.getHours()).padStart(2, "0")}:07 이후`;
 }
 
 function renderSummary() {
@@ -614,6 +617,11 @@ function renderPager(total, pages) {
       : `<button type="button" data-p="${n}" aria-current="${n === curPage}">${n}</button>`).join("")
     + `<button type="button" data-p="${curPage + 1}" ${curPage === pages ? "disabled" : ""} aria-label="다음 쪽">다음 ›</button>` + info;
 }
+function repostHtml(it) {
+  const r = it.reposts || [];
+  if (!r.length) return "";
+  return `<span class="rep">같은 공지 이전 게시 ${r.length}회: ${r.map(x => `<a href="${esc(x.url)}" target="_blank" rel="noopener">${esc((x.date || "").slice(2).replaceAll("-", "."))}</a>`).join(", ")}</span>`;
+}
 function revMark(on) {
   return on ? `<svg class="rev" viewBox="0 0 22 20" role="img" aria-label="안 읽음"><polygon points="11,1.5 20.5,18.5 1.5,18.5"/><text x="11" y="15.5" text-anchor="middle">N</text></svg>` : `<span class="rev" aria-hidden="true"></span>`;
 }
@@ -635,7 +643,7 @@ function renderItems() {
       <span class="date">${esc(it.date ? it.date.slice(2).replaceAll("-", ".") : "")}</span>
       <div class="what">
         <span class="src">${esc(it.grp)} / ${esc(it.source)}</span>${kwHtml(hlHits(it, DATA.highlight))}
-        ${titleHtml(it)}
+        ${titleHtml(it)}${repostHtml(it)}
         ${sumBlock(it, isUnread(it))}
       </div>
       <button class="star" type="button" aria-pressed="${starSet.has(it.id)}" aria-label="별표">${starSet.has(it.id) ? "★" : "☆"}</button>

@@ -88,10 +88,24 @@ def is_korean(text: str) -> bool:
     return bool(letters) and len(HANGUL.findall(text)) / len(letters) >= 0.3
 
 
+# 정리에 쓸모없는 줄: 구분선, 날짜·시각만, 숫자·기호만, 한두 글자
+JUNK_LINE = re.compile(r"^[\s\-=_*~·•.,:;|/\\()\[\]<>#+0-9년월일시분초~]*$|^(작성자|조회수?|등록일|첨부|목록|이전글|다음글)\b")
+
+
+def clean_points(points: list[str]) -> list[str]:
+    out = []
+    for p in points or []:
+        p = crawler.clean(str(p))
+        if len(re.sub(r"[\W\d_]", "", p)) < 2 or JUNK_LINE.search(p):
+            continue
+        out.append(p)
+    return out
+
+
 def excerpt(text: str, limit: int = 420) -> list[str]:
     """키가 없을 때: 본문 앞부분을 줄 단위로 잘라 쓴다."""
     out, n = [], 0
-    for line in text.split("\n"):
+    for line in clean_points(text.split("\n")):
         if n >= limit:
             break
         line = line if len(line) <= 200 else line[:200] + "…"

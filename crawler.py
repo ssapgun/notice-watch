@@ -232,6 +232,7 @@ class Store:
             name TEXT PRIMARY KEY, grp TEXT, kind TEXT, url TEXT,
             last_checked TEXT, last_ok TEXT, last_error TEXT, last_new INTEGER DEFAULT 0);
         CREATE TABLE IF NOT EXISTS meta (k TEXT PRIMARY KEY, v TEXT);
+        CREATE TABLE IF NOT EXISTS seen (key TEXT PRIMARY KEY, source TEXT, at TEXT);
         """)
         # 공지 정리·번역 칸 (예전 DB 에는 없으므로 없으면 추가)
         if "fail_count" not in {r["name"] for r in self.db.execute("PRAGMA table_info(sources)")}:
@@ -247,6 +248,17 @@ class Store:
     def has_key(self, key: str) -> bool:
         with self.lock:
             return self.db.execute("SELECT 1 FROM items WHERE key=?", (key,)).fetchone() is not None
+
+    # 목록에서 본 적 있는 글 (필터에 걸려 저장하지 않은 글 포함). 다음 확인 때 어디서 멈출지 정하는 데 쓴다
+    def has_seen(self, key: str) -> bool:
+        with self.lock:
+            return self.db.execute("SELECT 1 FROM seen WHERE key=?", (key,)).fetchone() is not None
+
+    def mark_seen(self, source: str, keys) -> None:
+        with self.lock:
+            self.db.executemany("INSERT OR IGNORE INTO seen(key,source,at) VALUES(?,?,?)",
+                                [(k, source, now_str()) for k in keys])
+            self.db.commit()
 
     # ---- 공지 정리
     def pending_summaries(self, mode: str, max_tries: int) -> list[dict]:
@@ -512,6 +524,30 @@ def highlight_hits(it: dict, cfg: dict, key: str = "keywords") -> list[str]:
     return list(norm.values())
 
 
+def collapse_reposts(items: list[dict], days: int = 45) -> list[dict]:
+    """같은 게시판에 같은 제목으로 다시 올라온 글(재공지·연장 공지)은 가장 최근 것 하나만 남기고,
+    이전 글은 'reposts' 에 날짜·주소로 붙인다. items 는 최신순이어야 한다."""
+    def norm(t: str) -> str:
+        return re.sub(r"[\s\W_]+", "", t or "").lower()
+
+    kept: list[dict] = []
+    first: dict = {}
+    for it in items:
+        k = (it.get("source"), norm(it.get("title", "")))
+        head = first.get(k)
+        if head is not None and it.get("date") and head.get("date"):
+            try:
+                gap = (datetime.strptime(head["date"], "%Y-%m-%d") - datetime.strptime(it["date"], "%Y-%m-%d")).days
+            except ValueError:
+                gap = days + 1
+            if 0 <= gap <= days:
+                head.setdefault("reposts", []).append({"date": it["date"], "url": it["url"], "id": it.get("id")})
+                continue
+        first[k] = it
+        kept.append(it)
+    return kept
+
+
 def topic_hits(it: dict, topics: list[dict]) -> list[str]:
     """글 제목이 걸리는 주제(채용·상담 등) 이름들. 화면의 '주제 켜기/끄기'에 쓴다."""
     t = (str(it.get("title", "")) + " " + str(it.get("title_ko") or "")).lower()
@@ -561,7 +597,8 @@ def cutoff_date(cfg: dict) -> str:
 
 def crawl_board(src: dict, session: requests.Session, delay: float,
                 cutoff: str = "", max_pages: int = 25,
-                is_known: Callable[[str], bool] | None = None) -> list[dict]:
+                is_known: Callable[[str], bool] | None = None,
+                mark_seen: Callable[[list], None] | None = None) -> list[dict]:
     """게시판 목록을 읽는다. cutoff 가 있으면 그 날짜까지 페이지를 더 넘겨 빠짐없이 모으고,
     그보다 오래된 글은 버린다. 페이지 수는 max_pages 를 넘지 않는다 (서버 부담 제한)."""
     found, seen = [], set()
@@ -602,8 +639,11 @@ def crawl_board(src: dict, session: requests.Session, delay: float,
             break
         # 이 페이지에 새로 나온 글을 이미 다 모아 뒀으면 그 뒤도 모아 둔 것이다 → 그만 (매번 8개월치를 다시 읽지 않게)
         check = fresh if i > 1 else page_items
-        if i >= min_pages and is_known and check and all(
-                is_known(it["url"] if it["url"] != url else it["title"]) for it in check):
+        stop = bool(i >= min_pages and is_known and check and all(
+            is_known(it["url"] if it["url"] != url else it["title"]) for it in check))
+        if mark_seen:
+            mark_seen(list(keys))
+        if stop:
             break
     return found
 
@@ -788,7 +828,8 @@ def run_crawl(store: Store, cfg: dict, group: str | None = None,
                 time.sleep(delay)
             else:
                 raw = crawl_board(src, session, delay, cutoff, max_pages,
-                                  None if first_time else store.has_key)
+                                  None if first_time else store.has_seen,
+                                  lambda keys, n=src["name"]: store.mark_seen(n, keys))
         except Exception as e:  # 한 사이트가 실패해도 나머지는 계속
             store.set_source(src, ok=False, error=f"{type(e).__name__}: {e}"[:300])
             continue
