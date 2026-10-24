@@ -32,6 +32,7 @@ python app.py
 app.py            웹 대시보드 서버
 crawler.py        크롤링 엔진 (python crawler.py 로 화면 없이도 실행 가능)
 summarize.py      공지 정리·번역 (상세 페이지 본문 → 한국어 요약)
+notify.py         텔레그램 알림 (토큰이 있을 때만)
 config.yaml       감시 대상 목록
 static/index.html 대시보드 화면
 notices.db        수집 결과 (자동 생성)
@@ -71,6 +72,7 @@ page_snapshots/   페이지 변경 감지용 사본 (자동 생성)
 | enabled, note | 켜짐 여부, 메모 |
 | max_age_months, max_pages (맨 위 단계) | 이 개월 수(기본 8)보다 오래된 글은 모으지도 보여주지도 않는다. 그 기간 글을 빠짐없이 모으려고 게시판 페이지를 max_pages(기본 25)까지 넘긴다 |
 | page_size | 주소에 {offset}(글 순번)을 쓰는 게시판의 한 페이지 글 수 |
+| highlight (맨 위 단계) | keywords: 화면에서 노란 표시·'관심 키워드 글만' / exclude: 오탐 제외어 / alert: 텔레그램 알림 키워드 |
 | links (맨 위 단계) | 자동 확인하지 않고 화면 왼쪽에 바로가기로만 두는 곳 (robots.txt·이용약관상 수집 불가한 사이트) |
 
 ## 지키는 원칙

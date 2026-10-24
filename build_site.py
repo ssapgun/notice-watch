@@ -15,6 +15,7 @@ from datetime import datetime
 from pathlib import Path
 
 import crawler
+import notify
 import summarize
 
 BASE = Path(__file__).resolve().parent
@@ -45,12 +46,20 @@ def main() -> int:
         if p["current"]:
             print(f"  {p['done'] + 1}/{p['total']}  {p['current']}", flush=True)
 
+    started = crawler.now_str()
     new = crawler.run_crawl(store, run_cfg, progress=progress)
     print(f"새 항목 {new}건")
 
     # 공지 정리·번역 (ANTHROPIC_API_KEY 비밀값이 있으면 Claude, 없으면 본문 발췌)
     st = summarize.summarize_pending(store, cfg, progress=lambda m: print("  " + m, flush=True))
     print(f"공지 정리 {st['done']}건, 실패 {st.get('failed', 0)}건, 남은 글 {st.get('left', 0)}건 ({st['mode']})")
+
+    # 텔레그램 알림 (TELEGRAM_BOT_TOKEN, TELEGRAM_CHAT_ID 비밀값이 있을 때만)
+    try:
+        n = notify.alert_after_run(store, cfg, started, cfg.get("site_url", ""))
+        print(f"텔레그램 알림 {n}건" if notify.enabled() else "텔레그램 알림 꺼짐 (토큰 없음)")
+    except Exception as e:   # 알림이 실패해도 사이트 갱신은 계속
+        print(f"[알림 오류] {type(e).__name__}: {e}")
 
     ok = crawler.visible_filter(cfg)   # 필터를 바꾸기 전에 모인 글도 현재 필터로 가린다
     with store.lock:
@@ -71,6 +80,7 @@ def main() -> int:
         "excluded": cfg.get("excluded", []),
         "links": cfg.get("links", []),
         "topics": cfg.get("topics", []),
+        "highlight": {k: v for k, v in (cfg.get("highlight") or {}).items() if k in ("keywords", "exclude", "alert")},
         "status": store.sources(),
         "items": items,
     }

@@ -19,6 +19,7 @@ from pathlib import Path
 from urllib.parse import parse_qs, urlparse
 
 import crawler
+import notify
 import summarize
 
 HOST, PORT = "127.0.0.1", 8765
@@ -45,11 +46,16 @@ def start_crawl(group: str = "") -> bool:
     def work() -> None:
         try:
             cfg = crawler.load_config()
+            started = crawler.now_str()
             n = crawler.run_crawl(store, cfg, group or None, progress, stop_event)
             with state_lock:
                 state["new"] = n
             # 새 글 정리·번역 (환경변수 ANTHROPIC_API_KEY 가 있으면 Claude, 없으면 본문 발췌)
             summarize.summarize_pending(store, cfg, progress=lambda m: progress({"current": m}))
+            try:   # 텔레그램 알림 (환경변수 TELEGRAM_BOT_TOKEN, TELEGRAM_CHAT_ID 가 있을 때만)
+                notify.alert_after_run(store, cfg, started)
+            except Exception:
+                pass
         except Exception as e:  # 설정 파일 오류 등
             with state_lock:
                 state["error"] = f"{type(e).__name__}: {e}"
@@ -160,7 +166,7 @@ class Handler(BaseHTTPRequestHandler):
                 st = dict(state)
             counts, sub_counts = visible_counts(cfg, hidden_param(q))
             return self.send_json({
-                "groups": groups, "links": cfg.get("links", []), "topics": cfg.get("topics", []),
+                "groups": groups, "links": cfg.get("links", []), "topics": cfg.get("topics", []), "highlight": cfg.get("highlight", {}),
                 "counts": counts, "sub_counts": sub_counts, "sources": store.sources(),
                 "configured": [{"name": s["name"], "group": s.get("group", ""), "sub": s.get("sub") or s["name"],
                                 "kind": s.get("type", "board"),

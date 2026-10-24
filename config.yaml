@@ -10,6 +10,56 @@ summary:
   enabled: true
   model: claude-haiku-5-5
   per_run: 150
+highlight:
+  keywords:
+  - 구조
+  - BIM
+  - OSC
+  - 모듈러
+  - 강구조
+  - 철골
+  - 접합
+  - 탈현장
+  - 프리캐스트
+  - 자동화
+  - 학부연구생
+  - 연구생
+  - T/O
+  - T.O
+  - 장학생 모집
+  - 연구실탐방
+  - 연구실 탐방
+  - 대학원 모집
+  - 모집요강
+  - 신(편)입학
+  - Modular
+  - Steel
+  - 構造
+  - 鋼構造
+  exclude:
+  - 구조조정
+  - 조직구조
+  - 조직 구조
+  - 인명구조
+  - 구조대
+  - 구조요청
+  - 구조 요청
+  - 가족구조
+  alert:
+  - 학부연구생
+  - T/O
+  - T.O
+  - 모집요강
+  - 연구실탐방
+  - 연구실 탐방
+  - 대학원 모집
+  - 신(편)입학
+  - 장학생 모집
+  - 모듈러
+  - 강구조
+  - 철골
+  - 募集要項
+site_url: https://ssapgun.github.io/notice-watch/
 sources:
 - name: 학교 공지
   group: 경희대
@@ -108,6 +158,21 @@ sources:
   remove_in_title: span
   link_regex: view\('(\d+)'
   link_template: https://archieng.khu.ac.kr/archieng/user/bbs/BMSR00040/view.do?menuNo=17900015&boardId={0}
+  detail_selector: .bbs-view_c
+- name: 일반대학원 공지
+  group: 경희대
+  sub: 일반대학원
+  type: board
+  enabled: true
+  note: 경희대 일반대학원 정보광장 > 공지사항 (입학·학사·학부연구생·연구실탐방)
+  list_url: https://gskh.khu.ac.kr/gskh_kor/user/bbs/BMSR00040/list.do?menuNo=13100089&pageIndex={page}
+  pages: 2
+  row_selector: table tbody tr
+  title_selector: td.tal a
+  date_selector: td:last-of-type
+  remove_in_title: span
+  link_regex: view\('(\d+)'
+  link_template: https://gskh.khu.ac.kr/gskh_kor/user/bbs/BMSR00040/view.do?menuNo=13100089&boardId={0}
   detail_selector: .bbs-view_c
 - name: 국제처 공지
   group: 경희대
@@ -438,9 +503,10 @@ sources:
   group: 독일
   sub: RWTH
   type: watch
-  enabled: true
+  enabled: false
   url: https://www2.daad.de/deutschland/studienangebote/international-programmes/en/detail/8967/
   content_selector: '#content'
+  note: GitHub 서버 접속을 403으로 막아 자동 확인을 껐다. 바로가기로 직접 볼 것
 - name: NUS CEE 연구과정(PhD/M.Eng)
   group: 싱가포르
   sub: NUS
@@ -770,6 +836,9 @@ links:
 - name: McKinsey 건설·건자재 인사이트
   url: https://www.mckinsey.com/industries/engineering-construction-and-building-materials/our-insights
   note: 이용약관이 수집·AI 이용·재게시를 금지해 자동 확인·정리하지 않는다. 직접 열어서 볼 것
+- name: RWTH Resilient Civil Engineering (DAAD)
+  url: https://www2.daad.de/deutschland/studienangebote/international-programmes/en/detail/8967/
+  note: GitHub 서버 접속을 403으로 막아 자동 확인하지 않는다. 직접 열어서 볼 것
 excluded:
 - 'POSTECH: 건축·토목·구조 학과가 없음 (학과 목록 확인. 가장 가까운 곳이 친환경소재대학원·환경공학부)'
 - 연세대 건축공학과 -> 연세대 건설환경공학과로 교체 (지반 연구실은 건설환경공학과에 있음)
@@ -780,3 +849,4 @@ excluded:
 - '한국강구조학회 — robots.txt 전체 수집 금지(Disallow: /). 바로가기(links)로만 둔다'
 - McKinsey 보고서 — 이용약관 3조가 크롤링·AI 이용·재게시 금지. 바로가기(links)로만 둔다
 - 한국지반공학회 — 관심 분야가 지반보다 강구조라 보류
+- RWTH Resilient Civil Engineering (DAAD) — GitHub 서버 접속 403 차단. 감시 끄고 바로가기로 옮김

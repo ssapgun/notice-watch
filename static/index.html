@@ -149,6 +149,10 @@ button{font:inherit;color:inherit;cursor:pointer}
   .extras>summary{display:block;cursor:pointer;padding:8px 18px;font-size:13.5px;color:var(--ink-2)}
   .extras .topics,.extras .quick{border-top:0;margin-top:0}
 }
+.row.hl{box-shadow:inset 3px 0 0 var(--amber)}
+.kws{display:flex;flex-wrap:wrap;gap:4px;margin:3px 0 1px}
+.kw{font-size:11.5px;line-height:1.5;padding:0 6px;border:1px solid var(--amber);color:var(--amber);border-radius:2px;white-space:nowrap}
+.warn{color:var(--markup);font-weight:600}
 .star{background:none;border:0;font-size:18px;line-height:1;color:var(--pencil);padding:2px}
 .star[aria-pressed="true"]{color:var(--amber)}
 @media (max-width:560px){.row{grid-template-columns:28px 1fr 34px;padding:12px 12px 12px 8px}.date{grid-column:2;grid-row:1;font-size:12.5px}.what{grid-column:2}.star{grid-row:1/3;grid-column:3}.rev{grid-row:1/3}}
@@ -264,6 +268,7 @@ dialog::backdrop{background:rgba(14,34,54,.45)}
       <div class="opts">
         <label><input type="checkbox" id="fUnread"> 안 읽은 것만</label>
         <label><input type="checkbox" id="fStar"> 별표만</label>
+        <label><input type="checkbox" id="fHl"> 관심 키워드 글만</label>
         <button class="linkbtn" id="readAll" type="button">보이는 분류 모두 읽음 처리</button>
         <a class="linkbtn" href="/api/export">엑셀로 내보내기</a>
       </div>
@@ -375,13 +380,13 @@ dialog::backdrop{background:rgba(14,34,54,.45)}
 
 <script>
 const $ = s => document.querySelector(s);
-const ui = { group: "", sub: "", q: "", unread: false, star: false };
+const ui = { group: "", sub: "", q: "", unread: false, star: false, hl: false };
 let summary = null, pollTimer = null;
 try { Object.assign(ui, JSON.parse(localStorage.getItem("ui") || "{}")); } catch (e) {}
 let hiddenTopics = new Set();
 try { hiddenTopics = new Set(JSON.parse(localStorage.getItem("hiddenTopics") || "[]")); } catch (e) {}
 const hideParam = () => [...hiddenTopics].join("|");
-const save = () => { try { localStorage.setItem("ui", JSON.stringify({group: ui.group, sub: ui.sub, unread: ui.unread, star: ui.star})); } catch (e) {} };
+const save = () => { try { localStorage.setItem("ui", JSON.stringify({group: ui.group, sub: ui.sub, unread: ui.unread, star: ui.star, hl: ui.hl})); } catch (e) {} };
 
 const api = (p, body) => fetch(p, body ? {method: "POST", headers: {"Content-Type": "application/json", "X-Dashboard": "1"}, body: JSON.stringify(body)} : {})
   .then(r => r.json());
@@ -445,6 +450,18 @@ function subsHtml(list, countOf) {
     return `<li><button type="button" data-sub="${esc(sb)}" aria-current="${sb === (ui.sub || "")}"><span>${esc(sb || "전체 보기")}</span><span class="n ${n ? "has" : ""}">${n ? n + " 새" : ""}</span></button></li>`;
   }).join("")}</ul>`;
 }
+// 관심 키워드: crawler.highlight_hits 와 같은 규칙 (제목·번역 제목·정리에서 찾는다)
+function hlHits(it, hl) {
+  const words = (hl && hl.keywords) || [];
+  if (!words.length) return [];
+  let t = [it.title, it.title_ko || "", ...(Array.isArray(it.summary) ? it.summary : [])].join(" ").toLowerCase();
+  for (const x of (hl.exclude || [])) t = t.split(String(x).toLowerCase()).join(" ");
+  let hits = words.filter(w => t.includes(String(w).toLowerCase()));
+  hits = hits.filter(w => !hits.some(o => o !== w && String(o).toLowerCase().includes(String(w).toLowerCase())));
+  const seen = new Set();
+  return hits.filter(w => { const k = String(w).replace(/\s/g, "").toLowerCase(); if (seen.has(k)) return false; seen.add(k); return true; });
+}
+const kwHtml = h => h.length ? `<span class="kws">${h.map(w => `<span class="kw">${esc(w)}</span>`).join("")}</span>` : "";
 function revMark(on) {
   return on ? `<svg class="rev" viewBox="0 0 22 20" role="img" aria-label="안 읽음"><polygon points="11,1.5 20.5,18.5 1.5,18.5"/><text x="11" y="15.5" text-anchor="middle">N</text></svg>` : `<span class="rev" aria-hidden="true"></span>`;
 }
@@ -494,7 +511,7 @@ async function loadSummary() {
   const by = Object.fromEntries(summary.sources.map(s => [s.name, s]));
   $("#srcTable").innerHTML = summary.configured.map(s => {
     const r = by[s.name] || {};
-    const state = !r.last_checked ? "아직 확인 전" : r.last_error ? `<span class="err">${esc(r.last_error)}</span>` : "정상";
+    const state = !r.last_checked ? "아직 확인 전" : r.last_error ? `<span class="err">${(r.fail_count || 0) >= 3 ? `<b class="warn">${r.fail_count}회 연속 실패</b> · ` : ""}${esc(r.last_error)}</span>` : "정상";
     return `<tr><td>${esc(s.group)}</td><td><a href="${esc(s.url)}" target="_blank" rel="noopener">${esc(s.name)}</a></td>
       <td>${s.kind === "watch" ? "페이지 변경" : "게시판"}</td><td>${short(r.last_ok)}</td><td>${state}</td></tr>`;
   }).join("");
@@ -504,7 +521,8 @@ async function loadSummary() {
 
 async function loadItems() {
   const p = new URLSearchParams({group: ui.group, sub: ui.sub || "", q: ui.q, unread: ui.unread ? 1 : "", starred: ui.star ? 1 : "", hide: hideParam()});
-  const items = await api("/api/items?" + p);
+  const HL = summary && summary.highlight;
+  const items = (await api("/api/items?" + p)).filter(it => !ui.hl || hlHits(it, HL).length);
   if (!items.length) {
     const never = summary && !summary.last_run;
     $("#list").innerHTML = `<li class="empty"><b>${never ? "아직 한 번도 확인하지 않았다" : "조건에 맞는 항목이 없다"}</b>
@@ -513,11 +531,11 @@ async function loadItems() {
     return;
   }
   $("#list").innerHTML = items.map(it => `
-    <li class="row ${it.is_read ? "" : "unread"}" data-id="${it.id}">
+    <li class="row ${it.is_read ? "" : "unread"} ${hlHits(it, HL).length ? "hl" : ""}" data-id="${it.id}">
       ${revMark(!it.is_read)}
       <span class="date">${esc(it.date ? it.date.slice(2).replaceAll("-", ".") : "")}</span>
       <div class="what">
-        <span class="src">${esc(it.grp)} / ${esc(it.source)}</span>
+        <span class="src">${esc(it.grp)} / ${esc(it.source)}</span>${kwHtml(hlHits(it, HL))}
         ${titleHtml(it)}
         ${sumBlock(it, !it.is_read)}
       </div>
@@ -549,6 +567,7 @@ $("#topics").addEventListener("change", e => {
 });
 $("#fUnread").addEventListener("change", e => { ui.unread = e.target.checked; save(); loadItems(); });
 $("#fStar").addEventListener("change", e => { ui.star = e.target.checked; save(); loadItems(); });
+$("#fHl").addEventListener("change", e => { ui.hl = e.target.checked; save(); loadItems(); });
 let qt; $("#q").addEventListener("input", e => { clearTimeout(qt); qt = setTimeout(() => { ui.q = e.target.value.trim(); loadItems(); }, 200); });
 $("#checkBtn").addEventListener("click", async () => {
   await api("/api/check", {group: ""}); await loadSummary(); poll();
@@ -569,7 +588,7 @@ $("#list").addEventListener("click", async e => {
   }
 });
 
-$("#fUnread").checked = ui.unread; $("#fStar").checked = ui.star;
+$("#fUnread").checked = ui.unread; $("#fStar").checked = ui.star; $("#fHl").checked = !!ui.hl;
 refresh().then(running => { if (running) poll(); });
 setInterval(async () => { if (!document.hidden && await refresh()) poll(); }, 60000);
 
@@ -598,7 +617,7 @@ async function loadManage() {
   $("#mlist").innerHTML = groups.map(g => `<div class="mgroup"><h3>${esc(g)}</h3>${
     mdata.sources.filter(s => s.group === g).map(s => {
       const r = st[s.name] || {}, on = s.enabled !== false;
-      const state = !r.last_checked ? "아직 확인 전" : r.last_error ? `<span class="err">오류: ${esc(r.last_error.slice(0, 80))}</span>` : `정상 ${short(r.last_ok)}`;
+      const state = !r.last_checked ? "아직 확인 전" : r.last_error ? `<span class="err">${(r.fail_count || 0) >= 3 ? `${r.fail_count}회 연속 실패 · ` : "오류: "}${esc(r.last_error.slice(0, 80))}</span>` : `정상 ${short(r.last_ok)}`;
       return `<div class="srow ${on ? "" : "off"}" data-name="${esc(s.name)}">
         <label class="switch" title="${on ? "켜짐" : "꺼짐"}"><input type="checkbox" data-act="toggle" ${on ? "checked" : ""} aria-label="${esc(s.name)} 켜기"><span></span></label>
         <div><a class="sname" href="${esc(s.list_url ? s.list_url.replace("{page}", "1").replace("{offset}", "0") : s.url)}" target="_blank" rel="noopener">${esc(s.name)}</a>${s.note ? `<span class="snote">${esc(s.note)}</span>` : ""}</div>

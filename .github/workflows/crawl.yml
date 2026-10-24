@@ -24,6 +24,9 @@ jobs:
       TZ: Asia/Seoul
       # 공지 정리·번역용. 저장소 Settings → Secrets and variables → Actions 에 넣는다. 없으면 본문 발췌만 한다
       ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
+      # 텔레그램 알림용. 둘 다 있을 때만 보낸다 (WEB_SETUP.md 8번)
+      TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
+      TELEGRAM_CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}
     steps:
       - uses: actions/checkout@v4
 

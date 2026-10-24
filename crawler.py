@@ -234,6 +234,8 @@ class Store:
         CREATE TABLE IF NOT EXISTS meta (k TEXT PRIMARY KEY, v TEXT);
         """)
         # 공지 정리·번역 칸 (예전 DB 에는 없으므로 없으면 추가)
+        if "fail_count" not in {r["name"] for r in self.db.execute("PRAGMA table_info(sources)")}:
+            self.db.execute("ALTER TABLE sources ADD COLUMN fail_count INTEGER DEFAULT 0")   # 연속 실패 횟수
         have = {r["name"] for r in self.db.execute("PRAGMA table_info(items)")}
         for col, typ in [("summary", "TEXT"), ("title_ko", "TEXT"), ("sum_mode", "TEXT"),
                          ("sum_state", "TEXT"), ("sum_tries", "INTEGER DEFAULT 0"),
@@ -295,15 +297,17 @@ class Store:
 
     def set_source(self, src: dict, ok: bool, error: str = "", new: int = 0) -> None:
         with self.lock:
-            prev = self.db.execute("SELECT last_ok FROM sources WHERE name=?", (src["name"],)).fetchone()
+            prev = self.db.execute("SELECT last_ok, fail_count FROM sources WHERE name=?", (src["name"],)).fetchone()
             last_ok = now_str() if ok else (prev["last_ok"] if prev else None)
+            fails = 0 if ok else ((prev["fail_count"] or 0) if prev else 0) + 1
             self.db.execute(
-                "INSERT INTO sources(name,grp,kind,url,last_checked,last_ok,last_error,last_new)"
-                " VALUES(?,?,?,?,?,?,?,?) ON CONFLICT(name) DO UPDATE SET grp=excluded.grp,"
+                "INSERT INTO sources(name,grp,kind,url,last_checked,last_ok,last_error,last_new,fail_count)"
+                " VALUES(?,?,?,?,?,?,?,?,?) ON CONFLICT(name) DO UPDATE SET grp=excluded.grp,"
                 " kind=excluded.kind, url=excluded.url, last_checked=excluded.last_checked,"
-                " last_ok=excluded.last_ok, last_error=excluded.last_error, last_new=excluded.last_new",
+                " last_ok=excluded.last_ok, last_error=excluded.last_error, last_new=excluded.last_new,"
+                " fail_count=excluded.fail_count",
                 (src["name"], src.get("group", ""), src.get("type", "board"),
-                 src.get("url") or src.get("list_url"), now_str(), last_ok, error, new),
+                 src.get("url") or src.get("list_url"), now_str(), last_ok, error, new, fails),
             )
             self.db.commit()
 
@@ -482,6 +486,30 @@ def keyword_ok(title: str, src: dict) -> bool:
     if req and not any(k.lower() in t for k in req):
         return False
     return not any(k.lower() in t for k in exc)
+
+
+def highlight_hits(it: dict, cfg: dict, key: str = "keywords") -> list[str]:
+    """관심 키워드 중 제목(번역 제목·정리 포함)에 든 것. key='alert' 면 알림용 핵심 키워드."""
+    hl = cfg.get("highlight") or {}
+    words = hl.get(key) or []
+    if not words:
+        return []
+    summ = it.get("summary") or []
+    if isinstance(summ, str):
+        try:
+            summ = json.loads(summ)
+        except ValueError:
+            summ = []
+    t = " ".join([str(it.get("title", "")), str(it.get("title_ko") or ""), *map(str, summ)]).lower()
+    for x in hl.get("exclude") or []:
+        t = t.replace(str(x).lower(), " ")
+    hits = [w for w in words if str(w).lower() in t]
+    # '연구생'과 '학부연구생'처럼 다른 키워드에 포함되는 것은 하나만 남긴다
+    hits = [w for w in hits if not any(w != o and str(w).lower() in str(o).lower() for o in hits)]
+    norm = {}
+    for w in hits:   # '연구실탐방' / '연구실 탐방' 같은 띄어쓰기 차이도 하나로
+        norm.setdefault(str(w).replace(" ", "").lower(), w)
+    return list(norm.values())
 
 
 def topic_hits(it: dict, topics: list[dict]) -> list[str]:

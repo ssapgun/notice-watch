@@ -152,6 +152,10 @@ button{font:inherit;color:inherit;cursor:pointer}
   .extras>summary{display:block;cursor:pointer;padding:8px 18px;font-size:13.5px;color:var(--ink-2)}
   .extras .topics,.extras .quick{border-top:0;margin-top:0}
 }
+.row.hl{box-shadow:inset 3px 0 0 var(--amber)}
+.kws{display:flex;flex-wrap:wrap;gap:4px;margin:3px 0 1px}
+.kw{font-size:11.5px;line-height:1.5;padding:0 6px;border:1px solid var(--amber);color:var(--amber);border-radius:2px;white-space:nowrap}
+.warn{color:var(--markup);font-weight:600}
 .star{background:none;border:0;font-size:18px;line-height:1;color:var(--pencil);padding:2px}
 .star[aria-pressed="true"]{color:var(--amber)}
 @media (max-width:560px){.row{grid-template-columns:28px 1fr 34px;padding:12px 12px 12px 8px}.date{grid-column:2;grid-row:1;font-size:12.5px}.what{grid-column:2}.star{grid-row:1/3;grid-column:3}.rev{grid-row:1/3}}
@@ -274,6 +278,7 @@ dialog::backdrop{background:rgba(14,34,54,.45)}
         <div class="opts">
           <label><input type="checkbox" id="fUnread"> 안 읽은 것만</label>
           <label><input type="checkbox" id="fStar"> 별표만</label>
+          <label><input type="checkbox" id="fHl"> 관심 키워드 글만</label>
           <button class="linkbtn" id="readAll" type="button">보이는 분류 모두 읽음 처리</button>
           <span class="webnote">읽음·별표는 이 기기에만 저장된다.</span>
         </div>
@@ -400,7 +405,7 @@ const store = {
   set(k, v) { try { localStorage.setItem(k, JSON.stringify(v)); } catch (e) {} },
   del(k) { try { localStorage.removeItem(k); } catch (e) {} },
 };
-const ui = Object.assign({group: "", sub: "", q: "", unread: false, star: false}, store.get("ui", {}));
+const ui = Object.assign({group: "", sub: "", q: "", unread: false, star: false, hl: false}, store.get("ui", {}));
 const readSet = new Set(store.get("read", []));
 const starSet = new Set(store.get("star", []));
 const hiddenTopics = new Set(store.get("hiddenTopics", []));
@@ -499,7 +504,7 @@ function renderSummary() {
   const by = Object.fromEntries(DATA.status.map(s => [s.name, s]));
   $("#srcTable").innerHTML = enabled.map(s => {
     const r = by[s.name] || {};
-    const st = !r.last_checked ? "다음 확인 때 처음 확인" : r.last_error ? `<span class="err">${esc(r.last_error)}</span>` : "정상";
+    const st = !r.last_checked ? "다음 확인 때 처음 확인" : r.last_error ? `<span class="err">${(r.fail_count || 0) >= 3 ? `<b class="warn">${r.fail_count}회 연속 실패</b> · ` : ""}${esc(r.last_error)}</span>` : "정상";
     const url = (s.list_url || s.url || "").replace("{page}", "1").replace("{offset}", "0");
     return `<tr><td>${esc(s.group)}</td><td><a href="${esc(url)}" target="_blank" rel="noopener">${esc(s.name)}</a></td><td>${s.type === "watch" ? "페이지 변경" : "게시판"}</td><td>${short(r.last_ok)}</td><td>${st}</td></tr>`;
   }).join("");
@@ -563,6 +568,18 @@ function subsHtml(list, countOf) {
     return `<li><button type="button" data-sub="${esc(sb)}" aria-current="${sb === (ui.sub || "")}"><span>${esc(sb || "전체 보기")}</span><span class="n ${n ? "has" : ""}">${n ? n + " 새" : ""}</span></button></li>`;
   }).join("")}</ul>`;
 }
+// 관심 키워드: crawler.highlight_hits 와 같은 규칙 (제목·번역 제목·정리에서 찾는다)
+function hlHits(it, hl) {
+  const words = (hl && hl.keywords) || [];
+  if (!words.length) return [];
+  let t = [it.title, it.title_ko || "", ...(Array.isArray(it.summary) ? it.summary : [])].join(" ").toLowerCase();
+  for (const x of (hl.exclude || [])) t = t.split(String(x).toLowerCase()).join(" ");
+  let hits = words.filter(w => t.includes(String(w).toLowerCase()));
+  hits = hits.filter(w => !hits.some(o => o !== w && String(o).toLowerCase().includes(String(w).toLowerCase())));
+  const seen = new Set();
+  return hits.filter(w => { const k = String(w).replace(/\s/g, "").toLowerCase(); if (seen.has(k)) return false; seen.add(k); return true; });
+}
+const kwHtml = h => h.length ? `<span class="kws">${h.map(w => `<span class="kw">${esc(w)}</span>`).join("")}</span>` : "";
 function revMark(on) {
   return on ? `<svg class="rev" viewBox="0 0 22 20" role="img" aria-label="안 읽음"><polygon points="11,1.5 20.5,18.5 1.5,18.5"/><text x="11" y="15.5" text-anchor="middle">N</text></svg>` : `<span class="rev" aria-hidden="true"></span>`;
 }
@@ -571,18 +588,18 @@ function renderItems() {
   const SS = Object.fromEntries(DATA.sources.map(s => [s.name, subName(s)]));
   let items = DATA.items.filter(it => shown(it) && (!ui.group || it.grp === ui.group) && (!ui.sub || SS[it.source] === ui.sub)
     && (!q || (it.title + it.source + (it.change || "") + (it.title_ko || "") + (it.summary || []).join(" ")).toLowerCase().includes(q))
-    && (!ui.unread || isUnread(it)) && (!ui.star || starSet.has(it.id)));
+    && (!ui.unread || isUnread(it)) && (!ui.star || starSet.has(it.id)) && (!ui.hl || hlHits(it, DATA.highlight).length));
   items = [...items.filter(isUnread), ...items.filter(it => !isUnread(it))].slice(0, 400);
   if (!items.length) {
     $("#list").innerHTML = `<li class="empty"><b>${DATA.items.length ? "조건에 맞는 항목이 없다" : "아직 모은 항목이 없다"}</b>${DATA.items.length ? "검색어를 지우거나 '안 읽은 것만'을 끄면 더 보인다." : "첫 확인이 끝나면 여기에 쌓인다. 처음 확인한 글은 읽음으로 들어가고, 그 뒤 새로 올라온 글에 빨간 표시가 붙는다."}</li>`;
     return;
   }
   $("#list").innerHTML = items.map(it => `
-    <li class="row ${isUnread(it) ? "unread" : ""}" data-id="${it.id}">
+    <li class="row ${isUnread(it) ? "unread" : ""} ${hlHits(it, DATA.highlight).length ? "hl" : ""}" data-id="${it.id}">
       ${revMark(isUnread(it))}
       <span class="date">${esc(it.date ? it.date.slice(2).replaceAll("-", ".") : "")}</span>
       <div class="what">
-        <span class="src">${esc(it.grp)} / ${esc(it.source)}</span>
+        <span class="src">${esc(it.grp)} / ${esc(it.source)}</span>${kwHtml(hlHits(it, DATA.highlight))}
         ${titleHtml(it)}
         ${sumBlock(it, isUnread(it))}
       </div>
@@ -647,6 +664,7 @@ $("#topics").addEventListener("change", e => {
   store.set("hiddenTopics", [...hiddenTopics]); renderAll();
 });
 $("#fStar").addEventListener("change", e => { ui.star = e.target.checked; store.set("ui", ui); renderItems(); });
+$("#fHl").addEventListener("change", e => { ui.hl = e.target.checked; store.set("ui", ui); renderItems(); });
 let qt; $("#q").addEventListener("input", e => { clearTimeout(qt); qt = setTimeout(() => { ui.q = e.target.value.trim(); renderItems(); }, 150); });
 $("#readAll").addEventListener("click", () => { DATA.items.filter(it => { const src = DATA.sources.find(s => s.name === it.source); return shown(it) && (!ui.group || it.grp === ui.group) && (!ui.sub || (src && subName(src) === ui.sub)); }).forEach(it => readSet.add(it.id)); saveSets(); renderAll(); });
 $("#list").addEventListener("click", e => {
@@ -704,7 +722,7 @@ function renderManage() {
   $("#mlist").innerHTML = groups.map(g => `<div class="mgroup"><h3>${esc(g)}</h3>${
     DATA.sources.filter(s => s.group === g).map(s => {
       const r = st[s.name] || {}, on = s.enabled !== false;
-      const state = !r.last_checked ? "아직 확인 전" : r.last_error ? `<span class="err">오류: ${esc(r.last_error.slice(0, 80))}</span>` : `정상 ${short(r.last_ok)}`;
+      const state = !r.last_checked ? "아직 확인 전" : r.last_error ? `<span class="err">${(r.fail_count || 0) >= 3 ? `${r.fail_count}회 연속 실패 · ` : "오류: "}${esc(r.last_error.slice(0, 80))}</span>` : `정상 ${short(r.last_ok)}`;
       const url = (s.list_url || s.url || "").replace("{page}", "1").replace("{offset}", "0");
       return `<div class="srow ${on ? "" : "off"}" data-name="${esc(s.name)}">
         <label class="switch"><input type="checkbox" data-act="toggle" ${on ? "checked" : ""} aria-label="${esc(s.name)} 켜기"><span></span></label>
@@ -807,7 +825,7 @@ form.addEventListener("submit", async e => {
 });
 
 // ════════ 시작 ════════
-$("#fUnread").checked = ui.unread; $("#fStar").checked = ui.star; $("#q").value = "";
+$("#fUnread").checked = ui.unread; $("#fStar").checked = ui.star; $("#fHl").checked = !!ui.hl; $("#q").value = "";
 loadData().then(() => { renderAll(); watchRun(); }).catch(() => {
   $("#list").innerHTML = `<li class="empty"><b>아직 확인 결과가 없다</b>GitHub 저장소의 Actions 탭에서 '공지·입시 확인'을 한 번 실행하면 여기에 결과가 나온다.</li>`;
   $("#progText").textContent = "첫 실행 전";

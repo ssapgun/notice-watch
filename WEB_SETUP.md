@@ -63,6 +63,21 @@ Claude 가 핵심을 항목별로 정리하고 일본어·영어·독일어 글�
 - 비밀값(Secret)은 공개 저장소에서도 다른 사람에게 보이지 않는다. 키를 코드나 config.yaml 에 직접 적지 말 것.
 - 정리를 끄려면 config.yaml 의 `summary.enabled` 를 `false` 로.
 
+## 8. (선택) 텔레그램 알림 켜기
+새 글 중 핵심 키워드(config.yaml 의 `highlight.alert`: 학부연구생, T/O, 모집요강, 연구실탐방, 장학생 모집, 모듈러, 강구조 등)가 든 글과,
+3회 연속 실패한 감시 대상을 휴대폰으로 받는다. 토큰을 넣지 않으면 아무것도 보내지 않는다.
+
+1. 텔레그램에서 **@BotFather** 와 대화 → `/newbot` → 봇 이름과 아이디(끝이 bot)를 정하면 토큰(`123456:ABC...`)을 준다. 비밀번호처럼 다룬다.
+2. 방금 만든 봇과 대화를 열어 아무 말이나 한 번 보낸다.
+3. 브라우저에서 `https://api.telegram.org/bot<토큰>/getUpdates` 를 연다 → `"chat":{"id": 숫자` 의 숫자가 채팅 ID 다.
+4. GitHub 저장소 **Settings → Secrets and variables → Actions → New repository secret** 로 두 개를 넣는다.
+   - `TELEGRAM_BOT_TOKEN`: 1번의 토큰
+   - `TELEGRAM_CHAT_ID`: 3번의 숫자
+5. 다음 확인부터 보낸다. 같은 글은 한 번만 온다(처음 들어온 확인에서만).
+
+- 알림 키워드는 config.yaml 의 `highlight.alert`, 화면에서 눈에 띄게 표시할 키워드는 `highlight.keywords`, 오탐을 막는 제외어는 `highlight.exclude`.
+- PC 대시보드(app.py)에서 받으려면 같은 이름의 환경변수를 넣고 실행한다.
+
 ## 알아둘 점
 - **읽음·별표**는 기기마다 따로 저장된다 (휴대폰에서 읽어도 PC에선 새 글로 보인다).
 - **미리보기·구조 자동 추정**은 웹에서는 안 된다 (브라우저 보안 규칙상 다른 사이트를 직접 못 읽는다). 웹에서 대상을 추가하면 다음 확인 결과의 '감시 대상별 상태'로 확인한다. 미리보기가 필요하면 PC 대시보드(app.py)를 쓴다.
