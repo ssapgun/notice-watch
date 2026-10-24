@@ -151,10 +151,10 @@ class Handler(BaseHTTPRequestHandler):
             ok = crawler.visible_filter(cfg, hidden_param(q))
             sub, subs = q.get("sub", ""), sub_of(cfg)
             rows = store.items(group=q.get("group", ""), q=q.get("q", ""), unread=q.get("unread") == "1",
-                               starred=q.get("starred") == "1", limit=3000 if sub else 400)
+                               starred=q.get("starred") == "1", limit=3000)
             rows = [it for it in rows if ok(it) and (not sub or subs.get(it["source"], it["source"]) == sub)]
             return self.send_json([dict(it, summary=json.loads(it["summary"]) if it.get("summary") else [])
-                                   for it in rows[:400]])
+                                   for it in rows[:3000]])
         if u.path == "/api/summary":
             cfg = crawler.load_config()
             groups = []

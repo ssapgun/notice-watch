@@ -156,6 +156,13 @@ button{font:inherit;color:inherit;cursor:pointer}
 .kws{display:flex;flex-wrap:wrap;gap:4px;margin:3px 0 1px}
 .kw{font-size:11.5px;line-height:1.5;padding:0 6px;border:1px solid var(--amber);color:var(--amber);border-radius:2px;white-space:nowrap}
 .warn{color:var(--markup);font-weight:600}
+.pager{display:flex;flex-wrap:wrap;gap:6px;align-items:center;justify-content:center;padding:16px 12px 20px;border-top:1px solid var(--grid)}
+.pager button{min-width:34px;height:32px;padding:0 9px;border:1px solid var(--grid);background:none;color:var(--ink);font:inherit;font-size:13.5px;cursor:pointer}
+.pager button:hover:not([disabled]){border-color:var(--ink)}
+.pager button[aria-current="true"]{background:var(--ink);color:var(--sheet);border-color:var(--ink);font-weight:600}
+.pager button[disabled]{opacity:.4;cursor:default}
+.pager .gap{color:var(--pencil);padding:0 2px}
+.pager .pinfo{width:100%;text-align:center;font-size:12.5px;color:var(--pencil)}
 .star{background:none;border:0;font-size:18px;line-height:1;color:var(--pencil);padding:2px}
 .star[aria-pressed="true"]{color:var(--amber)}
 @media (max-width:560px){.row{grid-template-columns:28px 1fr 34px;padding:12px 12px 12px 8px}.date{grid-column:2;grid-row:1;font-size:12.5px}.what{grid-column:2}.star{grid-row:1/3;grid-column:3}.rev{grid-row:1/3}}
@@ -292,6 +299,7 @@ dialog::backdrop{background:rgba(14,34,54,.45)}
           <input id="q" type="search" placeholder="제목·출처 검색 (예: 募集要項, 대학원, deadline)" aria-label="검색">
         </div>
         <ul class="list" id="list"></ul>
+        <nav class="pager" id="pager" aria-label="쪽 이동"></nav>
       </main>
     </div>
     <details class="status" id="statusBox">
@@ -580,6 +588,32 @@ function hlHits(it, hl) {
   return hits.filter(w => { const k = String(w).replace(/\s/g, "").toLowerCase(); if (seen.has(k)) return false; seen.add(k); return true; });
 }
 const kwHtml = h => h.length ? `<span class="kws">${h.map(w => `<span class="kw">${esc(w)}</span>`).join("")}</span>` : "";
+// ── 페이지 나누기 (한 쪽에 10개). 분류·검색·필터가 바뀌면 1쪽으로
+const PER_PAGE = 10;
+let curPage = 1, lastSig = "";
+function paginate(items, sig) {
+  if (sig !== lastSig) { curPage = 1; lastSig = sig; }
+  const pages = Math.max(1, Math.ceil(items.length / PER_PAGE));
+  if (curPage > pages) curPage = pages;
+  renderPager(items.length, pages);
+  return items.slice((curPage - 1) * PER_PAGE, curPage * PER_PAGE);
+}
+function renderPager(total, pages) {
+  const box = $("#pager");
+  if (!box) return;
+  if (!total) { box.innerHTML = ""; return; }
+  const info = `<span class="pinfo">총 ${total}건 · ${curPage}/${pages}쪽</span>`;
+  if (pages <= 1) { box.innerHTML = info; return; }
+  let a = Math.max(1, curPage - 2), b = Math.min(pages, a + 4); a = Math.max(1, b - 4);
+  const nums = [];
+  if (a > 1) { nums.push(1); if (a > 2) nums.push("…"); }
+  for (let i = a; i <= b; i++) nums.push(i);
+  if (b < pages) { if (b < pages - 1) nums.push("…"); nums.push(pages); }
+  box.innerHTML = `<button type="button" data-p="${curPage - 1}" ${curPage === 1 ? "disabled" : ""} aria-label="이전 쪽">‹ 이전</button>`
+    + nums.map(n => n === "…" ? `<span class="gap">…</span>`
+      : `<button type="button" data-p="${n}" aria-current="${n === curPage}">${n}</button>`).join("")
+    + `<button type="button" data-p="${curPage + 1}" ${curPage === pages ? "disabled" : ""} aria-label="다음 쪽">다음 ›</button>` + info;
+}
 function revMark(on) {
   return on ? `<svg class="rev" viewBox="0 0 22 20" role="img" aria-label="안 읽음"><polygon points="11,1.5 20.5,18.5 1.5,18.5"/><text x="11" y="15.5" text-anchor="middle">N</text></svg>` : `<span class="rev" aria-hidden="true"></span>`;
 }
@@ -589,7 +623,8 @@ function renderItems() {
   let items = DATA.items.filter(it => shown(it) && (!ui.group || it.grp === ui.group) && (!ui.sub || SS[it.source] === ui.sub)
     && (!q || (it.title + it.source + (it.change || "") + (it.title_ko || "") + (it.summary || []).join(" ")).toLowerCase().includes(q))
     && (!ui.unread || isUnread(it)) && (!ui.star || starSet.has(it.id)) && (!ui.hl || hlHits(it, DATA.highlight).length));
-  items = [...items.filter(isUnread), ...items.filter(it => !isUnread(it))].slice(0, 400);
+  items = [...items.filter(isUnread), ...items.filter(it => !isUnread(it))];
+  items = paginate(items, JSON.stringify([ui.group, ui.sub, ui.q, ui.unread, ui.star, ui.hl, [...hiddenTopics]]));
   if (!items.length) {
     $("#list").innerHTML = `<li class="empty"><b>${DATA.items.length ? "조건에 맞는 항목이 없다" : "아직 모은 항목이 없다"}</b>${DATA.items.length ? "검색어를 지우거나 '안 읽은 것만'을 끄면 더 보인다." : "첫 확인이 끝나면 여기에 쌓인다. 처음 확인한 글은 읽음으로 들어가고, 그 뒤 새로 올라온 글에 빨간 표시가 붙는다."}</li>`;
     return;
@@ -607,6 +642,11 @@ function renderItems() {
     </li>`).join("");
 }
 function renderAll() { renderSummary(); renderItems(); }
+$("#pager").addEventListener("click", e => {
+  const b = e.target.closest("button[data-p]"); if (!b || b.disabled) return;
+  curPage = +b.dataset.p; renderItems();
+  $("#list").scrollIntoView({block: "start", behavior: "smooth"});
+});
 
 // ════════ 지금 확인 (GitHub Actions 실행) ════════
 let runPoll = null;
