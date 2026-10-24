@@ -14,6 +14,7 @@ import sys
 from datetime import datetime
 from pathlib import Path
 
+import calendar_events
 import crawler
 import notify
 import summarize
@@ -61,6 +62,18 @@ def main() -> int:
     except Exception as e:   # 알림이 실패해도 사이트 갱신은 계속
         print(f"[알림 오류] {type(e).__name__}: {e}")
 
+    # 시험 일정: 직접 적은 시험(config exams) + 학사 공지에서 뽑은 기간 → 사이트·구글 캘린더(.ics)·텔레그램
+    events = calendar_events.all_events(store, cfg)
+    (OUT.parent.parent / "calendar.ics").write_text(calendar_events.build_ics(events), encoding="utf-8", newline="")
+    try:
+        due = calendar_events.due_reminders(store, cfg, events)
+        if due and notify.enabled():
+            notify.send(calendar_events.reminder_text(due, cfg.get("site_url", "")))
+            calendar_events.mark_sent(store, cfg, due)
+            print(f"일정 알림 {len(due)}건")
+    except Exception as e:
+        print(f"[일정 알림 오류] {type(e).__name__}: {e}")
+
     ok = crawler.visible_filter(cfg)   # 필터를 바꾸기 전에 모인 글도 현재 필터로 가린다
     with store.lock:
         rows = [dict(r) for r in store.db.execute(
@@ -81,6 +94,8 @@ def main() -> int:
         "excluded": cfg.get("excluded", []),
         "links": cfg.get("links", []),
         "topics": cfg.get("topics", []),
+        "calendar": {"events": events, "undated": calendar_events.undated(cfg),
+                     "ics_url": (cfg.get("site_url", "").rstrip("/") + "/calendar.ics") if cfg.get("site_url") else ""},
         "highlight": {k: v for k, v in (cfg.get("highlight") or {}).items() if k in ("keywords", "exclude", "alert")},
         "status": store.sources(),
         "items": items,

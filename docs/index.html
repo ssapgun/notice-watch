@@ -166,6 +166,32 @@ button{font:inherit;color:inherit;cursor:pointer}
 .sum .box,.sum li,.sum pre{overflow-wrap:anywhere;word-break:break-word}
 .rep{display:block;font-size:12px;color:var(--pencil);margin-top:2px}
 .rep a{color:inherit}
+.cal h3{font-size:16px;margin:0 0 6px}
+.cal .lead{margin:0 0 14px;color:var(--ink-2);font-size:14px;max-width:70ch}
+.calhead{display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap;align-items:flex-end}
+.calfilter{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:12px}
+.calfilter button{border:1px solid var(--grid);background:none;color:var(--ink-2);font:inherit;font-size:13px;padding:4px 10px;cursor:pointer}
+.calfilter button[aria-pressed="true"]{border-color:var(--ink);color:var(--ink);font-weight:600}
+.cal-list{list-style:none;margin:0 0 26px;padding:0;border-top:1px solid var(--rule)}
+.cal-month{padding:14px 0 6px;font-size:12.5px;font-weight:600;color:var(--pencil);letter-spacing:.04em}
+.cal-ev{display:grid;grid-template-columns:62px 92px 1fr;gap:4px 12px;padding:10px 0;border-bottom:1px solid var(--grid);align-items:baseline}
+.cal-ev.past{opacity:.45}
+.cal-ev .dd{font-weight:700;font-size:14px;color:var(--ink-2)}
+.cal-ev .dd.soon{color:var(--markup)}
+.cal-ev .dt{font-size:13.5px;color:var(--ink-2)}
+.cal-ev .what b{font-weight:600}
+.cal-ev .ty{display:inline-block;font-size:11.5px;border:1px solid var(--grid);padding:0 6px;margin-right:6px;color:var(--ink-2)}
+.cal-ev .ty.t-시험{border-color:var(--markup);color:var(--markup)}
+.cal-ev .ty.t-접수마감,.cal-ev .ty.t-공지기간{border-color:var(--amber);color:var(--amber)}
+.cal-ev small{display:block;color:var(--pencil);font-size:12.5px;margin-top:2px;overflow-wrap:anywhere}
+.cal-undated{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:10px;margin:8px 0 26px}
+.cal-card{border:1px solid var(--grid);padding:10px 12px;font-size:13.5px}
+.cal-card .st{float:right;font-size:11.5px;border:1px solid var(--grid);padding:0 6px;color:var(--ink-2)}
+.cal-card b{display:block;margin-bottom:4px}
+.cal-card p{margin:0;color:var(--ink-2);line-height:1.5}
+.cal-sub{border-top:1px solid var(--rule);padding-top:14px;font-size:13.5px;color:var(--ink-2)}
+.cal-sub code{display:block;margin:6px 0;padding:6px 8px;background:var(--sheet);border:1px solid var(--grid);overflow-wrap:anywhere;color:var(--ink)}
+@media (max-width:560px){.cal-ev{grid-template-columns:52px 1fr}.cal-ev .what{grid-column:1/3}}
 .star{background:none;border:0;font-size:18px;line-height:1;color:var(--pencil);padding:2px}
 .star[aria-pressed="true"]{color:var(--amber)}
 @media (max-width:560px){.row{grid-template-columns:28px 1fr 34px;padding:12px 12px 12px 8px}.date{grid-column:2;grid-row:1;font-size:12.5px}.what{grid-column:2}.star{grid-row:1/3;grid-column:3}.rev{grid-row:1/3}}
@@ -275,6 +301,7 @@ dialog::backdrop{background:rgba(14,34,54,.45)}
 
   <nav class="views" role="tablist" aria-label="화면">
     <button type="button" role="tab" id="tabNotices" aria-selected="true">공지 보기</button>
+    <button type="button" role="tab" id="tabCal" aria-selected="false">시험 일정</button>
     <button type="button" role="tab" id="tabManage" aria-selected="false">감시 대상 관리</button>
     <button type="button" role="tab" id="tabSettings" aria-selected="false">연결 설정</button>
   </nav>
@@ -313,6 +340,20 @@ dialog::backdrop{background:rgba(14,34,54,.45)}
       </table></div>
     </details>
   </div>
+
+  <section id="viewCal" class="manage cal" hidden>
+    <div class="calhead">
+      <div>
+        <h3>다가오는 일정</h3>
+        <p class="lead">직접 정리한 시험 일정과, 학사 공지에서 자동으로 뽑은 신청 기간이다. 날짜는 공식 공지로 한 번 더 확인할 것.</p>
+      </div>
+      <div class="calfilter" id="calFilter"></div>
+    </div>
+    <ol class="cal-list" id="calList"></ol>
+    <h3>날짜가 아직 없는 시험</h3>
+    <div class="cal-undated" id="calUndated"></div>
+    <div class="cal-sub" id="calSub"></div>
+  </section>
 
   <section id="viewManage" class="manage" hidden>
     <div id="manageLock" class="locked" hidden><b>연결 설정이 필요하다.</b> 보기는 되지만, 추가·수정·삭제는 '연결 설정' 탭에서 GitHub 토큰을 넣어야 저장된다.</div>
@@ -725,16 +766,58 @@ $("#list").addEventListener("click", e => {
   }
 });
 
+// ════════ 시험 일정 ════════
+let calCat = "";
+function calDays(iso) {
+  const now = new Date(), kst = new Date(now.getTime() + (9 * 60 + now.getTimezoneOffset()) * 60000);
+  const t = new Date(kst.getFullYear(), kst.getMonth(), kst.getDate());
+  const [y, m, d] = iso.split("-").map(Number);
+  return Math.round((new Date(y, m - 1, d) - t) / 86400000);
+}
+function renderCal() {
+  const C = DATA.calendar || {events: [], undated: []};
+  const evs = C.events || [];
+  const cats = [...new Set([...evs.map(e => e.category), ...(C.undated || []).map(u => u.category)].filter(Boolean))];
+  $("#calFilter").innerHTML = ["", ...cats].map(c => `<button type="button" data-c="${esc(c)}" aria-pressed="${c === calCat}">${esc(c || "전체")}</button>`).join("");
+  const W = ["일", "월", "화", "수", "목", "금", "토"];
+  let month = "";
+  const rows = evs.filter(e => (!calCat || e.category === calCat) && calDays(e.date) >= -7).map(e => {
+    const n = calDays(e.date), [y, m, d] = e.date.split("-").map(Number);
+    const head = `${y}년 ${m}월`;
+    const sep = head !== month ? `<li class="cal-month">${head}</li>` : ""; month = head;
+    const dd = n === 0 ? "오늘" : n > 0 ? `D-${n}` : `${-n}일 전`;
+    const wd = W[new Date(y, m - 1, d).getDay()];
+    const range = e.start ? `${e.start.slice(5).replace("-", ".")} ~ ` : "";
+    return sep + `<li class="cal-ev ${n < 0 ? "past" : ""}">
+      <span class="dd ${n >= 0 && n <= 7 ? "soon" : ""}">${dd}</span>
+      <span class="dt">${range}${String(m).padStart(2, "0")}.${String(d).padStart(2, "0")} (${wd})${e.time ? " " + esc(e.time) : ""}</span>
+      <div class="what"><span class="ty t-${esc(e.type.replace(/\s/g, ""))}">${esc(e.type)}</span><b>${e.url ? `<a href="${esc(e.url)}" target="_blank" rel="noopener">${esc(e.exam)}</a>` : esc(e.exam)}</b>${e.label ? " " + esc(e.label) : ""}
+        ${e.note ? `<small>${esc(e.note)}</small>` : ""}</div></li>`;
+  });
+  $("#calList").innerHTML = rows.join("") || `<li class="empty"><b>다가오는 일정이 없다</b>시험 날짜가 정해지면 config.yaml 의 exams 에 추가한다.</li>`;
+  const un = (C.undated || []).filter(u => !calCat || u.category === calCat);
+  $("#calUndated").innerHTML = un.map(u => `<div class="cal-card"><span class="st">${esc(u.status)}</span>
+    <b>${u.url ? `<a href="${esc(u.url)}" target="_blank" rel="noopener">${esc(u.name)}</a>` : esc(u.name)}</b><p>${esc(u.note)}</p></div>`).join("") || "<p>없음</p>";
+  $("#calSub").innerHTML = C.ics_url ? `<b>구글 캘린더에서 구독하기</b><br>구글 캘린더(PC) → 왼쪽 '다른 캘린더' 옆 + → 'URL로 추가' → 아래 주소를 붙여넣는다. 이후 자동으로 갱신된다(구글 쪽 갱신은 몇 시간 걸릴 수 있다).
+    <code>${esc(C.ics_url)}</code><button class="btn" id="icsCopy" type="button">주소 복사</button>` : "";
+}
+document.addEventListener("click", e => {
+  const b = e.target.closest("#calFilter button"); if (b) { calCat = b.dataset.c; renderCal(); return; }
+  if (e.target.id === "icsCopy") { try { navigator.clipboard.writeText(DATA.calendar.ics_url); e.target.textContent = "복사했다"; } catch (err) {} }
+});
+
 // ════════ 화면 전환 ════════
 function showView(v) {
-  ["notices", "manage", "settings"].forEach(n => {
+  ["notices", "cal", "manage", "settings"].forEach(n => {
     $("#tab" + n[0].toUpperCase() + n.slice(1)).setAttribute("aria-selected", v === n);
     $("#view" + n[0].toUpperCase() + n.slice(1)).hidden = v !== n;
   });
   if (v === "manage") renderManage();
+  if (v === "cal") renderCal();
   if (v === "settings") { $("#repoInput").value = gh.repo; $("#branchInput").value = gh.branch; $("#tokenInput").value = gh.token ? "••••••••" : ""; }
 }
 $("#tabNotices").addEventListener("click", () => showView("notices"));
+$("#tabCal").addEventListener("click", () => showView("cal"));
 $("#tabManage").addEventListener("click", () => showView("manage"));
 $("#tabSettings").addEventListener("click", () => showView("settings"));
 

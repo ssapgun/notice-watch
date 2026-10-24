@@ -12,6 +12,7 @@
 | `crawler.py` | 크롤링 엔진. 저장소(`Store`, SQLite), 게시판 파싱(`parse_list`), 페이지 변경 감지(`crawl_watch`), 설정 편집(`upsert_source` 등), 미리보기(`test_source`), 구조 추정(`guess_board`) |
 | `summarize.py` | 공지 정리·번역. 상세 페이지 본문(`detail_selector`)을 뽑아 Claude API(`ANTHROPIC_API_KEY`)로 한국어 정리, 키가 없으면 발췌. 첨부파일은 읽지 않는다 |
 | `notify.py` | 텔레그램 알림. TELEGRAM_BOT_TOKEN·TELEGRAM_CHAT_ID 가 있을 때만 핵심 키워드 새 글과 3회 연속 실패 대상을 보낸다 |
+| `calendar_events.py` | 시험 일정: config exams + 학사 공지 기간 추출 → data.json calendar, docs/calendar.ics, 텔레그램 미리 알림(meta 로 중복 방지) |
 | `app.py` | 파이썬 표준 라이브러리 웹서버(`ThreadingHTTPServer`). `127.0.0.1:8765`. API 와 자동 확인 스레드 |
 | `static/index.html` | 화면 전체 (HTML+CSS+JS 한 파일, 빌드 도구 없음) |
 | `config.yaml` | 감시 대상 목록. 화면에서 저장하면 `crawler.save_config` 가 다시 쓴다 |

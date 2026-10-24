@@ -60,6 +60,129 @@ highlight:
   - 철골
   - 募集要項
 site_url: https://ssapgun.github.io/notice-watch/
+exams:
+- name: 건축기사 (2027 정기)
+  category: 국가기술자격
+  status: 미발표
+  url: https://www.q-net.or.kr/rcv001.do?gSite=Q.&id=rcv00104
+  note: 2027년 시행계획 발표 전. 참고로 2026년 필기 원서접수는 1회 1/12~1/15, 2회 4/20~4/23, 3회 7/20~7/23. 응시자격은 큐넷 응시자격 자가진단으로 먼저 확인할 것.
+- name: JLPT N4 (2026 제2회)
+  category: 어학 · 일본어
+  url: https://www.jlpt.or.kr
+  note: 접수 완료. 온라인 성적 발표는 2027년 1월 말 예정(정확한 날짜 미발표).
+  events:
+  - type: 시험
+    date: '2026-12-06'
+- name: JLPT N3 (2027 제1회)
+  category: 어학 · 일본어
+  status: 미발표
+  url: https://www.jlpt.or.kr
+  note: N4 다음 단계. 2027년 7월 회차 접수 일정이 나오면 추가.
+- name: 기관토플 (경희대 TOEFL ITP)
+  category: 어학 · 영어
+  url: https://oia.khu.ac.kr/oiak_kor/user/bbs/BMSR00040/view.do?menuNo=5800010&boardId=551746
+  note: 응시료 33,000원. 회차 중 하나만 고르면 된다. 국제캠퍼스 8·10회는 서울 7·9회와 같은 날. TOEFL iBT 와 둘 중 하나.
+  remind:
+  - 접수 마감
+  events:
+  - label: 2회 (서울)
+    type: 접수 마감
+    date: '2026-10-26'
+    time: '11:00'
+  - label: 2회 (서울)
+    type: 시험
+    date: '2026-11-06'
+    time: '18:00'
+  - label: 2회 (서울)
+    type: 결과 발표
+    date: '2026-11-13'
+  - label: 4회 (서울)
+    type: 접수 마감
+    date: '2026-11-09'
+    time: '11:00'
+  - label: 4회 (서울)
+    type: 시험
+    date: '2026-11-20'
+    time: '18:00'
+  - label: 4회 (서울)
+    type: 결과 발표
+    date: '2026-11-27'
+  - label: 6회 (서울)
+    type: 접수 마감
+    date: '2026-11-23'
+    time: '11:00'
+  - label: 6회 (서울)
+    type: 시험
+    date: '2026-12-04'
+    time: '18:00'
+  - label: 6회 (서울)
+    type: 결과 발표
+    date: '2026-12-11'
+  - label: 7회 (서울)
+    type: 접수 마감
+    date: '2026-12-14'
+    time: '11:00'
+  - label: 7회 (서울)
+    type: 시험
+    date: '2026-12-22'
+    time: '15:00'
+  - label: 7회 (서울)
+    type: 결과 발표
+    date: '2026-12-29'
+  - label: 9회 (서울)
+    type: 접수 마감
+    date: '2026-12-14'
+    time: '11:00'
+  - label: 9회 (서울)
+    type: 시험
+    date: '2026-12-23'
+    time: '15:00'
+  - label: 9회 (서울)
+    type: 결과 발표
+    date: '2026-12-30'
+- name: TOEFL iBT
+  category: 어학 · 영어
+  status: 상시
+  url: https://www.ets.org/toefl.html
+  note: 원하는 날짜를 골라 접수. 2026년 1월 시험 개편. 기관토플과 둘 중 하나. 응시일을 정하면 일정에 추가.
+- name: OPIc
+  category: 어학 · 영어 말하기
+  status: 상시
+  url: https://www.opic.or.kr
+  note: 거의 매일 시행. 2~3주 전 좌석 예약 권장, 재응시는 25일 뒤부터, 결과는 응시 10일 뒤 13시. 경희대 재학·휴학생 연 2회 69,000원 할인. 토익스피킹과 둘 중 하나.
+- name: 토익스피킹
+  category: 어학 · 영어 말하기
+  status: 미정
+  url: https://exam.toeic.co.kr
+  note: 시험 일정은 확인하지 않았다. GPMU 스터디 일정에 맞춰 응시일을 정하면 추가. OPIc 과 둘 중 하나.
+- name: CAPM (PMI)
+  category: PM 자격
+  status: 미정
+  url: https://www.pmi.org/certifications/certified-associate-capm
+  note: '요건: 고졸 이상·만 18세 이상·프로젝트관리 교육 23시간. 180분 150문항. GPMU 수강 시간이 23시간으로 인정되는지 확인할 것.'
+- name: BIM AWARDS 2027 (빌딩스마트협회)
+  category: 공모전
+  status: 미발표
+  url: https://www.theteams.kr/activities/page/331951/lc
+  note: 대학생 부문(휴학생 가능, 4인 이하 팀). 2026년은 접수 6/22~9/4. 2027년 공고가 나오면 추가.
+- name: 대학생 모듈러 건축설계 공모전 (대한건축학회)
+  category: 공모전
+  status: 미발표
+  url: https://www.aik.or.kr/board/?ncode=a001
+  note: 2026년 제1회 개최. 다음 회차 공지는 '학회' 분류(대한건축학회 학회소식)에서 잡힌다.
+academic_calendar:
+  sources:
+  - 학교 공지 - 학사
+  keywords:
+  - 복학
+  - 휴학
+  - 수강신청
+  - 수강 신청
+  - 등록
+  - 졸업
+  - 계절학기
+  - 학점교류
+  - 조기졸업
 sources:
 - name: 학교 공지
   group: 경희대
@@ -75,6 +198,21 @@ sources:
   remove_in_title: span
   link_regex: view\('(\d+)'
   link_template: https://www.khu.ac.kr/kor/user/bbs/BMSR00040/view.do?menuNo=200316&boardId={0}
+  detail_selector: .row.contents
+- name: 학교 공지 - 학사
+  group: 경희대
+  sub: 학사
+  type: board
+  enabled: true
+  note: 경희대 공지사항 > 학사 (복학·수강신청·등록·졸업 등). 시험 일정 탭의 학사 기간을 여기서 뽑는다
+  list_url: https://www.khu.ac.kr/kor/user/bbs/BMSR00040/list.do?menuNo=200317&pageIndex={page}
+  pages: 2
+  row_selector: table.board01 tbody tr
+  title_selector: td.tal a
+  date_selector: td:nth-of-type(4)
+  remove_in_title: span
+  link_regex: view\('(\d+)'
+  link_template: https://www.khu.ac.kr/kor/user/bbs/BMSR00040/view.do?menuNo=200317&boardId={0}
   detail_selector: .row.contents
 - name: 학교 공지 - 장학
   group: 경희대
