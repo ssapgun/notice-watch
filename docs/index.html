@@ -848,7 +848,7 @@ function renderItems() {
       <div class="what">
         <span class="src">${esc(it.grp)} / ${esc(it.source)}</span>${kwHtml(hlHits(it, DATA.highlight))}
         ${titleHtml(it)}${repostHtml(it)}
-        ${sumBlock(it, isUnread(it))}
+        ${sumBlock(it, false)}
       </div>
       <button class="star" type="button" aria-pressed="${starSet.has(it.id)}" aria-label="별표">${starSet.has(it.id) ? "★" : "☆"}</button>
     </li>`).join("");

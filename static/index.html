@@ -710,7 +710,7 @@ function renderList() {
       <div class="what">
         <span class="src">${esc(it.grp)} / ${esc(it.source)}</span>${kwHtml(hlHits(it, HL))}
         ${titleHtml(it)}${repostHtml(it)}
-        ${sumBlock(it, !it.is_read)}
+        ${sumBlock(it, false)}
       </div>
       <button class="star" type="button" aria-pressed="${!!it.starred}" aria-label="별표">${it.starred ? "★" : "☆"}</button>
     </li>`).join("");
