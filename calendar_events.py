@@ -189,7 +189,7 @@ def _fold(line: str) -> str:
 
 
 def build_ics(events: list[dict], name: str = "공지·입시 감시 일정") -> str:
-    stamp = datetime.utcnow().strftime("%Y%m%dT%H%M%SZ")
+    stamp = "20260101T000000Z"   # 내용이 같으면 파일도 같게 (매시간 동기화가 빈 커밋을 만들지 않게)
     lines = ["BEGIN:VCALENDAR", "VERSION:2.0", "PRODID:-//notice-watch//exam-calendar//KO",
              "CALSCALE:GREGORIAN", "METHOD:PUBLISH", f"X-WR-CALNAME:{_esc(name)}", "X-WR-TIMEZONE:Asia/Seoul"]
     for e in events:

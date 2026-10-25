@@ -39,7 +39,11 @@ def write_calendar(store: crawler.Store, cfg: dict) -> None:
     ICS.write_text(calendar_events.build_ics(events), encoding="utf-8", newline="")
     if OUT.exists():
         d = json.loads(OUT.read_text(encoding="utf-8"))
-        d["calendar"] = calendar_payload(cfg, events)
+        new = calendar_payload(cfg, events)
+        old = {k: v for k, v in (d.get("calendar") or {}).items() if k != "synced_at"}
+        if old == {k: v for k, v in new.items() if k != "synced_at"}:
+            return   # 바뀐 일정이 없으면 그대로 둔다
+        d["calendar"] = new
         OUT.write_text(json.dumps(d, ensure_ascii=False, separators=(",", ":")), encoding="utf-8")
 
 
