@@ -6,7 +6,7 @@
 <meta name="robots" content="noindex, nofollow">
 <title>공지·입시 감시</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+KR:wght@400;500;600;700&family=Noto+Sans+JP:wght@400;500&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;700&family=Noto+Sans+JP:wght@400;500&display=swap" rel="stylesheet">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/js-yaml/4.1.0/js-yaml.min.js"></script>
 <style>
 
@@ -276,6 +276,161 @@ dialog::backdrop{background:rgba(14,34,54,.45)}
 .ghstate.ok{color:var(--ink)}
 .locked{padding:14px 16px;border:1px dashed var(--pencil);margin-bottom:14px;font-size:14px;color:var(--ink-2)}
 .locked b{color:var(--ink)}
+
+/* ════════ 경희대 홈페이지 느낌 (진한 글씨·큰 글씨) ════════
+   색: 경희대 홈페이지 상단 크림슨 #990E17, 표 머리 #873A35/#FAF9F5/#6A2C32, 검색 버튼 금색 #C5A06B, 남색 #1B253E */
+:root{
+  --khu:#990E17; --khu-deep:#6A2C32; --khu-ink:#873A35; --gold:#C5A06B; --gold-ink:#8A6531; --navy:#1B253E; --th-bg:#FAF9F5;
+  --sheet:#F3F1EC; --paper:#FFFFFF; --ink:#141414; --ink-2:#2E2E2E; --pencil:#5C5C5C;
+  --grid:#E3DFD7; --rule:#6A2C32; --markup:#990E17; --markup-bg:#FBF0F0; --amber:#8A6531; --focus:#990E17;
+}
+@media (prefers-color-scheme: dark){
+  :root{
+    --khu:#B3202B; --khu-deep:#C9787E; --khu-ink:#F0B4B8; --gold:#D8B784; --gold-ink:#E6C691; --navy:#AFC0E0; --th-bg:#24262B;
+    --sheet:#141518; --paper:#1C1D21; --ink:#F4F4F4; --ink-2:#DCDCDC; --pencil:#B0B0B0;
+    --grid:#34363C; --rule:#C9787E; --markup:#FF8E8E; --markup-bg:#3A2224; --amber:#E6C691; --focus:#FF8E8E;
+  }
+}
+body{background:var(--sheet);background-image:none;font:16px/1.65 "Noto Sans KR","Roboto","Noto Sans JP","Malgun Gothic",system-ui,sans-serif;
+  -webkit-font-smoothing:antialiased;letter-spacing:-.005em}
+.frame{border:0;border-top:6px solid var(--khu);box-shadow:0 1px 3px rgba(0,0,0,.08)}
+@media (max-width:700px){.frame{border-width:6px 0 0}}
+
+/* 표제: 크림슨 띠 */
+.head{border-bottom:2px solid var(--khu-deep)}
+.title{background:var(--khu);color:#fff;padding:24px 26px 20px}
+.title h1{font-size:30px;font-weight:700;letter-spacing:-.02em}
+.title p{color:rgba(255,255,255,.92);font-size:15px}
+.block{border-left:0}
+.cell{border-color:var(--grid)}
+.cell small{color:var(--pencil);font-size:13px;font-weight:500}
+.cell b{font-size:16.5px;font-weight:700;color:var(--ink)}
+#newCount{color:var(--khu)}
+.check{background:var(--gold);border-color:var(--gold);color:#fff;font-weight:700;padding:8px 18px}
+.check:hover:not(:disabled){filter:brightness(.95)}
+.progress{font-size:14px;color:var(--ink-2)}
+.bar i{background:var(--khu)}
+
+/* 화면 탭: 학교 공지 탭처럼 */
+.views{background:var(--paper);border-bottom:1px solid var(--grid)}
+.views button{border-right:0;padding:13px 22px;font-size:16px;font-weight:500;color:var(--pencil);border-bottom:3px solid transparent}
+.views button[aria-selected="true"]{background:none;box-shadow:none;color:var(--khu);font-weight:700;border-bottom-color:var(--khu)}
+
+/* 분류 목록 */
+.index{background:var(--paper);border-right:1px solid var(--grid)}
+.index h2{font-size:13.5px;color:var(--khu-ink)}
+.groups button{font-size:16px;color:var(--ink);padding-top:9px;padding-bottom:9px}
+.groups button[aria-current="true"]{border-left-color:var(--khu);background:var(--th-bg);color:var(--khu);font-weight:700}
+.groups .n{font-size:13.5px;color:var(--pencil)}
+.groups .n.has{color:var(--khu);font-weight:700}
+.subs button{font-size:15px;color:var(--ink-2)}
+.subs button[aria-current="true"]{border-left-color:var(--khu);color:var(--khu)}
+.subs .n.has{color:var(--khu)}
+.opts{font-size:15px;color:var(--ink)}
+.opts input,.topics input{accent-color:var(--khu)}
+.topics,.quick{font-size:14.5px}
+.topics h3,.quick h3{font-size:13.5px;color:var(--khu-ink)}
+.topics small,.quick small{font-size:12.5px;color:var(--pencil)}
+.linkbtn{color:var(--khu)}
+
+/* 검색창: 학교 사이트처럼 금색 테두리 */
+.searchbar{border-bottom:2px solid var(--khu-deep);background:var(--paper)}
+.searchbar input{border:1px solid #CFC7B8;padding:10px 14px;font-size:16px}
+.searchbar input:focus{border-color:var(--gold);outline:none;box-shadow:0 0 0 2px rgba(197,160,107,.25)}
+
+/* 공지 목록 */
+.row{padding:15px 22px 15px 14px;border-bottom:1px solid var(--grid)}
+.row.unread{background:linear-gradient(90deg,var(--markup-bg),transparent 55%)}
+.rev polygon{stroke:var(--khu)} .rev text{fill:var(--khu)}
+.date{font-size:15px;color:var(--ink-2);font-weight:500}
+.src{font-size:14px;color:var(--pencil);font-weight:500}
+.ttl{font-size:17px;font-weight:500;color:var(--ink);line-height:1.5}
+.row.unread .ttl{font-weight:700}
+.ttl:hover{color:var(--khu)}
+.ttl-orig{font-size:13.5px;color:var(--pencil)}
+.kw{font-size:12.5px;border-color:var(--gold);color:var(--gold-ink);font-weight:600}
+.row.hl{box-shadow:inset 3px 0 0 var(--gold)}
+.rep{font-size:13px}
+.sum{font-size:15px}
+.sum>summary{color:var(--khu-ink);font-weight:500}
+.sum .box{border-left-color:var(--gold);background:var(--th-bg)}
+.sum li{color:var(--ink)}
+.sum .note{font-size:13.5px}
+.sum .link{font-size:14px}
+.star{color:#9A9A9A}
+.star[aria-pressed="true"]{color:var(--gold)}
+
+/* 쪽 이동 */
+.pager button{font-size:15px;min-width:38px;height:36px;border-color:#D8D2C6}
+.pager button[aria-current="true"]{background:var(--khu);border-color:var(--khu);color:#fff}
+.pager .pinfo{font-size:14px}
+
+/* 상태표: 학교 게시판 표 머리 */
+.status{border-top:2px solid var(--khu-deep)}
+.status summary{font-size:16px;color:var(--khu-ink)}
+.status table{font-size:14.5px}
+.status th{background:var(--th-bg);color:var(--khu-ink);font-weight:600;border-top:1px solid var(--khu-deep)}
+
+/* 버튼·관리 화면 */
+.btn{border-color:var(--khu-deep);color:var(--khu-deep)}
+.btn.primary{background:var(--khu);border-color:var(--khu);color:#fff}
+.manage{font-size:15.5px}
+
+/* 시험 일정 */
+.cal h3{color:var(--ink);font-size:18px}
+.cal .lead{font-size:15px;color:var(--ink-2)}
+.calfilter button{font-size:14px;color:var(--ink-2);border-color:#D8D2C6}
+.calfilter button[aria-pressed="true"]{border-color:var(--khu);color:var(--khu)}
+.cal-month{font-size:14px;color:var(--khu-ink)}
+.cal-ev{font-size:16px}
+.cal-ev .dd{font-size:15.5px;color:var(--ink-2)}
+.cal-ev .dd.soon{color:var(--khu)}
+.cal-ev .dt{font-size:15px;color:var(--ink)}
+.cal-ev .ty{font-size:12.5px}
+.cal-ev .ty.t-시험{border-color:var(--khu);color:var(--khu)}
+.cal-ev .ty.t-접수마감,.cal-ev .ty.t-공지기간{border-color:var(--gold);color:var(--gold-ink)}
+.cal-ev small{font-size:13.5px}
+.cal-card{font-size:14.5px;background:var(--paper)}
+.cal-card p{color:var(--ink-2)}
+@media (max-width:820px){.index{border-right:0;border-bottom:1px solid var(--grid)}}
+/* 시험 일정: 목록/달력 전환 + 월간 달력 */
+.calmode{display:inline-flex;border:1px solid var(--khu-deep);margin:0 0 12px}
+.calmode button{border:0;background:none;padding:6px 16px;font:inherit;font-size:15px;color:var(--khu-deep);cursor:pointer}
+.calmode button[aria-pressed="true"]{background:var(--khu);color:#fff;font-weight:700}
+.mcal-head{display:flex;align-items:center;gap:10px;margin:4px 0 10px}
+.mcal-head b{font-size:20px;min-width:9.5em;text-align:center;color:var(--ink)}
+.mcal-head button{border:1px solid #D8D2C6;background:var(--paper);color:var(--ink);font:inherit;font-size:15px;height:36px;min-width:36px;padding:0 10px;cursor:pointer}
+.mcal{display:grid;grid-template-columns:repeat(7,minmax(0,1fr));border-top:2px solid var(--khu-deep);border-left:1px solid var(--grid)}
+.mcal .wd{background:var(--th-bg);color:var(--khu-ink);font-weight:600;font-size:14px;text-align:center;padding:7px 0;border-right:1px solid var(--grid);border-bottom:1px solid var(--grid)}
+.mcal .wd.sun,.mcal .day.sun .dn{color:var(--khu)}
+.mcal .wd.sat,.mcal .day.sat .dn{color:#2D5BA8}
+.mcal .day{min-height:108px;border-right:1px solid var(--grid);border-bottom:1px solid var(--grid);padding:5px 5px 6px;background:var(--paper);cursor:pointer;text-align:left;font:inherit;color:inherit;display:flex;flex-direction:column;gap:3px;min-width:0}
+.mcal .day.out{background:var(--sheet);opacity:.55}
+.mcal .day.today{box-shadow:inset 0 0 0 2px var(--khu)}
+.mcal .day.sel{background:var(--th-bg)}
+.mcal .dn{font-size:14.5px;font-weight:600;color:var(--ink)}
+.mcal .chip{display:block;font-size:12.5px;line-height:1.35;padding:2px 5px;border-left:3px solid var(--gold);background:var(--th-bg);color:var(--ink);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.mcal .chip.t-시험{border-left-color:var(--khu)}
+.mcal .chip.t-결과발표{border-left-color:#7A7A7A}
+.mcal .more{font-size:12px;color:var(--pencil)}
+.mcal-day{margin:14px 0 26px}
+.mcal-day h4{margin:0 0 4px;font-size:16px}
+@media (max-width:640px){
+  .mcal .day{min-height:58px;padding:4px 3px}
+  .mcal .chip{font-size:0;padding:0;height:6px;border-left:0;background:var(--gold);border-radius:3px}
+  .mcal .chip.t-시험{background:var(--khu)} .mcal .chip.t-결과발표{background:#7A7A7A}
+  .mcal .more{font-size:11px}
+  .mcal-head b{font-size:17px;min-width:7em}
+}
+/* 휴대폰 정리: 탭 한 줄, 필터 2열 */
+@media (max-width:820px){
+  .views{overflow-x:auto;scrollbar-width:none}
+  .views button{white-space:nowrap;padding:12px 16px;flex:0 0 auto}
+  .opts{grid-auto-flow:row;grid-template-columns:1fr 1fr;gap:8px 12px;overflow:visible}
+  .opts label{white-space:nowrap}
+  .opts .linkbtn,.opts .webnote,.opts a.linkbtn{grid-column:1/-1}
+}
+.mcal .day{border:0;border-right:1px solid var(--grid);border-bottom:1px solid var(--grid);border-radius:0}
 </style>
 </head>
 <body>
@@ -348,6 +503,14 @@ dialog::backdrop{background:rgba(14,34,54,.45)}
         <p class="lead">직접 정리한 시험 일정과, 학사 공지에서 자동으로 뽑은 신청 기간이다. 날짜는 공식 공지로 한 번 더 확인할 것.</p>
       </div>
       <div class="calfilter" id="calFilter"></div>
+    </div>
+    <div class="calmode" id="calMode" role="group" aria-label="보기 방식">
+      <button type="button" data-m="list" aria-pressed="true">목록</button><button type="button" data-m="month" aria-pressed="false">달력</button>
+    </div>
+    <div id="calMonthBox" hidden>
+      <div class="mcal-head"><button type="button" id="mPrev" aria-label="이전 달">‹</button><b id="mTitle"></b><button type="button" id="mNext" aria-label="다음 달">›</button><button type="button" id="mToday">오늘</button></div>
+      <div class="mcal" id="mGrid"></div>
+      <div class="mcal-day" id="mDay"></div>
     </div>
     <ol class="cal-list" id="calList"></ol>
     <h3>날짜가 아직 없는 시험</h3>
@@ -798,6 +961,7 @@ function renderCal() {
   const un = (C.undated || []).filter(u => !calCat || u.category === calCat);
   $("#calUndated").innerHTML = un.map(u => `<div class="cal-card"><span class="st">${esc(u.status)}</span>
     <b>${u.url ? `<a href="${esc(u.url)}" target="_blank" rel="noopener">${esc(u.name)}</a>` : esc(u.name)}</b><p>${esc(u.note)}</p></div>`).join("") || "<p>없음</p>";
+  applyCalView();
   $("#calSub").innerHTML = C.ics_url ? `<b>구글 캘린더에서 구독하기</b><br>구글 캘린더(PC) → 왼쪽 '다른 캘린더' 옆 + → 'URL로 추가' → 아래 주소를 붙여넣는다. 이후 자동으로 갱신된다(구글 쪽 갱신은 몇 시간 걸릴 수 있다).
     <code>${esc(C.ics_url)}</code><button class="btn" id="icsCopy" type="button">주소 복사</button>` : "";
 }
@@ -805,6 +969,60 @@ document.addEventListener("click", e => {
   const b = e.target.closest("#calFilter button"); if (b) { calCat = b.dataset.c; renderCal(); return; }
   if (e.target.id === "icsCopy") { try { navigator.clipboard.writeText(DATA.calendar.ics_url); e.target.textContent = "복사했다"; } catch (err) {} }
 });
+
+// ── 달력 보기
+let calView = (() => { try { return localStorage.getItem("calView") || "list"; } catch (e) { return "list"; } })();
+let mYM = null, mSel = null;
+function kstToday() { const n = new Date(), k = new Date(n.getTime() + (9 * 60 + n.getTimezoneOffset()) * 60000); return new Date(k.getFullYear(), k.getMonth(), k.getDate()); }
+const iso = d => `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}-${String(d.getDate()).padStart(2, "0")}`;
+function evsByDay() {
+  const C = DATA.calendar || {events: []}, map = {};
+  for (const e of (C.events || []).filter(e => !calCat || e.category === calCat)) {
+    (map[e.date] ||= []).push(e);
+    if (e.start && e.start !== e.date) (map[e.start] ||= []).push({...e, type: e.type, _start: true});
+  }
+  return map;
+}
+function renderMonth() {
+  const t = kstToday();
+  if (!mYM) mYM = [t.getFullYear(), t.getMonth()];
+  const [y, m] = mYM, first = new Date(y, m, 1), map = evsByDay();
+  $("#mTitle").textContent = `${y}년 ${m + 1}월`;
+  const W = ["일", "월", "화", "수", "목", "금", "토"];
+  let html = W.map((w, i) => `<div class="wd ${i === 0 ? "sun" : i === 6 ? "sat" : ""}">${w}</div>`).join("");
+  const start = new Date(y, m, 1 - first.getDay());
+  const weeks = Math.ceil((first.getDay() + new Date(y, m + 1, 0).getDate()) / 7);
+  for (let i = 0; i < weeks * 7; i++) {
+    const d = new Date(start.getFullYear(), start.getMonth(), start.getDate() + i), k = iso(d), list = map[k] || [];
+    const cls = ["day", d.getMonth() !== m ? "out" : "", k === iso(t) ? "today" : "", k === mSel ? "sel" : "", d.getDay() === 0 ? "sun" : d.getDay() === 6 ? "sat" : ""].join(" ");
+    const chips = list.slice(0, 3).map(e => `<span class="chip t-${esc(e.type.replace(/\s/g, ""))}" title="${esc(e.type + " · " + e.exam + (e.label ? " " + e.label : ""))}">${esc((e._start ? "시작 " : "") + (e.type.replace(" ", "") + " ") + e.exam.replace(/\s*\(.*?\)\s*/g, " ").trim() + (e.label ? " " + e.label.replace(/\s*\(.*?\)/, "") : ""))}</span>`).join("");
+    html += `<button type="button" class="${cls}" data-d="${k}" aria-label="${d.getMonth() + 1}월 ${d.getDate()}일 일정 ${list.length}건"><span class="dn">${d.getDate()}</span>${chips}${list.length > 3 ? `<span class="more">+${list.length - 3}</span>` : ""}</button>`;
+  }
+  $("#mGrid").innerHTML = html;
+  renderDay(map);
+}
+function renderDay(map) {
+  map = map || evsByDay();
+  if (!mSel) { $("#mDay").innerHTML = `<p class="lead">날짜를 누르면 그날 일정이 여기에 나온다.</p>`; return; }
+  const [y, m, d] = mSel.split("-").map(Number), list = map[mSel] || [];
+  $("#mDay").innerHTML = `<h4>${m}월 ${d}일 일정 ${list.length}건</h4>` + (list.length ? `<ol class="cal-list">${list.map(e => `<li class="cal-ev"><span class="dd">${e._start ? "시작" : esc(e.type)}</span><span class="dt">${e.time ? esc(e.time) : ""}</span>
+    <div class="what"><span class="ty t-${esc(e.type.replace(/\s/g, ""))}">${esc(e.type)}</span><b>${e.url ? `<a href="${esc(e.url)}" target="_blank" rel="noopener">${esc(e.exam)}</a>` : esc(e.exam)}</b>${e.label ? " " + esc(e.label) : ""}${e.note ? `<small>${esc(e.note)}</small>` : ""}</div></li>`).join("")}</ol>` : `<p class="lead">일정이 없다.</p>`);
+}
+function applyCalView() {
+  $("#calMode").querySelectorAll("button").forEach(b => b.setAttribute("aria-pressed", b.dataset.m === calView));
+  $("#calMonthBox").hidden = calView !== "month";
+  $("#calList").hidden = calView !== "list";
+  if (calView === "month") renderMonth();
+}
+$("#calMode").addEventListener("click", e => {
+  const b = e.target.closest("button[data-m]"); if (!b) return;
+  calView = b.dataset.m; try { localStorage.setItem("calView", calView); } catch (err) {}
+  applyCalView();
+});
+$("#mPrev").addEventListener("click", () => { mYM = [mYM[0] - (mYM[1] === 0 ? 1 : 0), (mYM[1] + 11) % 12]; renderMonth(); });
+$("#mNext").addEventListener("click", () => { mYM = [mYM[0] + (mYM[1] === 11 ? 1 : 0), (mYM[1] + 1) % 12]; renderMonth(); });
+$("#mToday").addEventListener("click", () => { const t = kstToday(); mYM = [t.getFullYear(), t.getMonth()]; mSel = iso(t); renderMonth(); });
+$("#mGrid").addEventListener("click", e => { const b = e.target.closest("button[data-d]"); if (!b) return; mSel = b.dataset.d; renderMonth(); });
 
 // ════════ 화면 전환 ════════
 function showView(v) {
