@@ -27,7 +27,7 @@ import crawler
 API_URL = "https://api.anthropic.com/v1/messages"
 DEFAULT_MODEL = "claude-haiku-5-5"
 MAX_TEXT = 6000          # 모델에 보내는 본문 최대 글자 수
-MAX_IMAGES = 3           # 본문이 짧을 때 함께 보내는 이미지 수
+MAX_IMAGES = 6           # 본문에서 모으는 이미지 수 (화면 표시용). Claude 에는 앞 3장만 보낸다
 MAX_IMAGE_BYTES = 3_500_000
 MAX_TRIES = 3            # 실패한 글을 다시 시도하는 횟수
 EXTRACT_VERSION = "2"    # 본문 뽑는 방식을 바꾸면 올린다 → 발췌해 둔 글을 새 방식으로 다시 뽑는다
@@ -194,6 +194,13 @@ def summarize_pending(store: crawler.Store, cfg: dict, limit: int | None = None,
             store.db.commit()
         store.set_meta("extract_version", EXTRACT_VERSION)
 
+    if store.get_meta("images_backfill") != "1":
+        with store.lock:
+            store.db.execute("UPDATE items SET sum_mode=NULL, sum_tries=0 WHERE sum_state IN ('image_only','empty')"
+                             " AND images IS NULL")
+            store.db.commit()
+        store.set_meta("images_backfill", "1")
+
     session = requests.Session()
     session.headers["User-Agent"] = crawler.USER_AGENT
     todo = [it for it in store.pending_summaries(mode, MAX_TRIES) if visible(it) and it["source"] in srcs]
@@ -204,7 +211,8 @@ def summarize_pending(store: crawler.Store, cfg: dict, limit: int | None = None,
             progress(f"정리 {stats['done'] + stats['failed'] + 1}/{min(limit, len(todo))}  {it['title'][:40]}")
         try:
             res = summarize_item(it, src, session, delay, api_key, model)
-            store.set_summary(it["id"], res["mode"], res.get("title_ko", ""), res["points"], res["state"])
+            store.set_summary(it["id"], res["mode"], res.get("title_ko", ""), res["points"], res["state"],
+                              res.get("images"))
             stats["done"] += 1
         except Exception as e:  # 한 글이 실패해도 계속
             store.summary_failed(it["id"], f"{type(e).__name__}: {e}"[:200])
@@ -232,14 +240,14 @@ def summarize_item(it: dict, src: dict, session: requests.Session, delay: float,
         if it["kind"] == "watch":
             return {"mode": "extract", "points": [], "state": "no_key"}
         if len(body) < 30:
-            return {"mode": "extract", "points": [], "state": "image_only" if images else "empty"}
-        return {"mode": "extract", "points": excerpt(body), "state": "ok"}
+            return {"mode": "extract", "points": [], "state": "image_only" if images else "empty", "images": images}
+        return {"mode": "extract", "points": excerpt(body), "state": "ok", "images": images}
 
     # 한국어 글이고 본문이 충분하면 이미지는 보내지 않는다 (비용 절약)
-    imgs = fetch_images(images, session, delay) if len(body) < 300 and images else []
+    imgs = fetch_images(images[:3], session, delay) if len(body) < 300 and images else []
     if len(body) < 30 and not imgs and is_korean(title):
-        return {"mode": "llm", "points": [], "state": "empty"}
+        return {"mode": "llm", "points": [], "state": "empty", "images": images}
     out = call_claude(api_key, model, src["name"], title, body, imgs)
     if is_korean(title):
         out["title_ko"] = ""
-    return {"mode": "llm", "state": "ok", **out}
+    return {"mode": "llm", "state": "ok", "images": images, **out}

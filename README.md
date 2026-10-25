@@ -72,6 +72,7 @@ page_snapshots/   페이지 변경 감지용 사본 (자동 생성)
 | content_selector, keywords | (watch) 본문 영역, 이 단어가 든 변경만 알림 |
 | enabled, note | 켜짐 여부, 메모 |
 | max_age_months, max_pages (맨 위 단계) | 이 개월 수(기본 8)보다 오래된 글은 모으지도 보여주지도 않는다. 그 기간 글을 빠짐없이 모으려고 게시판 페이지를 max_pages(기본 25)까지 넘긴다 |
+| max_age_months_by_group | 분류별 보관 기간 (예: 경희대: 3). 없는 분류는 max_age_months |
 | page_size | 주소에 {offset}(글 순번)을 쓰는 게시판의 한 페이지 글 수 |
 | highlight (맨 위 단계) | keywords: 화면에서 노란 표시·'관심 키워드 글만' / exclude: 오탐 제외어 / alert: 텔레그램 알림 키워드 |
 | exams (맨 위 단계) | 시험 일정. events 에 type(접수 시작/접수 마감/시험/결과 발표)·date·time·label, 날짜가 없으면 status(상시/미발표/미정)와 note. remind 로 텔레그램 알림 종류를 줄일 수 있다 |

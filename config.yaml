@@ -5,6 +5,8 @@
 delay_seconds: 2
 auto_check_hours: 6
 max_age_months: 8
+max_age_months_by_group:
+  경희대: 3
 max_pages: 25
 summary:
   enabled: true

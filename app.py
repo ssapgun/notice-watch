@@ -153,7 +153,8 @@ class Handler(BaseHTTPRequestHandler):
             rows = store.items(group=q.get("group", ""), q=q.get("q", ""), unread=q.get("unread") == "1",
                                starred=q.get("starred") == "1", limit=3000)
             rows = [it for it in rows if ok(it) and (not sub or subs.get(it["source"], it["source"]) == sub)]
-            rows = [dict(it, summary=summarize.clean_points(json.loads(it["summary"])) if it.get("summary") else [])
+            rows = [dict(it, summary=summarize.clean_points(json.loads(it["summary"])) if it.get("summary") else [],
+                         images=(json.loads(it["images"]) if it.get("images") and it.get("sum_state") in ("image_only", "empty") else []))
                     for it in rows[:3000]]
             if not q.get("unread"):   # 안 읽은 것만 볼 때는 묶지 않는다 (읽음 표시가 섞이지 않게)
                 rows = crawler.collapse_reposts(sorted(rows, key=lambda r: (r["date"] or "", r["id"]), reverse=True))

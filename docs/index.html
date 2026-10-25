@@ -431,6 +431,9 @@ body{background:var(--sheet);background-image:none;font:18px/1.65 "Noto Sans KR"
   .opts .linkbtn,.opts .webnote,.opts a.linkbtn{grid-column:1/-1}
 }
 .mcal .day{border:0;border-right:1px solid var(--grid);border-bottom:1px solid var(--grid);border-radius:0}
+.sum .imgs{display:grid;gap:10px;margin:8px 0 4px}
+.sum .imgs a{display:block;max-width:760px}
+.sum .imgs img{display:block;max-width:100%;height:auto;border:1px solid var(--grid);background:#fff}
 </style>
 </head>
 <body>
@@ -738,8 +741,11 @@ function sumBlock(it, open) {
   const parts = [];
   if (pts.length) parts.push(`<ul>${pts.map(p => `<li>${esc(p)}</li>`).join("")}</ul>`);
   if (it.change) parts.push(`<pre>${esc(it.change)}</pre>`);
+  const imgs = Array.isArray(it.images) ? it.images : [];
+  if (imgs.length) parts.push(`<div class="imgs">${imgs.map(u => `<a href="${esc(u)}" target="_blank" rel="noopener"><img data-src="${esc(u)}" alt="공지 본문 이미지" loading="lazy"></a>`).join("")}</div>`);
   let note = "";
   if (!it.sum_state) note = it.kind === "watch" ? "" : "아직 정리 전이다. 다음 확인 때 정리된다.";
+  else if (imgs.length) note = "본문이 이미지라 원문 이미지를 그대로 보여준다. 이미지를 누르면 크게 열린다.";
   else if (SUM_NOTE[it.sum_state]) note = SUM_NOTE[it.sum_state];
   else if (pts.length) note = it.sum_mode === "llm" ? "Claude 가 정리" + (it.title_ko ? "·번역" : "") + "했다. 정확한 내용은 원문으로 확인할 것." : "본문 앞부분 발췌 (번역 없음).";
   if (note) parts.push(`<p class="note">${esc(note)}</p>`);
@@ -826,6 +832,19 @@ function repostHtml(it) {
   if (!r.length) return "";
   return `<span class="rep">같은 공지 이전 게시 ${r.length}회: ${r.map(x => `<a href="${esc(x.url)}" target="_blank" rel="noopener">${esc((x.date || "").slice(2).replaceAll("-", "."))}</a>`).join(", ")}</span>`;
 }
+// 공지 정리를 펼칠 때만 이미지를 불러온다 (원본 주소를 그대로 사용, 복사하지 않음)
+document.addEventListener("toggle", e => {
+  const d = e.target;
+  if (!(d instanceof HTMLDetailsElement) || !d.open || !d.classList.contains("sum")) return;
+  d.querySelectorAll("img[data-src]").forEach(img => {
+    img.addEventListener("error", () => {
+      const a = img.closest("a"), msg = document.createElement("p");
+      msg.className = "note"; msg.textContent = "이 이미지는 원래 사이트 밖에서 불러올 수 없다. 원문에서 확인할 것.";
+      (a || img).replaceWith(msg);
+    }, {once: true});
+    img.src = img.dataset.src; img.removeAttribute("data-src");
+  });
+}, true);
 function revMark(on) {
   return on ? `<svg class="rev" viewBox="0 0 22 20" role="img" aria-label="안 읽음"><polygon points="11,1.5 20.5,18.5 1.5,18.5"/><text x="11" y="15.5" text-anchor="middle">N</text></svg>` : `<span class="rev" aria-hidden="true"></span>`;
 }

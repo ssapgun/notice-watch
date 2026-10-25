@@ -240,7 +240,7 @@ class Store:
         have = {r["name"] for r in self.db.execute("PRAGMA table_info(items)")}
         for col, typ in [("summary", "TEXT"), ("title_ko", "TEXT"), ("sum_mode", "TEXT"),
                          ("sum_state", "TEXT"), ("sum_tries", "INTEGER DEFAULT 0"),
-                         ("sum_error", "TEXT"), ("sum_at", "TEXT")]:
+                         ("sum_error", "TEXT"), ("sum_at", "TEXT"), ("images", "TEXT")]:
             if col not in have:
                 self.db.execute(f"ALTER TABLE items ADD COLUMN {col} {typ}")
         self.db.commit()
@@ -269,12 +269,14 @@ class Store:
         with self.lock:
             return [dict(r) for r in self.db.execute(sql, (max_tries,)).fetchall()]
 
-    def set_summary(self, item_id: int, mode: str, title_ko: str, points: list[str], state: str) -> None:
+    def set_summary(self, item_id: int, mode: str, title_ko: str, points: list[str], state: str,
+                    images: list[str] | None = None) -> None:
         with self.lock:
             self.db.execute(
-                "UPDATE items SET summary=?, title_ko=?, sum_mode=?, sum_state=?, sum_error=NULL, sum_at=?"
-                " WHERE id=?",
-                (json.dumps(points, ensure_ascii=False), title_ko or None, mode, state, now_str(), item_id))
+                "UPDATE items SET summary=?, title_ko=?, sum_mode=?, sum_state=?, sum_error=NULL, sum_at=?,"
+                " images=? WHERE id=?",
+                (json.dumps(points, ensure_ascii=False), title_ko or None, mode, state, now_str(),
+                 json.dumps(images or [], ensure_ascii=False), item_id))
             self.db.commit()
 
     def summary_failed(self, item_id: int, error: str) -> None:
@@ -564,10 +566,14 @@ def visible_filter(cfg: dict, hidden_topics: set[str] | None = None):
     by_name = {s.get("name"): s for s in cfg.get("sources", [])}
     topics = cfg.get("topics") or []
     hidden = set(hidden_topics or ())
-    cutoff = cutoff_date(cfg)
+    cut_cache: dict = {}
 
     def ok(it: dict) -> bool:
-        if cutoff and it.get("date") and it["date"] < cutoff:   # max_age_months 보다 오래된 글
+        g = it.get("grp") or it.get("group")
+        if g not in cut_cache:
+            cut_cache[g] = cutoff_date(cfg, g)
+        cutoff = cut_cache[g]
+        if cutoff and it.get("date") and it["date"] < cutoff:   # 보관 기간보다 오래된 글
             return False
         if hidden and hidden & set(topic_hits(it, topics)):
             return False
@@ -583,9 +589,11 @@ def page_url(src: dict, i: int) -> str:
     return src["list_url"].replace("{page}", str(i)).replace("{offset}", str((i - 1) * int(src.get("page_size", 10))))
 
 
-def cutoff_date(cfg: dict) -> str:
-    """max_age_months(기본 8)개월 전 날짜 'YYYY-MM-DD'. 0 이면 '' (제한 없음)."""
-    months = int(cfg.get("max_age_months", 8) or 0)
+def cutoff_date(cfg: dict, group: str | None = None) -> str:
+    """보관 기간(개월) 전 날짜 'YYYY-MM-DD'. 0 이면 '' (제한 없음).
+    max_age_months_by_group 에 그 분류가 있으면 그 값, 없으면 max_age_months(기본 8)."""
+    by = cfg.get("max_age_months_by_group") or {}
+    months = int((by.get(group) if group in by else cfg.get("max_age_months", 8)) or 0)
     if months <= 0:
         return ""
     t = datetime.now()
@@ -810,7 +818,6 @@ def run_crawl(store: Store, cfg: dict, group: str | None = None,
     session.headers["User-Agent"] = USER_AGENT
     _robots_cache.clear()
 
-    cutoff = cutoff_date(cfg)
     max_pages = int(cfg.get("max_pages", 25))
     recent = (datetime.now() - timedelta(days=14)).strftime("%Y-%m-%d")
     targets = [s for s in cfg["sources"]
@@ -827,7 +834,7 @@ def run_crawl(store: Store, cfg: dict, group: str | None = None,
                 raw = crawl_watch(src, session)
                 time.sleep(delay)
             else:
-                raw = crawl_board(src, session, delay, cutoff, max_pages,
+                raw = crawl_board(src, session, delay, cutoff_date(cfg, src.get("group")), max_pages,
                                   None if first_time else store.has_seen,
                                   lambda keys, n=src["name"]: store.mark_seen(n, keys))
         except Exception as e:  # 한 사이트가 실패해도 나머지는 계속

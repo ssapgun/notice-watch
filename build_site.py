@@ -78,11 +78,16 @@ def main() -> int:
     with store.lock:
         rows = [dict(r) for r in store.db.execute(
             "SELECT id, grp, source, date, title, url, change, kind, found_at, is_read,"
-            " summary, title_ko, sum_mode, sum_state FROM items "
+            " summary, title_ko, sum_mode, sum_state, images FROM items "
             "ORDER BY COALESCE(NULLIF(date,''), substr(found_at,1,10)) DESC, id DESC").fetchall()]
     items = [r for r in rows if ok(r)]
     for r in items:
         r["summary"] = summarize.clean_points(json.loads(r["summary"])) if r["summary"] else []
+        imgs = json.loads(r["images"]) if r.get("images") else []
+        # 이미지는 본문이 이미지뿐인 공지에만 싣는다 (원본 주소만, 복사하지 않음)
+        r["images"] = imgs if r.get("sum_state") in ("image_only", "empty") else []
+        if not r["images"]:
+            r.pop("images")
     items = crawler.collapse_reposts(items)[:MAX_ITEMS]   # 같은 게시판 재공지는 하나로
     payload = {
         "generated_at": crawler.now_str(),
