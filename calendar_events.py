@@ -16,7 +16,7 @@ from datetime import date, datetime, timedelta
 import crawler
 
 # 일정 종류별 미리 알림 (며칠 전). config.yaml 의 calendar_alert_days 로 바꿀 수 있다
-DEFAULT_ALERT_DAYS = {"접수 시작": [0], "접수 마감": [3, 0], "시험": [7, 1], "결과 발표": [0], "공지 기간": [3, 0]}
+DEFAULT_ALERT_DAYS = {"접수 시작": [0], "접수 마감": [3, 0], "시험": [7, 1], "결과 발표": [0], "공지 기간": [3, 0], "행사": [7, 1]}
 
 FULL = re.compile(r"(20\d{2})\s*[.\-/년]\s*(\d{1,2})\s*[.\-/월]\s*(\d{1,2})\s*[.일]?")
 MD_WEEK = re.compile(r"(\d{1,2})\s*[.\-/월]\s*(\d{1,2})\s*[.일]?\s*\(\s*[월화수목금토일]")

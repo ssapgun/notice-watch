@@ -38,6 +38,11 @@ highlight:
   - Steel
   - 構造
   - 鋼構造
+  - 공모전
+  - 경진대회
+  - 해커톤
+  - 부트캠프
+  - 현장실습
   exclude:
   - 구조조정
   - 조직구조
@@ -61,6 +66,9 @@ highlight:
   - 강구조
   - 철골
   - 募集要項
+  - BIM AWARDS
+  - 엔지니어링산업 경진대회
+  - 스마트건설 챌린지
 site_url: https://ssapgun.github.io/notice-watch/
 exams:
 - name: 건축기사 (2027 정기)
@@ -162,16 +170,69 @@ exams:
   status: 미정
   url: https://www.pmi.org/certifications/certified-associate-capm
   note: '요건: 고졸 이상·만 18세 이상·프로젝트관리 교육 23시간. 180분 150문항. GPMU 수강 시간이 23시간으로 인정되는지 확인할 것.'
+- name: 엔지니어링산업 경진대회 – BIM·설계 아이디어 (한국엔지니어링협회)
+  category: 공모전
+  status: 미발표
+  url: https://thinkyou.co.kr/contest/61359
+  note: 'BIM 부문 장려상을 받았던 대회. 2026년 기준 BIM: 신청 3/3~4/30, 작품 5/1~7/17 (이공계 전문대 이상 재학·휴학생 또는 미취업 졸업생, 2~4인). 설계 아이디어: 신청 3/3~4/10, 작품 4/13~5/15. BIM 상금 대상 500만 원~장려 100만 원. 2027년 공고는 3월 무렵 예상.'
 - name: BIM AWARDS 2027 (빌딩스마트협회)
   category: 공모전
   status: 미발표
   url: https://www.theteams.kr/activities/page/331951/lc
-  note: 대학생 부문(휴학생 가능, 4인 이하 팀). 2026년은 접수 6/22~9/4. 2027년 공고가 나오면 추가.
+  note: 대학생 부문(휴학생 가능, 4인 이하 팀). 2026년 접수 6/22~9/4.
+- name: 스마트건설 창업 아이디어 공모전 (한국건설기술연구원)
+  category: 공모전
+  status: 미발표
+  url: https://www.unicornfactory.co.kr/article/2026032308101327632
+  note: 2026년 접수 3/23~5/1. 예비창업자 포함 5인 이하 팀, AI·BIM·OSC·건설로봇 분야, 총상금 4,500만 원. 학생 참가 가능 여부는 공고 원문 확인.
+- name: 스마트건설 챌린지 (국토교통부)
+  category: 공모전
+  status: 미발표
+  url: https://www.heraldk.com/article/2026061413000075036
+  note: 2026년 접수 6월~7/14. 기업·기관·개인 누구나. 총상금 3억 원.
 - name: 대학생 모듈러 건축설계 공모전 (대한건축학회)
   category: 공모전
   status: 미발표
   url: https://www.aik.or.kr/board/?ncode=a001
   note: 2026년 제1회 개최. 다음 회차 공지는 '학회' 분류(대한건축학회 학회소식)에서 잡힌다.
+- name: 2026 스마트건설 EXPO (킨텍스)
+  category: 공모전
+  url: https://www.heraldk.com/article/2026061413000075036
+  note: 스마트건설 챌린지 입상 기술 전시, 건설연 창업 공모전 시상. 견학 추천.
+  events:
+  - type: 행사
+    date: '2026-11-25'
+    label: 개막 (~11/27)
+- name: 경희대 일반대학원 방학 학부연구생
+  category: 방학 프로그램
+  status: 복학 후
+  url: https://gskh.khu.ac.kr/gskh_kor/user/bbs/BMSR00040/view.do?menuNo=13100089&boardId=555695
+  note: 정규학기 재학생, 4개 학기 이상 등록(편입생 가능), 직전 학기 2.0 이상·12학점 이상, 학과·연구실 탐방 후 교수 추천. 이번 동계는 12/21~2/5(휴학 중이라 불가). 공고는 '일반대학원' 소분류에서 잡힌다.
+- name: 경희대 겨울·여름학기 단기현장실습
+  category: 방학 프로그램
+  status: 복학 후
+  url: https://www.khu.ac.kr/kor/user/bbs/BMSR00040/view.do?menuNo=200316&boardId=323286
+  note: 방학 중 기업 현장실습 + 학점 인정. 세부 조건은 현장실습 사이트(intern.khu.ac.kr) 확인. 공고는 학교·공과대학·건축공학과 공지에서 잡힌다.
+- name: 경희대 동계·하계 국제화연수
+  category: 방학 프로그램
+  status: 복학 후
+  url: https://www.khu.ac.kr/kor/user/bbs/BMSR00040/view.do?menuNo=200316&boardId=323300
+  note: '재학생 대상. 예: 2026 동계 SDGs(Lincoln University) 학생 부담 약 150만 원+항공비, 10/25 마감.'
+- name: LG 에이머스 (AI 온라인 교육 + 해커톤)
+  category: 방학 프로그램
+  status: 미발표
+  url: https://www.lg.co.kr/media/release/30586
+  note: 만 19~29세, 연 2회. 해커톤은 8기 4월·9기 9월. 다음 기수 모집 날짜는 미확인.
+- name: 현대차그룹 소프티어 부트캠프
+  category: 방학 프로그램
+  status: 대상 아님
+  url: https://www.smarttoday.co.kr/ko-kr/articles/112841
+  note: 9기 12/28~2/26(8주, 겨울방학형). 대상이 2026.8~2027.8 졸업(예정)자라 지금은 해당 없음. 졸업예정 학년에 다시 확인.
+- name: 구글 머신러닝 부트캠프
+  category: 방학 프로그램
+  status: 미발표
+  url: https://blog.google/intl/ko-kr/company-news/technology/the-global-machine-learning-training-program-born-out-of-south-korea/
+  note: 과정은 있으나 모집 시기·대상은 확인하지 못했다.
 academic_calendar:
   sources:
   - 학교 공지 - 학사
