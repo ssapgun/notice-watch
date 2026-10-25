@@ -62,7 +62,7 @@ def main() -> int:
     except Exception as e:   # 알림이 실패해도 사이트 갱신은 계속
         print(f"[알림 오류] {type(e).__name__}: {e}")
 
-    # 시험 일정: 직접 적은 시험(config exams) + 학사 공지에서 뽑은 기간 → 사이트·구글 캘린더(.ics)·텔레그램
+    # 일정: 직접 적은 시험·공모전·방학 프로그램(config exams) + 학사 공지에서 뽑은 기간 → 사이트·구글 캘린더(.ics)·텔레그램
     events = calendar_events.all_events(store, cfg)
     (OUT.parent.parent / "calendar.ics").write_text(calendar_events.build_ics(events), encoding="utf-8", newline="")
     try:

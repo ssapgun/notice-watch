@@ -33,7 +33,7 @@ app.py            웹 대시보드 서버
 crawler.py        크롤링 엔진 (python crawler.py 로 화면 없이도 실행 가능)
 summarize.py      공지 정리·번역 (상세 페이지 본문 → 한국어 요약)
 notify.py         텔레그램 알림 (토큰이 있을 때만)
-calendar_events.py 시험 일정 (사이트 '시험 일정' 탭, docs/calendar.ics, 일정 미리 알림)
+calendar_events.py 일정 (사이트 '일정' 탭, docs/calendar.ics, 일정 미리 알림)
 config.yaml       감시 대상 목록
 static/index.html 대시보드 화면
 notices.db        수집 결과 (자동 생성)
@@ -75,8 +75,8 @@ page_snapshots/   페이지 변경 감지용 사본 (자동 생성)
 | max_age_months_by_group | 분류별 보관 기간 (예: 경희대: 3). 없는 분류는 max_age_months |
 | page_size | 주소에 {offset}(글 순번)을 쓰는 게시판의 한 페이지 글 수 |
 | highlight (맨 위 단계) | keywords: 화면에서 노란 표시·'관심 키워드 글만' / exclude: 오탐 제외어 / alert: 텔레그램 알림 키워드 |
-| exams (맨 위 단계) | 시험 일정. events 에 type(접수 시작/접수 마감/시험/결과 발표)·date·time·label, 날짜가 없으면 status(상시/미발표/미정)와 note. remind 로 텔레그램 알림 종류를 줄일 수 있다 |
-| academic_calendar | sources(학사 게시판)와 keywords(복학·수강신청 등): 이 공지들의 본문에서 기간을 뽑아 시험 일정 탭과 calendar.ics 에 넣는다 |
+| exams (맨 위 단계) | 일정(시험·공모전·방학 프로그램). events 에 type(접수 시작/접수 마감/시험/결과 발표)·date·time·label, 날짜가 없으면 status(상시/미발표/미정)와 note. remind 로 텔레그램 알림 종류를 줄일 수 있다 |
+| academic_calendar | sources(학사 게시판)와 keywords(복학·수강신청 등): 이 공지들의 본문에서 기간을 뽑아 일정 탭과 calendar.ics 에 넣는다 |
 | calendar_alert_days | 일정 종류별 텔레그램 미리 알림 날짜 (기본: 접수 마감 3일 전·당일, 시험 7일 전·1일 전) |
 | links (맨 위 단계) | 자동 확인하지 않고 화면 왼쪽에 바로가기로만 두는 곳 (robots.txt·이용약관상 수집 불가한 사이트) |
 

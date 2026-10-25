@@ -78,10 +78,10 @@ Claude 가 핵심을 항목별로 정리하고 일본어·영어·독일어 글�
 - 알림 키워드는 config.yaml 의 `highlight.alert`, 화면에서 눈에 띄게 표시할 키워드는 `highlight.keywords`, 오탐을 막는 제외어는 `highlight.exclude`.
 - PC 대시보드(app.py)에서 받으려면 같은 이름의 환경변수를 넣고 실행한다.
 
-## 9. 시험 일정을 구글 캘린더에서 보기
-사이트의 **시험 일정** 탭 맨 아래 주소(`https://<아이디>.github.io/notice-watch/calendar.ics`)를 복사해,
+## 9. 일정을 구글 캘린더에서 보기
+사이트의 **일정** 탭 맨 아래 주소(`https://<아이디>.github.io/notice-watch/calendar.ics`)를 복사해,
 구글 캘린더(PC) → 왼쪽 '다른 캘린더' 옆 **+** → **URL로 추가** 에 붙여넣는다. 휴대폰 구글 캘린더에도 같이 보인다.
-- 시험 일정은 config.yaml 의 `exams` 에서 고친다. 확인 실행 때마다 calendar.ics 가 다시 만들어진다.
+- 일정은 config.yaml 의 `exams` 에서 고친다. 확인 실행 때마다 calendar.ics 가 다시 만들어진다.
 - 구글 캘린더가 구독 주소를 다시 읽는 데는 몇 시간 걸릴 수 있다.
 - 텔레그램이 켜져 있으면 접수 마감 3일 전·당일, 시험 7일 전·1일 전에 한 번씩 알린다.
 

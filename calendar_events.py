@@ -1,5 +1,5 @@
 """
-시험 일정 캘린더
+일정 캘린더 (시험·공모전·방학 프로그램·학사 기간)
 
 - config.yaml 의 exams: 직접 적어 둔 시험 일정 (확인된 날짜만). 날짜가 없는 시험은 status(상시·미발표·미정)로 둔다.
 - config.yaml 의 academic_calendar: 학사 공지(복학·수강신청·등록 등)에서 기간을 자동으로 뽑아 일정에 더한다.
@@ -155,7 +155,7 @@ def _fold(line: str) -> str:
     return "\r\n ".join(parts)
 
 
-def build_ics(events: list[dict], name: str = "공지·입시 감시 시험 일정") -> str:
+def build_ics(events: list[dict], name: str = "공지·입시 감시 일정") -> str:
     stamp = datetime.utcnow().strftime("%Y%m%dT%H%M%SZ")
     lines = ["BEGIN:VCALENDAR", "VERSION:2.0", "PRODID:-//notice-watch//exam-calendar//KO",
              "CALSCALE:GREGORIAN", "METHOD:PUBLISH", f"X-WR-CALNAME:{_esc(name)}", "X-WR-TIMEZONE:Asia/Seoul"]
