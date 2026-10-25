@@ -1,0 +1,63 @@
+name: 구글 캘린더 동기화
+
+on:
+  schedule:
+    # 1시간마다 (정각은 붐벼 17분에 돈다)
+    - cron: "17 * * * *"
+  workflow_dispatch: {}
+  push:
+    branches: [main]
+    paths: ["schedule.json"]   # 웹 '일정' 탭에서 고치면 바로 한 번 돈다
+
+permissions:
+  contents: write
+
+concurrency:
+  group: crawl   # 공지 확인과 겹치지 않게 같은 줄에 선다
+  cancel-in-progress: false
+
+jobs:
+  sync:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    env:
+      TZ: Asia/Seoul
+      # WEB_SETUP.md 10번. 둘 다 없으면 구글 쪽은 건너뛰고 사이트 일정만 다시 만든다
+      GOOGLE_SERVICE_ACCOUNT: ${{ secrets.GOOGLE_SERVICE_ACCOUNT }}
+      GOOGLE_CALENDAR_ID: ${{ secrets.GOOGLE_CALENDAR_ID }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: main   # 줄 서 있던 사이 바뀐 최신본으로
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          cache: pip
+
+      - run: pip install -r requirements.txt
+
+      - name: 동기화
+        run: python gcal_sync.py
+
+      - name: 결과 저장
+        run: |
+          git config user.name "notice-bot"
+          git config user.email "notice-bot@users.noreply.github.com"
+          git add schedule.json docs/data docs/calendar.ics
+          if [ -f data/gcal_state.json ]; then git add data/gcal_state.json; fi
+          if git diff --cached --quiet; then
+            echo "바뀐 내용 없음"
+            exit 0
+          fi
+          git commit -m "일정 동기화 $(date '+%Y-%m-%d %H:%M')"
+          if ! git pull --rebase; then
+            # 동기화하는 사이 웹에서 schedule.json 을 또 고쳤다 → 최신본으로 다시 한 번
+            git rebase --abort
+            git reset --hard origin/main
+            python gcal_sync.py
+            git add schedule.json docs/data docs/calendar.ics
+            if [ -f data/gcal_state.json ]; then git add data/gcal_state.json; fi
+            git diff --cached --quiet || git commit -m "일정 동기화 $(date '+%Y-%m-%d %H:%M') (재시도)"
+          fi
+          git push

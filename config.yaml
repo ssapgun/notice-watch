@@ -70,86 +70,18 @@ highlight:
   - 엔지니어링산업 경진대회
   - 스마트건설 챌린지
 site_url: https://ssapgun.github.io/notice-watch/
+# exams: 날짜가 아직 없는 시험·공모전·프로그램 카드. 날짜가 정해진 일정은 schedule.json 에 둔다(웹 '일정' 탭·구글 캘린더에서 고친다)
 exams:
 - name: 건축기사 (2027 정기)
   category: 국가기술자격
   status: 미발표
   url: https://www.q-net.or.kr/rcv001.do?gSite=Q.&id=rcv00104
   note: 2027년 시행계획 발표 전. 참고로 2026년 필기 원서접수는 1회 1/12~1/15, 2회 4/20~4/23, 3회 7/20~7/23. 응시자격은 큐넷 응시자격 자가진단으로 먼저 확인할 것.
-- name: JLPT N4 (2026 제2회)
-  category: 어학 · 일본어
-  url: https://www.jlpt.or.kr
-  note: 접수 완료. 온라인 성적 발표는 2027년 1월 말 예정(정확한 날짜 미발표).
-  events:
-  - type: 시험
-    date: '2026-12-06'
 - name: JLPT N3 (2027 제1회)
   category: 어학 · 일본어
   status: 미발표
   url: https://www.jlpt.or.kr
   note: N4 다음 단계. 2027년 7월 회차 접수 일정이 나오면 추가.
-- name: 기관토플 (경희대 TOEFL ITP)
-  category: 어학 · 영어
-  url: https://oia.khu.ac.kr/oiak_kor/user/bbs/BMSR00040/view.do?menuNo=5800010&boardId=551746
-  note: 응시료 33,000원. 회차 중 하나만 고르면 된다. 국제캠퍼스 8·10회는 서울 7·9회와 같은 날. TOEFL iBT 와 둘 중 하나.
-  remind:
-  - 접수 마감
-  events:
-  - label: 2회 (서울)
-    type: 접수 마감
-    date: '2026-10-26'
-    time: '11:00'
-  - label: 2회 (서울)
-    type: 시험
-    date: '2026-11-06'
-    time: '18:00'
-  - label: 2회 (서울)
-    type: 결과 발표
-    date: '2026-11-13'
-  - label: 4회 (서울)
-    type: 접수 마감
-    date: '2026-11-09'
-    time: '11:00'
-  - label: 4회 (서울)
-    type: 시험
-    date: '2026-11-20'
-    time: '18:00'
-  - label: 4회 (서울)
-    type: 결과 발표
-    date: '2026-11-27'
-  - label: 6회 (서울)
-    type: 접수 마감
-    date: '2026-11-23'
-    time: '11:00'
-  - label: 6회 (서울)
-    type: 시험
-    date: '2026-12-04'
-    time: '18:00'
-  - label: 6회 (서울)
-    type: 결과 발표
-    date: '2026-12-11'
-  - label: 7회 (서울)
-    type: 접수 마감
-    date: '2026-12-14'
-    time: '11:00'
-  - label: 7회 (서울)
-    type: 시험
-    date: '2026-12-22'
-    time: '15:00'
-  - label: 7회 (서울)
-    type: 결과 발표
-    date: '2026-12-29'
-  - label: 9회 (서울)
-    type: 접수 마감
-    date: '2026-12-14'
-    time: '11:00'
-  - label: 9회 (서울)
-    type: 시험
-    date: '2026-12-23'
-    time: '15:00'
-  - label: 9회 (서울)
-    type: 결과 발표
-    date: '2026-12-30'
 - name: TOEFL iBT
   category: 어학 · 영어
   status: 상시
@@ -195,14 +127,6 @@ exams:
   status: 미발표
   url: https://www.aik.or.kr/board/?ncode=a001
   note: 2026년 제1회 개최. 다음 회차 공지는 '학회' 분류(대한건축학회 학회소식)에서 잡힌다.
-- name: 2026 스마트건설 EXPO (킨텍스)
-  category: 공모전
-  url: https://www.heraldk.com/article/2026061413000075036
-  note: 스마트건설 챌린지 입상 기술 전시, 건설연 창업 공모전 시상. 견학 추천.
-  events:
-  - type: 행사
-    date: '2026-11-25'
-    label: 개막 (~11/27)
 - name: 경희대 일반대학원 방학 학부연구생
   category: 방학 프로그램
   status: 복학 후

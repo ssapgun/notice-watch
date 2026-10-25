@@ -29,6 +29,8 @@ jobs:
       TELEGRAM_CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}
     steps:
       - uses: actions/checkout@v4
+        with:
+          ref: main   # 줄 서 있던 사이 바뀐 최신본으로
 
       - uses: actions/setup-python@v5
         with:

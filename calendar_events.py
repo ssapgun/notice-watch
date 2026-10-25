@@ -1,7 +1,8 @@
 """
 일정 캘린더 (시험·공모전·방학 프로그램·학사 기간)
 
-- config.yaml 의 exams: 직접 적어 둔 시험 일정 (확인된 날짜만). 날짜가 없는 시험은 status(상시·미발표·미정)로 둔다.
+- schedule.json: 날짜가 정해진 일정 (웹 '일정' 탭과 구글 캘린더가 함께 고친다. gcal_sync.py 가 1시간마다 맞춘다).
+- config.yaml 의 exams: 날짜가 아직 없는 시험·공모전 카드 (status: 상시·미발표·미정).
 - config.yaml 의 academic_calendar: 학사 공지(복학·수강신청·등록 등)에서 기간을 자동으로 뽑아 일정에 더한다.
 - docs/calendar.ics 로 내보내 구글 캘린더에서 'URL로 추가'해 구독할 수 있다.
 - 텔레그램이 켜져 있으면 접수 마감·시험 며칠 전에 한 번씩 알린다.
@@ -12,6 +13,7 @@ import hashlib
 import json
 import re
 from datetime import date, datetime, timedelta
+from pathlib import Path
 
 import crawler
 
@@ -68,16 +70,38 @@ def find_periods(text: str, base_year: int) -> list[tuple[date, date]]:
     return out
 
 
-def exam_events(cfg: dict) -> list[dict]:
+SCHEDULE = Path(__file__).resolve().parent / "schedule.json"
+EVENT_FIELDS = ("exam", "category", "label", "type", "date", "start", "time", "url", "note")
+
+
+def load_schedule(path: Path | None = None) -> dict:
+    p = path or SCHEDULE
+    if not p.exists():
+        return {"events": [], "hidden_auto": []}
+    d = json.loads(p.read_text(encoding="utf-8"))
+    d.setdefault("events", [])
+    d.setdefault("hidden_auto", [])
+    return d
+
+
+def save_schedule(d: dict, path: Path | None = None) -> None:
+    p = path or SCHEDULE
+    tmp = p.with_suffix(".tmp")
+    tmp.write_text(json.dumps(d, ensure_ascii=False, indent=1) + "\n", encoding="utf-8")
+    tmp.replace(p)
+
+
+def exam_events(cfg: dict, sched: dict | None = None) -> list[dict]:
+    """schedule.json 의 일정 (삭제 기록 제외)."""
+    sched = sched if sched is not None else load_schedule()
     out = []
-    for ex in cfg.get("exams") or []:
-        for ev in ex.get("events") or []:
-            out.append({
-                "exam": ex["name"], "category": ex.get("category", ""), "label": ev.get("label", ""),
-                "type": ev["type"], "date": str(ev["date"]), "time": ev.get("time", ""),
-                "url": ev.get("url") or ex.get("url", ""), "note": ev.get("note", ""),
-                "remind": ex.get("remind"), "auto": False,
-            })
+    for ev in sched["events"]:
+        if ev.get("deleted") or not ev.get("date"):
+            continue
+        e = {k: str(ev.get(k) or "") for k in EVENT_FIELDS}
+        e["type"] = e["type"] or "일정"
+        e.update(id=ev["id"], remind=ev.get("remind"), auto=False, origin=ev.get("origin", "site"))
+        out.append(e)
     return out
 
 
@@ -121,11 +145,20 @@ def academic_events(store: crawler.Store, cfg: dict, today: date) -> list[dict]:
     return out
 
 
-def all_events(store: crawler.Store, cfg: dict, today: date | None = None) -> list[dict]:
+def auto_id(e: dict) -> str:
+    return hashlib.md5(f"{e['exam']}|{e['label']}|{e['type']}|{e['date']}".encode()).hexdigest()[:12]
+
+
+def all_events(store: crawler.Store, cfg: dict, today: date | None = None, sched: dict | None = None) -> list[dict]:
+    """사이트·구글 캘린더에 실을 일정 전체: schedule.json + 학사 공지 자동 기간(숨긴 것·직접 고친 것 제외)."""
     today = today or date.today()
-    evs = exam_events(cfg) + academic_events(store, cfg, today)
-    for e in evs:
-        e["id"] = hashlib.md5(f"{e['exam']}|{e['label']}|{e['type']}|{e['date']}".encode()).hexdigest()[:12]
+    sched = sched if sched is not None else load_schedule()
+    evs = exam_events(cfg, sched)
+    taken = {e["id"] for e in sched["events"]} | set(sched.get("hidden_auto") or [])
+    for e in academic_events(store, cfg, today):
+        e["id"] = auto_id(e)
+        if e["id"] not in taken:   # 웹·구글에서 지웠거나 고쳐서 schedule.json 으로 옮긴 자동 일정은 뺀다
+            evs.append(e)
     return sorted(evs, key=lambda e: (e["date"], e["time"] or "99"))
 
 

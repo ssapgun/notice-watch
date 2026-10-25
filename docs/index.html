@@ -390,6 +390,12 @@ body{background:var(--sheet);background-image:none;font:18px/1.65 "Noto Sans KR"
 .cal-ev .ty.t-시험{border-color:var(--khu);color:var(--khu)}
 .cal-ev .ty.t-접수마감,.cal-ev .ty.t-공지기간{border-color:var(--gold);color:var(--gold-ink)}
 .cal-ev small{font-size:15.5px}
+.cal-tools{display:flex;flex-wrap:wrap;gap:10px;align-items:center;margin:4px 0 6px}
+#calSync{font-size:15px;color:var(--ink-2)}
+#calSync.bad{color:var(--khu)}
+.evedit{float:right;margin-left:8px;border:1px solid var(--grid);background:var(--paper);color:var(--ink-2);font-size:14px;padding:1px 9px;cursor:pointer}
+.evedit:hover{border-color:var(--khu-deep);color:var(--khu-deep)}
+.ty.t-일정{border-color:var(--grid)}
 .cal-card{font-size:16.5px;background:var(--paper)}
 .cal-card p{color:var(--ink-2)}
 @media (max-width:820px){.index{border-right:0;border-bottom:1px solid var(--grid)}}
@@ -504,6 +510,8 @@ body{background:var(--sheet);background-image:none;font:18px/1.65 "Noto Sans KR"
       <div>
         <h3>다가오는 일정</h3>
         <p class="lead">직접 정리한 시험·공모전·방학 프로그램 일정과, 학사 공지에서 자동으로 뽑은 신청 기간이다. 날짜는 공식 공지로 한 번 더 확인할 것.</p>
+        <p class="lead">여기서 추가·수정·삭제하면 구글 캘린더 '공지·입시 일정'에도 반영되고, 구글 캘린더에서 고친 것도 1시간 안에 여기로 들어온다.</p>
+        <div class="cal-tools"><button class="btn primary" id="evAdd" type="button">새 일정 추가</button><span id="calSync"></span></div>
       </div>
       <div class="calfilter" id="calFilter"></div>
     </div>
@@ -612,6 +620,27 @@ body{background:var(--sheet);background-image:none;font:18px/1.65 "Noto Sans KR"
     <p style="margin:0;font-size:13px;color:var(--ink-2)">잠시 쉬게 하려면 삭제 대신 스위치를 끄는 게 낫다. 지운 설정은 GitHub 저장소의 config.yaml 기록(History)에서 되살릴 수 있다.</p>
   </div>
   <div class="dfoot"><button class="btn" type="button" data-close>취소</button><button class="btn danger" type="button" id="delOk">삭제</button></div>
+</dialog>
+<dialog id="evDlg" aria-labelledby="evTitle">
+  <form id="evForm" method="dialog">
+    <div class="dhead"><h2 id="evTitle">일정 추가</h2><button class="btn" type="button" data-close>닫기</button></div>
+    <div class="dbody">
+      <p class="webnote" id="evAutoNote" hidden style="margin:0 0 10px">학사 공지에서 자동으로 뽑은 일정이다. 저장하면 직접 관리하는 일정으로 바뀌고, 삭제하면 다시 나타나지 않는다.</p>
+      <div class="fgrid">
+        <label class="f full"><span>제목</span><input name="exam" required placeholder="예: 정보처리기사 필기"></label>
+        <label class="f"><span>종류</span><select name="type"><option>일정</option><option>접수 시작</option><option>접수 마감</option><option>시험</option><option>결과 발표</option><option>행사</option><option>공지 기간</option></select></label>
+        <label class="f"><span>분류</span><input name="category" list="calCatList" placeholder="예: 국가기술자격"><datalist id="calCatList"></datalist></label>
+        <label class="f"><span>세부</span><input name="label" placeholder="회차·장소 (예: 2회 서울)"></label>
+        <label class="f"><span>시간</span><input name="time" placeholder="예: 18:00 (비우면 종일)"></label>
+        <label class="f"><span>시작일</span><input name="start" type="date"><small>여러 날에 걸친 일정일 때만 넣는다</small></label>
+        <label class="f"><span>날짜 (여러 날이면 마지막 날)</span><input name="date" type="date" required></label>
+        <label class="f full"><span>링크</span><input name="url" inputmode="url" placeholder="https://..."></label>
+        <label class="f full"><span>메모</span><textarea name="note"></textarea></label>
+      </div>
+      <div id="evMsg"></div>
+    </div>
+    <div class="dfoot"><button class="btn danger" type="button" id="evDel">삭제</button><button class="btn" type="button" data-close>취소</button><button class="btn primary" type="submit" id="evSave">저장</button></div>
+  </form>
 </dialog>
 
 <script>
@@ -973,21 +1002,96 @@ function renderCal() {
     return sep + `<li class="cal-ev ${n < 0 ? "past" : ""}">
       <span class="dd ${n >= 0 && n <= 7 ? "soon" : ""}">${dd}</span>
       <span class="dt">${range}${String(m).padStart(2, "0")}.${String(d).padStart(2, "0")} (${wd})${e.time ? " " + esc(e.time) : ""}</span>
-      <div class="what"><span class="ty t-${esc(e.type.replace(/\s/g, ""))}">${esc(e.type)}</span><b>${e.url ? `<a href="${esc(e.url)}" target="_blank" rel="noopener">${esc(e.exam)}</a>` : esc(e.exam)}</b>${e.label ? " " + esc(e.label) : ""}
+      <div class="what">${evBtn(e)}<span class="ty t-${esc(e.type.replace(/\s/g, ""))}">${esc(e.type)}</span><b>${e.url ? `<a href="${esc(e.url)}" target="_blank" rel="noopener">${esc(e.exam)}</a>` : esc(e.exam)}</b>${e.label ? " " + esc(e.label) : ""}
         ${e.note ? `<small>${esc(e.note)}</small>` : ""}</div></li>`;
   });
-  $("#calList").innerHTML = rows.join("") || `<li class="empty"><b>다가오는 일정이 없다</b>시험 날짜가 정해지면 config.yaml 의 exams 에 추가한다.</li>`;
+  $("#calList").innerHTML = rows.join("") || `<li class="empty"><b>다가오는 일정이 없다</b>'새 일정 추가'로 넣거나 구글 캘린더 '공지·입시 일정'에 넣는다.</li>`;
   const un = (C.undated || []).filter(u => !calCat || u.category === calCat);
   $("#calUndated").innerHTML = un.map(u => `<div class="cal-card"><span class="st">${esc(u.status)}</span>
     <b>${u.url ? `<a href="${esc(u.url)}" target="_blank" rel="noopener">${esc(u.name)}</a>` : esc(u.name)}</b><p>${esc(u.note)}</p></div>`).join("") || "<p>없음</p>";
   applyCalView();
-  $("#calSub").innerHTML = C.ics_url ? `<b>구글 캘린더에서 구독하기</b><br>구글 캘린더(PC) → 왼쪽 '다른 캘린더' 옆 + → 'URL로 추가' → 아래 주소를 붙여넣는다. 이후 자동으로 갱신된다(구글 쪽 갱신은 몇 시간 걸릴 수 있다).
+  $("#calSync").textContent = (C.synced_at ? `일정 갱신 ${short(C.synced_at)}` : "") + (calNote ? " · " + calNote : "");
+  $("#calCatList").innerHTML = cats.map(c => `<option value="${esc(c)}">`).join("");
+  $("#calSub").innerHTML = C.ics_url ? `<b>읽기 전용 구독 주소 (.ics)</b><br>구글 캘린더 양방향 동기화를 켰다면 이 구독은 넣지 않는다(같은 일정이 두 번 보인다). 다른 달력 앱에서 보기만 할 때 쓴다.
     <code>${esc(C.ics_url)}</code><button class="btn" id="icsCopy" type="button">주소 복사</button>` : "";
 }
 document.addEventListener("click", e => {
   const b = e.target.closest("#calFilter button"); if (b) { calCat = b.dataset.c; renderCal(); return; }
   if (e.target.id === "icsCopy") { try { navigator.clipboard.writeText(DATA.calendar.ics_url); e.target.textContent = "복사했다"; } catch (err) {} }
 });
+
+// ── 일정 추가·수정·삭제 (schedule.json 을 GitHub 에 저장 → 동기화 작업이 구글 캘린더에 반영)
+let calNote = "", evEditing = null;
+const evBtn = e => `<button type="button" class="evedit" data-ev="${esc(e.id)}" aria-label="${esc(e.exam)} 일정 수정">수정</button>`;
+async function loadSchedule() {
+  const f = await ghApi(`/contents/schedule.json?ref=${encodeURIComponent(gh.branch)}`);
+  return {sch: JSON.parse(b64decode(f.content)), sha: f.sha};
+}
+async function saveSchedule(mutate, message) {
+  const {sch, sha} = await loadSchedule();   // 항상 최신본을 받아 고친다 (구글 쪽에서 들어온 변경을 덮지 않게)
+  sch.events ||= []; sch.hidden_auto ||= [];
+  mutate(sch);
+  await ghApi("/contents/schedule.json", {method: "PUT", body: JSON.stringify({message, content: b64encode(JSON.stringify(sch, null, 1) + "\n"), sha, branch: gh.branch})});
+}
+function evMsg(t, bad) { $("#evMsg").innerHTML = t ? `<p class="msg ${bad ? "bad" : ""}">${t}</p>` : ""; }
+function openEv(id) {
+  const e = id ? (DATA.calendar.events || []).find(x => x.id === id) : null;
+  evEditing = e;
+  const f = $("#evForm");
+  f.reset();
+  for (const k of ["exam", "type", "category", "label", "time", "start", "date", "url", "note"]) f.elements[k].value = (e && e[k]) || (k === "type" ? "일정" : "");
+  if (e && ![...f.elements.type.options].some(o => o.value === e.type)) f.elements.type.add(new Option(e.type));
+  if (e) f.elements.type.value = e.type;
+  $("#evTitle").textContent = e ? "일정 수정" : "일정 추가";
+  $("#evDel").hidden = !e;
+  $("#evAutoNote").hidden = !(e && e.auto);
+  evMsg(ghReady() ? "" : "연결 설정(GitHub 토큰) 전에는 저장되지 않는다.", !ghReady());
+  $("#evDlg").showModal();
+}
+const FIELDS = ["exam", "category", "label", "type", "date", "start", "time", "url", "note"];
+async function evCommit(del) {
+  if (!ghReady()) { $("#evDlg").close(); showView("settings"); $("#setMsg").textContent = "일정을 저장하려면 먼저 연결 설정을 한다."; return; }
+  const f = $("#evForm"), v = {};
+  for (const k of FIELDS) v[k] = f.elements[k].value.trim();
+  if (!del) {
+    if (!v.exam || !v.date) { evMsg("제목과 날짜는 꼭 넣는다.", true); return; }
+    if (v.start && v.start > v.date) { evMsg("시작일이 마지막 날보다 늦다.", true); return; }
+    if (v.start === v.date) v.start = "";
+    if (v.url && !/^https?:\/\//.test(v.url)) { evMsg("링크는 http:// 또는 https:// 로 시작해야 한다.", true); return; }
+    if (/^\d:\d{2}$/.test(v.time)) v.time = "0" + v.time;
+  }
+  const old = evEditing, now = new Date().toISOString().replace(/\.\d+Z$/, "Z");
+  const id = old ? old.id : "w" + Array.from(crypto.getRandomValues(new Uint8Array(6)), b => b.toString(16).padStart(2, "0")).join("").slice(0, 11);
+  $("#evSave").disabled = $("#evDel").disabled = true;
+  evMsg("저장하는 중…");
+  try {
+    await saveSchedule(sch => {
+      const i = sch.events.findIndex(x => x.id === id);
+      if (del) {
+        if (i >= 0) Object.assign(sch.events[i], {deleted: true, updated: now});
+        else if (!sch.hidden_auto.includes(id)) sch.hidden_auto.push(id);   // 자동 일정은 숨김 목록으로
+        return;
+      }
+      const cur = i >= 0 ? sch.events[i] : {id, origin: old && old.auto ? "auto-edited" : "site"};
+      Object.assign(cur, v, {updated: now});
+      delete cur.deleted;
+      if (old && old.remind && !("remind" in cur)) cur.remind = old.remind;
+      if (i < 0) sch.events.push(cur);
+    }, `${del ? "일정 삭제" : old ? "일정 수정" : "일정 추가"}: ${v.exam || (old && old.exam)}`);
+    // 화면에 바로 반영 (data.json 은 동기화 작업이 1~2분 뒤 다시 만든다)
+    const list = DATA.calendar.events = (DATA.calendar.events || []).filter(x => x.id !== id);
+    if (!del) list.push({...(old || {}), ...v, id, auto: false, origin: old && old.auto ? "auto-edited" : (old && old.origin) || "site"});
+    list.sort((a, b) => (a.date + (a.time || "99")).localeCompare(b.date + (b.time || "99")));
+    calNote = `${del ? "삭제" : "저장"}했다. 구글 캘린더에는 1~2분 뒤 반영된다`;
+    $("#evDlg").close();
+    renderCal();
+  } catch (err) { evMsg(esc(err.message), true); }
+  finally { $("#evSave").disabled = $("#evDel").disabled = false; }
+}
+$("#evAdd").addEventListener("click", () => openEv(null));
+$("#evForm").addEventListener("submit", e => { e.preventDefault(); evCommit(false); });
+$("#evDel").addEventListener("click", () => { if (evEditing) evCommit(true); });
+document.addEventListener("click", e => { const b = e.target.closest(".evedit"); if (b) { e.preventDefault(); openEv(b.dataset.ev); } });
 
 // ── 달력 보기
 let calView = (() => { try { return localStorage.getItem("calView") || "list"; } catch (e) { return "list"; } })();
@@ -1025,7 +1129,7 @@ function renderDay(map) {
   if (!mSel) { $("#mDay").innerHTML = `<p class="lead">날짜를 누르면 그날 일정이 여기에 나온다.</p>`; return; }
   const [y, m, d] = mSel.split("-").map(Number), list = map[mSel] || [];
   $("#mDay").innerHTML = `<h4>${m}월 ${d}일 일정 ${list.length}건</h4>` + (list.length ? `<ol class="cal-list">${list.map(e => `<li class="cal-ev"><span class="dd">${e._start ? "시작" : esc(e.type)}</span><span class="dt">${e.time ? esc(e.time) : ""}</span>
-    <div class="what"><span class="ty t-${esc(e.type.replace(/\s/g, ""))}">${esc(e.type)}</span><b>${e.url ? `<a href="${esc(e.url)}" target="_blank" rel="noopener">${esc(e.exam)}</a>` : esc(e.exam)}</b>${e.label ? " " + esc(e.label) : ""}${e.note ? `<small>${esc(e.note)}</small>` : ""}</div></li>`).join("")}</ol>` : `<p class="lead">일정이 없다.</p>`);
+    <div class="what">${e._start ? "" : evBtn(e)}<span class="ty t-${esc(e.type.replace(/\s/g, ""))}">${esc(e.type)}</span><b>${e.url ? `<a href="${esc(e.url)}" target="_blank" rel="noopener">${esc(e.exam)}</a>` : esc(e.exam)}</b>${e.label ? " " + esc(e.label) : ""}${e.note ? `<small>${esc(e.note)}</small>` : ""}</div></li>`).join("")}</ol>` : `<p class="lead">일정이 없다.</p>`);
 }
 function applyCalView() {
   $("#calMode").querySelectorAll("button").forEach(b => b.setAttribute("aria-pressed", b.dataset.m === calView));

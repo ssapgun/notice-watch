@@ -12,7 +12,9 @@
 | `crawler.py` | 크롤링 엔진. 저장소(`Store`, SQLite), 게시판 파싱(`parse_list`), 페이지 변경 감지(`crawl_watch`), 설정 편집(`upsert_source` 등), 미리보기(`test_source`), 구조 추정(`guess_board`) |
 | `summarize.py` | 공지 정리·번역. 상세 페이지 본문(`detail_selector`)을 뽑아 Claude API(`ANTHROPIC_API_KEY`)로 한국어 정리, 키가 없으면 발췌. 첨부파일은 읽지 않는다 |
 | `notify.py` | 텔레그램 알림. TELEGRAM_BOT_TOKEN·TELEGRAM_CHAT_ID 가 있을 때만 핵심 키워드 새 글과 3회 연속 실패 대상을 보낸다 |
-| `calendar_events.py` | 일정: config exams + 학사 공지 기간 추출 → data.json calendar, docs/calendar.ics, 텔레그램 미리 알림(meta 로 중복 방지) |
+| `calendar_events.py` | 일정: schedule.json + 학사 공지 기간 추출 → data.json calendar, docs/calendar.ics, 텔레그램 미리 알림(meta 로 중복 방지). 날짜 없는 카드는 config exams |
+| `gcal_sync.py`, `.github/workflows/gcal.yml` | 구글 캘린더 전용 캘린더와 schedule.json 양방향 동기화(1시간마다·schedule.json 푸시 때). 서비스 계정(GOOGLE_SERVICE_ACCOUNT·GOOGLE_CALENDAR_ID). 상태는 data/gcal_state.json |
+| `schedule.json` | 날짜가 정해진 일정 저장소. 웹 '일정' 탭이 GitHub API 로, 동기화 작업이 구글 쪽 변경으로 고친다. deleted:true 는 삭제 기록, hidden_auto 는 숨긴 자동 일정 |
 | `app.py` | 파이썬 표준 라이브러리 웹서버(`ThreadingHTTPServer`). `127.0.0.1:8765`. API 와 자동 확인 스레드 |
 | `static/index.html` | 화면 전체 (HTML+CSS+JS 한 파일, 빌드 도구 없음) |
 | `config.yaml` | 감시 대상 목록. 화면에서 저장하면 `crawler.save_config` 가 다시 쓴다 |
@@ -38,7 +40,7 @@ python crawler.py --export # 엑셀로 내보내기
 7. API 키는 환경변수·GitHub Secret 으로만 받는다. 코드·config.yaml·data.json 에 쓰지 않는다.
 
 ## 코드 규칙
-- 의존성은 `requirements.txt` 의 4개만 쓴다. 새 패키지가 꼭 필요하면 이유를 적고 사용자에게 먼저 묻는다.
+- 의존성은 `requirements.txt` 의 5개만 쓴다 (google-auth 는 구글 캘린더 동기화용, 사용자 승인). 새 패키지가 꼭 필요하면 이유를 적고 사용자에게 먼저 묻는다.
 - 화면 문구와 오류 메시지는 한국어, 평서문("~했다", "~할 것").
 - 한 사이트가 실패해도 전체 확인은 계속돼야 한다 (`run_crawl` 의 try/except 유지).
 - 설정 저장은 반드시 `save_config` 를 거친다 (.bak 백업과 원자적 쓰기 때문).

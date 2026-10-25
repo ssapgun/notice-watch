@@ -1,0 +1,289 @@
+{
+ "_설명": "일정 저장소. 웹 '일정' 탭과 구글 캘린더(공지·입시 일정)가 이 파일을 함께 고친다. deleted 가 true 인 항목은 삭제 기록이다.",
+ "events": [
+  {
+   "id": "ee6795f8333e",
+   "exam": "JLPT N4 (2026 제2회)",
+   "category": "어학 · 일본어",
+   "label": "",
+   "type": "시험",
+   "date": "2026-12-06",
+   "start": "",
+   "time": "",
+   "url": "https://www.jlpt.or.kr",
+   "note": "접수 완료. 온라인 성적 발표는 2027년 1월 말 예정(정확한 날짜 미발표).",
+   "origin": "site",
+   "updated": "2026-10-25T07:50:21Z"
+  },
+  {
+   "id": "66e348d06e07",
+   "exam": "기관토플 (경희대 TOEFL ITP)",
+   "category": "어학 · 영어",
+   "label": "2회 (서울)",
+   "type": "접수 마감",
+   "date": "2026-10-26",
+   "start": "",
+   "time": "11:00",
+   "url": "https://oia.khu.ac.kr/oiak_kor/user/bbs/BMSR00040/view.do?menuNo=5800010&boardId=551746",
+   "note": "응시료 33,000원. 회차 중 하나만 고르면 된다. 국제캠퍼스 8·10회는 서울 7·9회와 같은 날. TOEFL iBT 와 둘 중 하나.",
+   "remind": [
+    "접수 마감"
+   ],
+   "origin": "site",
+   "updated": "2026-10-25T07:50:21Z"
+  },
+  {
+   "id": "52ab6587a177",
+   "exam": "기관토플 (경희대 TOEFL ITP)",
+   "category": "어학 · 영어",
+   "label": "2회 (서울)",
+   "type": "시험",
+   "date": "2026-11-06",
+   "start": "",
+   "time": "18:00",
+   "url": "https://oia.khu.ac.kr/oiak_kor/user/bbs/BMSR00040/view.do?menuNo=5800010&boardId=551746",
+   "note": "응시료 33,000원. 회차 중 하나만 고르면 된다. 국제캠퍼스 8·10회는 서울 7·9회와 같은 날. TOEFL iBT 와 둘 중 하나.",
+   "remind": [
+    "접수 마감"
+   ],
+   "origin": "site",
+   "updated": "2026-10-25T07:50:21Z"
+  },
+  {
+   "id": "0acce86d39a6",
+   "exam": "기관토플 (경희대 TOEFL ITP)",
+   "category": "어학 · 영어",
+   "label": "2회 (서울)",
+   "type": "결과 발표",
+   "date": "2026-11-13",
+   "start": "",
+   "time": "",
+   "url": "https://oia.khu.ac.kr/oiak_kor/user/bbs/BMSR00040/view.do?menuNo=5800010&boardId=551746",
+   "note": "응시료 33,000원. 회차 중 하나만 고르면 된다. 국제캠퍼스 8·10회는 서울 7·9회와 같은 날. TOEFL iBT 와 둘 중 하나.",
+   "remind": [
+    "접수 마감"
+   ],
+   "origin": "site",
+   "updated": "2026-10-25T07:50:21Z"
+  },
+  {
+   "id": "9614153d4e9f",
+   "exam": "기관토플 (경희대 TOEFL ITP)",
+   "category": "어학 · 영어",
+   "label": "4회 (서울)",
+   "type": "접수 마감",
+   "date": "2026-11-09",
+   "start": "",
+   "time": "11:00",
+   "url": "https://oia.khu.ac.kr/oiak_kor/user/bbs/BMSR00040/view.do?menuNo=5800010&boardId=551746",
+   "note": "응시료 33,000원. 회차 중 하나만 고르면 된다. 국제캠퍼스 8·10회는 서울 7·9회와 같은 날. TOEFL iBT 와 둘 중 하나.",
+   "remind": [
+    "접수 마감"
+   ],
+   "origin": "site",
+   "updated": "2026-10-25T07:50:21Z"
+  },
+  {
+   "id": "76c7be5caa64",
+   "exam": "기관토플 (경희대 TOEFL ITP)",
+   "category": "어학 · 영어",
+   "label": "4회 (서울)",
+   "type": "시험",
+   "date": "2026-11-20",
+   "start": "",
+   "time": "18:00",
+   "url": "https://oia.khu.ac.kr/oiak_kor/user/bbs/BMSR00040/view.do?menuNo=5800010&boardId=551746",
+   "note": "응시료 33,000원. 회차 중 하나만 고르면 된다. 국제캠퍼스 8·10회는 서울 7·9회와 같은 날. TOEFL iBT 와 둘 중 하나.",
+   "remind": [
+    "접수 마감"
+   ],
+   "origin": "site",
+   "updated": "2026-10-25T07:50:21Z"
+  },
+  {
+   "id": "6eda3251c3be",
+   "exam": "기관토플 (경희대 TOEFL ITP)",
+   "category": "어학 · 영어",
+   "label": "4회 (서울)",
+   "type": "결과 발표",
+   "date": "2026-11-27",
+   "start": "",
+   "time": "",
+   "url": "https://oia.khu.ac.kr/oiak_kor/user/bbs/BMSR00040/view.do?menuNo=5800010&boardId=551746",
+   "note": "응시료 33,000원. 회차 중 하나만 고르면 된다. 국제캠퍼스 8·10회는 서울 7·9회와 같은 날. TOEFL iBT 와 둘 중 하나.",
+   "remind": [
+    "접수 마감"
+   ],
+   "origin": "site",
+   "updated": "2026-10-25T07:50:21Z"
+  },
+  {
+   "id": "b4fde42d3ff9",
+   "exam": "기관토플 (경희대 TOEFL ITP)",
+   "category": "어학 · 영어",
+   "label": "6회 (서울)",
+   "type": "접수 마감",
+   "date": "2026-11-23",
+   "start": "",
+   "time": "11:00",
+   "url": "https://oia.khu.ac.kr/oiak_kor/user/bbs/BMSR00040/view.do?menuNo=5800010&boardId=551746",
+   "note": "응시료 33,000원. 회차 중 하나만 고르면 된다. 국제캠퍼스 8·10회는 서울 7·9회와 같은 날. TOEFL iBT 와 둘 중 하나.",
+   "remind": [
+    "접수 마감"
+   ],
+   "origin": "site",
+   "updated": "2026-10-25T07:50:21Z"
+  },
+  {
+   "id": "3a5db0016e90",
+   "exam": "기관토플 (경희대 TOEFL ITP)",
+   "category": "어학 · 영어",
+   "label": "6회 (서울)",
+   "type": "시험",
+   "date": "2026-12-04",
+   "start": "",
+   "time": "18:00",
+   "url": "https://oia.khu.ac.kr/oiak_kor/user/bbs/BMSR00040/view.do?menuNo=5800010&boardId=551746",
+   "note": "응시료 33,000원. 회차 중 하나만 고르면 된다. 국제캠퍼스 8·10회는 서울 7·9회와 같은 날. TOEFL iBT 와 둘 중 하나.",
+   "remind": [
+    "접수 마감"
+   ],
+   "origin": "site",
+   "updated": "2026-10-25T07:50:21Z"
+  },
+  {
+   "id": "faf6a98f2b44",
+   "exam": "기관토플 (경희대 TOEFL ITP)",
+   "category": "어학 · 영어",
+   "label": "6회 (서울)",
+   "type": "결과 발표",
+   "date": "2026-12-11",
+   "start": "",
+   "time": "",
+   "url": "https://oia.khu.ac.kr/oiak_kor/user/bbs/BMSR00040/view.do?menuNo=5800010&boardId=551746",
+   "note": "응시료 33,000원. 회차 중 하나만 고르면 된다. 국제캠퍼스 8·10회는 서울 7·9회와 같은 날. TOEFL iBT 와 둘 중 하나.",
+   "remind": [
+    "접수 마감"
+   ],
+   "origin": "site",
+   "updated": "2026-10-25T07:50:21Z"
+  },
+  {
+   "id": "86192c525115",
+   "exam": "기관토플 (경희대 TOEFL ITP)",
+   "category": "어학 · 영어",
+   "label": "7회 (서울)",
+   "type": "접수 마감",
+   "date": "2026-12-14",
+   "start": "",
+   "time": "11:00",
+   "url": "https://oia.khu.ac.kr/oiak_kor/user/bbs/BMSR00040/view.do?menuNo=5800010&boardId=551746",
+   "note": "응시료 33,000원. 회차 중 하나만 고르면 된다. 국제캠퍼스 8·10회는 서울 7·9회와 같은 날. TOEFL iBT 와 둘 중 하나.",
+   "remind": [
+    "접수 마감"
+   ],
+   "origin": "site",
+   "updated": "2026-10-25T07:50:21Z"
+  },
+  {
+   "id": "59cc160c93d8",
+   "exam": "기관토플 (경희대 TOEFL ITP)",
+   "category": "어학 · 영어",
+   "label": "7회 (서울)",
+   "type": "시험",
+   "date": "2026-12-22",
+   "start": "",
+   "time": "15:00",
+   "url": "https://oia.khu.ac.kr/oiak_kor/user/bbs/BMSR00040/view.do?menuNo=5800010&boardId=551746",
+   "note": "응시료 33,000원. 회차 중 하나만 고르면 된다. 국제캠퍼스 8·10회는 서울 7·9회와 같은 날. TOEFL iBT 와 둘 중 하나.",
+   "remind": [
+    "접수 마감"
+   ],
+   "origin": "site",
+   "updated": "2026-10-25T07:50:21Z"
+  },
+  {
+   "id": "00c08ec62e59",
+   "exam": "기관토플 (경희대 TOEFL ITP)",
+   "category": "어학 · 영어",
+   "label": "7회 (서울)",
+   "type": "결과 발표",
+   "date": "2026-12-29",
+   "start": "",
+   "time": "",
+   "url": "https://oia.khu.ac.kr/oiak_kor/user/bbs/BMSR00040/view.do?menuNo=5800010&boardId=551746",
+   "note": "응시료 33,000원. 회차 중 하나만 고르면 된다. 국제캠퍼스 8·10회는 서울 7·9회와 같은 날. TOEFL iBT 와 둘 중 하나.",
+   "remind": [
+    "접수 마감"
+   ],
+   "origin": "site",
+   "updated": "2026-10-25T07:50:21Z"
+  },
+  {
+   "id": "df8f2188e0b2",
+   "exam": "기관토플 (경희대 TOEFL ITP)",
+   "category": "어학 · 영어",
+   "label": "9회 (서울)",
+   "type": "접수 마감",
+   "date": "2026-12-14",
+   "start": "",
+   "time": "11:00",
+   "url": "https://oia.khu.ac.kr/oiak_kor/user/bbs/BMSR00040/view.do?menuNo=5800010&boardId=551746",
+   "note": "응시료 33,000원. 회차 중 하나만 고르면 된다. 국제캠퍼스 8·10회는 서울 7·9회와 같은 날. TOEFL iBT 와 둘 중 하나.",
+   "remind": [
+    "접수 마감"
+   ],
+   "origin": "site",
+   "updated": "2026-10-25T07:50:21Z"
+  },
+  {
+   "id": "f9fa7c31a19d",
+   "exam": "기관토플 (경희대 TOEFL ITP)",
+   "category": "어학 · 영어",
+   "label": "9회 (서울)",
+   "type": "시험",
+   "date": "2026-12-23",
+   "start": "",
+   "time": "15:00",
+   "url": "https://oia.khu.ac.kr/oiak_kor/user/bbs/BMSR00040/view.do?menuNo=5800010&boardId=551746",
+   "note": "응시료 33,000원. 회차 중 하나만 고르면 된다. 국제캠퍼스 8·10회는 서울 7·9회와 같은 날. TOEFL iBT 와 둘 중 하나.",
+   "remind": [
+    "접수 마감"
+   ],
+   "origin": "site",
+   "updated": "2026-10-25T07:50:21Z"
+  },
+  {
+   "id": "0ca058e0897c",
+   "exam": "기관토플 (경희대 TOEFL ITP)",
+   "category": "어학 · 영어",
+   "label": "9회 (서울)",
+   "type": "결과 발표",
+   "date": "2026-12-30",
+   "start": "",
+   "time": "",
+   "url": "https://oia.khu.ac.kr/oiak_kor/user/bbs/BMSR00040/view.do?menuNo=5800010&boardId=551746",
+   "note": "응시료 33,000원. 회차 중 하나만 고르면 된다. 국제캠퍼스 8·10회는 서울 7·9회와 같은 날. TOEFL iBT 와 둘 중 하나.",
+   "remind": [
+    "접수 마감"
+   ],
+   "origin": "site",
+   "updated": "2026-10-25T07:50:21Z"
+  },
+  {
+   "id": "02a28b749706",
+   "exam": "2026 스마트건설 EXPO (킨텍스)",
+   "category": "공모전",
+   "label": "",
+   "type": "행사",
+   "date": "2026-11-27",
+   "start": "2026-11-25",
+   "time": "",
+   "url": "https://www.heraldk.com/article/2026061413000075036",
+   "note": "스마트건설 챌린지 입상 기술 전시, 건설연 창업 공모전 시상. 견학 추천.",
+   "origin": "site",
+   "updated": "2026-10-25T07:50:21Z"
+  }
+ ],
+ "hidden_auto": []
+}

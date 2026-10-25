@@ -3,193 +3,226 @@ VERSION:2.0
 PRODID:-//notice-watch//exam-calendar//KO
 CALSCALE:GREGORIAN
 METHOD:PUBLISH
-X-WR-CALNAME:공지·입시 감시 시험 일정
+X-WR-CALNAME:공지·입시 감시 일정
 X-WR-TIMEZONE:Asia/Seoul
 BEGIN:VEVENT
 UID:66e348d06e07@notice-watch
-DTSTAMP:20261025T072640Z
+DTSTAMP:20261025T075639Z
 DTSTART;VALUE=DATE:20261026
 DTEND;VALUE=DATE:20261027
 SUMMARY:[접수 마감] 기관토플 (경희대 TOEFL ITP) 2회 (서울) 
  11:00
-DESCRIPTION:https://oia.khu.ac.kr/oiak_kor/user/bbs/BMSR00040/view.do?men
- uNo=5800010&boardId=551746
+DESCRIPTION:응시료 33\,000원. 회차 중 하나만 고르면 된다. 
+ 국제캠퍼스 8·10회는 서울 7·9회와 같은 날. TOEFL iBT 와 
+ 둘 중 하나.\nhttps://oia.khu.ac.kr/oiak_kor/user/bbs/BMSR00040/view.d
+ o?menuNo=5800010&boardId=551746
 URL:https://oia.khu.ac.kr/oiak_kor/user/bbs/BMSR00040/view.do?menuNo=5800
  010&boardId=551746
 END:VEVENT
 BEGIN:VEVENT
 UID:52ab6587a177@notice-watch
-DTSTAMP:20261025T072640Z
+DTSTAMP:20261025T075639Z
 DTSTART;VALUE=DATE:20261106
 DTEND;VALUE=DATE:20261107
 SUMMARY:[시험] 기관토플 (경희대 TOEFL ITP) 2회 (서울) 18:00
-DESCRIPTION:https://oia.khu.ac.kr/oiak_kor/user/bbs/BMSR00040/view.do?men
- uNo=5800010&boardId=551746
+DESCRIPTION:응시료 33\,000원. 회차 중 하나만 고르면 된다. 
+ 국제캠퍼스 8·10회는 서울 7·9회와 같은 날. TOEFL iBT 와 
+ 둘 중 하나.\nhttps://oia.khu.ac.kr/oiak_kor/user/bbs/BMSR00040/view.d
+ o?menuNo=5800010&boardId=551746
 URL:https://oia.khu.ac.kr/oiak_kor/user/bbs/BMSR00040/view.do?menuNo=5800
  010&boardId=551746
 END:VEVENT
 BEGIN:VEVENT
 UID:9614153d4e9f@notice-watch
-DTSTAMP:20261025T072640Z
+DTSTAMP:20261025T075639Z
 DTSTART;VALUE=DATE:20261109
 DTEND;VALUE=DATE:20261110
 SUMMARY:[접수 마감] 기관토플 (경희대 TOEFL ITP) 4회 (서울) 
  11:00
-DESCRIPTION:https://oia.khu.ac.kr/oiak_kor/user/bbs/BMSR00040/view.do?men
- uNo=5800010&boardId=551746
+DESCRIPTION:응시료 33\,000원. 회차 중 하나만 고르면 된다. 
+ 국제캠퍼스 8·10회는 서울 7·9회와 같은 날. TOEFL iBT 와 
+ 둘 중 하나.\nhttps://oia.khu.ac.kr/oiak_kor/user/bbs/BMSR00040/view.d
+ o?menuNo=5800010&boardId=551746
 URL:https://oia.khu.ac.kr/oiak_kor/user/bbs/BMSR00040/view.do?menuNo=5800
  010&boardId=551746
 END:VEVENT
 BEGIN:VEVENT
 UID:0acce86d39a6@notice-watch
-DTSTAMP:20261025T072640Z
+DTSTAMP:20261025T075639Z
 DTSTART;VALUE=DATE:20261113
 DTEND;VALUE=DATE:20261114
 SUMMARY:[결과 발표] 기관토플 (경희대 TOEFL ITP) 2회 (서울)
-DESCRIPTION:https://oia.khu.ac.kr/oiak_kor/user/bbs/BMSR00040/view.do?men
- uNo=5800010&boardId=551746
+DESCRIPTION:응시료 33\,000원. 회차 중 하나만 고르면 된다. 
+ 국제캠퍼스 8·10회는 서울 7·9회와 같은 날. TOEFL iBT 와 
+ 둘 중 하나.\nhttps://oia.khu.ac.kr/oiak_kor/user/bbs/BMSR00040/view.d
+ o?menuNo=5800010&boardId=551746
 URL:https://oia.khu.ac.kr/oiak_kor/user/bbs/BMSR00040/view.do?menuNo=5800
  010&boardId=551746
 END:VEVENT
 BEGIN:VEVENT
 UID:76c7be5caa64@notice-watch
-DTSTAMP:20261025T072640Z
+DTSTAMP:20261025T075639Z
 DTSTART;VALUE=DATE:20261120
 DTEND;VALUE=DATE:20261121
 SUMMARY:[시험] 기관토플 (경희대 TOEFL ITP) 4회 (서울) 18:00
-DESCRIPTION:https://oia.khu.ac.kr/oiak_kor/user/bbs/BMSR00040/view.do?men
- uNo=5800010&boardId=551746
+DESCRIPTION:응시료 33\,000원. 회차 중 하나만 고르면 된다. 
+ 국제캠퍼스 8·10회는 서울 7·9회와 같은 날. TOEFL iBT 와 
+ 둘 중 하나.\nhttps://oia.khu.ac.kr/oiak_kor/user/bbs/BMSR00040/view.d
+ o?menuNo=5800010&boardId=551746
 URL:https://oia.khu.ac.kr/oiak_kor/user/bbs/BMSR00040/view.do?menuNo=5800
  010&boardId=551746
 END:VEVENT
 BEGIN:VEVENT
 UID:b4fde42d3ff9@notice-watch
-DTSTAMP:20261025T072640Z
+DTSTAMP:20261025T075639Z
 DTSTART;VALUE=DATE:20261123
 DTEND;VALUE=DATE:20261124
 SUMMARY:[접수 마감] 기관토플 (경희대 TOEFL ITP) 6회 (서울) 
  11:00
-DESCRIPTION:https://oia.khu.ac.kr/oiak_kor/user/bbs/BMSR00040/view.do?men
- uNo=5800010&boardId=551746
+DESCRIPTION:응시료 33\,000원. 회차 중 하나만 고르면 된다. 
+ 국제캠퍼스 8·10회는 서울 7·9회와 같은 날. TOEFL iBT 와 
+ 둘 중 하나.\nhttps://oia.khu.ac.kr/oiak_kor/user/bbs/BMSR00040/view.d
+ o?menuNo=5800010&boardId=551746
+URL:https://oia.khu.ac.kr/oiak_kor/user/bbs/BMSR00040/view.do?menuNo=5800
+ 010&boardId=551746
+END:VEVENT
+BEGIN:VEVENT
+UID:6eda3251c3be@notice-watch
+DTSTAMP:20261025T075639Z
+DTSTART;VALUE=DATE:20261127
+DTEND;VALUE=DATE:20261128
+SUMMARY:[결과 발표] 기관토플 (경희대 TOEFL ITP) 4회 (서울)
+DESCRIPTION:응시료 33\,000원. 회차 중 하나만 고르면 된다. 
+ 국제캠퍼스 8·10회는 서울 7·9회와 같은 날. TOEFL iBT 와 
+ 둘 중 하나.\nhttps://oia.khu.ac.kr/oiak_kor/user/bbs/BMSR00040/view.d
+ o?menuNo=5800010&boardId=551746
 URL:https://oia.khu.ac.kr/oiak_kor/user/bbs/BMSR00040/view.do?menuNo=5800
  010&boardId=551746
 END:VEVENT
 BEGIN:VEVENT
 UID:02a28b749706@notice-watch
-DTSTAMP:20261025T072640Z
+DTSTAMP:20261025T075639Z
 DTSTART;VALUE=DATE:20261125
-DTEND;VALUE=DATE:20261126
-SUMMARY:[행사] 2026 스마트건설 EXPO (킨텍스) 개막 (~11/27)
-DESCRIPTION:https://www.heraldk.com/article/2026061413000075036
+DTEND;VALUE=DATE:20261128
+SUMMARY:[행사] 2026 스마트건설 EXPO (킨텍스)
+DESCRIPTION:스마트건설 챌린지 입상 기술 전시\, 건설연 
+ 창업 공모전 시상. 견학 추천.\nhttps://www.heraldk.com/article/
+ 2026061413000075036
 URL:https://www.heraldk.com/article/2026061413000075036
 END:VEVENT
 BEGIN:VEVENT
-UID:6eda3251c3be@notice-watch
-DTSTAMP:20261025T072640Z
-DTSTART;VALUE=DATE:20261127
-DTEND;VALUE=DATE:20261128
-SUMMARY:[결과 발표] 기관토플 (경희대 TOEFL ITP) 4회 (서울)
-DESCRIPTION:https://oia.khu.ac.kr/oiak_kor/user/bbs/BMSR00040/view.do?men
- uNo=5800010&boardId=551746
-URL:https://oia.khu.ac.kr/oiak_kor/user/bbs/BMSR00040/view.do?menuNo=5800
- 010&boardId=551746
-END:VEVENT
-BEGIN:VEVENT
 UID:3a5db0016e90@notice-watch
-DTSTAMP:20261025T072640Z
+DTSTAMP:20261025T075639Z
 DTSTART;VALUE=DATE:20261204
 DTEND;VALUE=DATE:20261205
 SUMMARY:[시험] 기관토플 (경희대 TOEFL ITP) 6회 (서울) 18:00
-DESCRIPTION:https://oia.khu.ac.kr/oiak_kor/user/bbs/BMSR00040/view.do?men
- uNo=5800010&boardId=551746
+DESCRIPTION:응시료 33\,000원. 회차 중 하나만 고르면 된다. 
+ 국제캠퍼스 8·10회는 서울 7·9회와 같은 날. TOEFL iBT 와 
+ 둘 중 하나.\nhttps://oia.khu.ac.kr/oiak_kor/user/bbs/BMSR00040/view.d
+ o?menuNo=5800010&boardId=551746
 URL:https://oia.khu.ac.kr/oiak_kor/user/bbs/BMSR00040/view.do?menuNo=5800
  010&boardId=551746
 END:VEVENT
 BEGIN:VEVENT
 UID:ee6795f8333e@notice-watch
-DTSTAMP:20261025T072640Z
+DTSTAMP:20261025T075639Z
 DTSTART;VALUE=DATE:20261206
 DTEND;VALUE=DATE:20261207
 SUMMARY:[시험] JLPT N4 (2026 제2회)
-DESCRIPTION:https://www.jlpt.or.kr
+DESCRIPTION:접수 완료. 온라인 성적 발표는 2027년 1월 말 
+ 예정(정확한 날짜 미발표).\nhttps://www.jlpt.or.kr
 URL:https://www.jlpt.or.kr
 END:VEVENT
 BEGIN:VEVENT
 UID:faf6a98f2b44@notice-watch
-DTSTAMP:20261025T072640Z
+DTSTAMP:20261025T075639Z
 DTSTART;VALUE=DATE:20261211
 DTEND;VALUE=DATE:20261212
 SUMMARY:[결과 발표] 기관토플 (경희대 TOEFL ITP) 6회 (서울)
-DESCRIPTION:https://oia.khu.ac.kr/oiak_kor/user/bbs/BMSR00040/view.do?men
- uNo=5800010&boardId=551746
+DESCRIPTION:응시료 33\,000원. 회차 중 하나만 고르면 된다. 
+ 국제캠퍼스 8·10회는 서울 7·9회와 같은 날. TOEFL iBT 와 
+ 둘 중 하나.\nhttps://oia.khu.ac.kr/oiak_kor/user/bbs/BMSR00040/view.d
+ o?menuNo=5800010&boardId=551746
 URL:https://oia.khu.ac.kr/oiak_kor/user/bbs/BMSR00040/view.do?menuNo=5800
  010&boardId=551746
 END:VEVENT
 BEGIN:VEVENT
 UID:86192c525115@notice-watch
-DTSTAMP:20261025T072640Z
+DTSTAMP:20261025T075639Z
 DTSTART;VALUE=DATE:20261214
 DTEND;VALUE=DATE:20261215
 SUMMARY:[접수 마감] 기관토플 (경희대 TOEFL ITP) 7회 (서울) 
  11:00
-DESCRIPTION:https://oia.khu.ac.kr/oiak_kor/user/bbs/BMSR00040/view.do?men
- uNo=5800010&boardId=551746
+DESCRIPTION:응시료 33\,000원. 회차 중 하나만 고르면 된다. 
+ 국제캠퍼스 8·10회는 서울 7·9회와 같은 날. TOEFL iBT 와 
+ 둘 중 하나.\nhttps://oia.khu.ac.kr/oiak_kor/user/bbs/BMSR00040/view.d
+ o?menuNo=5800010&boardId=551746
 URL:https://oia.khu.ac.kr/oiak_kor/user/bbs/BMSR00040/view.do?menuNo=5800
  010&boardId=551746
 END:VEVENT
 BEGIN:VEVENT
 UID:df8f2188e0b2@notice-watch
-DTSTAMP:20261025T072640Z
+DTSTAMP:20261025T075639Z
 DTSTART;VALUE=DATE:20261214
 DTEND;VALUE=DATE:20261215
 SUMMARY:[접수 마감] 기관토플 (경희대 TOEFL ITP) 9회 (서울) 
  11:00
-DESCRIPTION:https://oia.khu.ac.kr/oiak_kor/user/bbs/BMSR00040/view.do?men
- uNo=5800010&boardId=551746
+DESCRIPTION:응시료 33\,000원. 회차 중 하나만 고르면 된다. 
+ 국제캠퍼스 8·10회는 서울 7·9회와 같은 날. TOEFL iBT 와 
+ 둘 중 하나.\nhttps://oia.khu.ac.kr/oiak_kor/user/bbs/BMSR00040/view.d
+ o?menuNo=5800010&boardId=551746
 URL:https://oia.khu.ac.kr/oiak_kor/user/bbs/BMSR00040/view.do?menuNo=5800
  010&boardId=551746
 END:VEVENT
 BEGIN:VEVENT
 UID:59cc160c93d8@notice-watch
-DTSTAMP:20261025T072640Z
+DTSTAMP:20261025T075639Z
 DTSTART;VALUE=DATE:20261222
 DTEND;VALUE=DATE:20261223
 SUMMARY:[시험] 기관토플 (경희대 TOEFL ITP) 7회 (서울) 15:00
-DESCRIPTION:https://oia.khu.ac.kr/oiak_kor/user/bbs/BMSR00040/view.do?men
- uNo=5800010&boardId=551746
+DESCRIPTION:응시료 33\,000원. 회차 중 하나만 고르면 된다. 
+ 국제캠퍼스 8·10회는 서울 7·9회와 같은 날. TOEFL iBT 와 
+ 둘 중 하나.\nhttps://oia.khu.ac.kr/oiak_kor/user/bbs/BMSR00040/view.d
+ o?menuNo=5800010&boardId=551746
 URL:https://oia.khu.ac.kr/oiak_kor/user/bbs/BMSR00040/view.do?menuNo=5800
  010&boardId=551746
 END:VEVENT
 BEGIN:VEVENT
 UID:f9fa7c31a19d@notice-watch
-DTSTAMP:20261025T072640Z
+DTSTAMP:20261025T075639Z
 DTSTART;VALUE=DATE:20261223
 DTEND;VALUE=DATE:20261224
 SUMMARY:[시험] 기관토플 (경희대 TOEFL ITP) 9회 (서울) 15:00
-DESCRIPTION:https://oia.khu.ac.kr/oiak_kor/user/bbs/BMSR00040/view.do?men
- uNo=5800010&boardId=551746
+DESCRIPTION:응시료 33\,000원. 회차 중 하나만 고르면 된다. 
+ 국제캠퍼스 8·10회는 서울 7·9회와 같은 날. TOEFL iBT 와 
+ 둘 중 하나.\nhttps://oia.khu.ac.kr/oiak_kor/user/bbs/BMSR00040/view.d
+ o?menuNo=5800010&boardId=551746
 URL:https://oia.khu.ac.kr/oiak_kor/user/bbs/BMSR00040/view.do?menuNo=5800
  010&boardId=551746
 END:VEVENT
 BEGIN:VEVENT
 UID:00c08ec62e59@notice-watch
-DTSTAMP:20261025T072640Z
+DTSTAMP:20261025T075639Z
 DTSTART;VALUE=DATE:20261229
 DTEND;VALUE=DATE:20261230
 SUMMARY:[결과 발표] 기관토플 (경희대 TOEFL ITP) 7회 (서울)
-DESCRIPTION:https://oia.khu.ac.kr/oiak_kor/user/bbs/BMSR00040/view.do?men
- uNo=5800010&boardId=551746
+DESCRIPTION:응시료 33\,000원. 회차 중 하나만 고르면 된다. 
+ 국제캠퍼스 8·10회는 서울 7·9회와 같은 날. TOEFL iBT 와 
+ 둘 중 하나.\nhttps://oia.khu.ac.kr/oiak_kor/user/bbs/BMSR00040/view.d
+ o?menuNo=5800010&boardId=551746
 URL:https://oia.khu.ac.kr/oiak_kor/user/bbs/BMSR00040/view.do?menuNo=5800
  010&boardId=551746
 END:VEVENT
 BEGIN:VEVENT
 UID:0ca058e0897c@notice-watch
-DTSTAMP:20261025T072640Z
+DTSTAMP:20261025T075639Z
 DTSTART;VALUE=DATE:20261230
 DTEND;VALUE=DATE:20261231
 SUMMARY:[결과 발표] 기관토플 (경희대 TOEFL ITP) 9회 (서울)
-DESCRIPTION:https://oia.khu.ac.kr/oiak_kor/user/bbs/BMSR00040/view.do?men
- uNo=5800010&boardId=551746
+DESCRIPTION:응시료 33\,000원. 회차 중 하나만 고르면 된다. 
+ 국제캠퍼스 8·10회는 서울 7·9회와 같은 날. TOEFL iBT 와 
+ 둘 중 하나.\nhttps://oia.khu.ac.kr/oiak_kor/user/bbs/BMSR00040/view.d
+ o?menuNo=5800010&boardId=551746
 URL:https://oia.khu.ac.kr/oiak_kor/user/bbs/BMSR00040/view.do?menuNo=5800
  010&boardId=551746
 END:VEVENT

@@ -22,7 +22,25 @@ import summarize
 BASE = Path(__file__).resolve().parent
 DATA = BASE / "data"
 OUT = BASE / "docs" / "data" / "data.json"
+ICS = BASE / "docs" / "calendar.ics"
 MAX_ITEMS = 1500
+
+
+def calendar_payload(cfg: dict, events: list[dict]) -> dict:
+    return {"events": events, "undated": calendar_events.undated(cfg),
+            "ics_url": (cfg.get("site_url", "").rstrip("/") + "/calendar.ics") if cfg.get("site_url") else "",
+            "gcal": bool(cfg.get("google_calendar_url")), "gcal_url": cfg.get("google_calendar_url", ""),
+            "synced_at": crawler.now_str()}
+
+
+def write_calendar(store: crawler.Store, cfg: dict) -> None:
+    """확인(크롤링) 없이 일정 부분만 다시 만든다. gcal_sync.py 가 쓴다."""
+    events = calendar_events.all_events(store, cfg)
+    ICS.write_text(calendar_events.build_ics(events), encoding="utf-8", newline="")
+    if OUT.exists():
+        d = json.loads(OUT.read_text(encoding="utf-8"))
+        d["calendar"] = calendar_payload(cfg, events)
+        OUT.write_text(json.dumps(d, ensure_ascii=False, separators=(",", ":")), encoding="utf-8")
 
 
 def main() -> int:
@@ -62,9 +80,9 @@ def main() -> int:
     except Exception as e:   # 알림이 실패해도 사이트 갱신은 계속
         print(f"[알림 오류] {type(e).__name__}: {e}")
 
-    # 일정: 직접 적은 시험·공모전·방학 프로그램(config exams) + 학사 공지에서 뽑은 기간 → 사이트·구글 캘린더(.ics)·텔레그램
+    # 일정: schedule.json(웹·구글 캘린더에서 고침) + 학사 공지에서 뽑은 기간 → 사이트·calendar.ics·텔레그램
     events = calendar_events.all_events(store, cfg)
-    (OUT.parent.parent / "calendar.ics").write_text(calendar_events.build_ics(events), encoding="utf-8", newline="")
+    ICS.write_text(calendar_events.build_ics(events), encoding="utf-8", newline="")
     try:
         due = calendar_events.due_reminders(store, cfg, events)
         if due and notify.enabled():
@@ -99,8 +117,7 @@ def main() -> int:
         "excluded": cfg.get("excluded", []),
         "links": cfg.get("links", []),
         "topics": cfg.get("topics", []),
-        "calendar": {"events": events, "undated": calendar_events.undated(cfg),
-                     "ics_url": (cfg.get("site_url", "").rstrip("/") + "/calendar.ics") if cfg.get("site_url") else ""},
+        "calendar": calendar_payload(cfg, events),
         "highlight": {k: v for k, v in (cfg.get("highlight") or {}).items() if k in ("keywords", "exclude", "alert")},
         "status": store.sources(),
         "items": items,
