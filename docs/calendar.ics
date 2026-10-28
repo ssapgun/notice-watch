@@ -47,6 +47,19 @@ URL:https://oia.khu.ac.kr/oiak_kor/user/bbs/BMSR00040/view.do?menuNo=5800
  010&boardId=551746
 END:VEVENT
 BEGIN:VEVENT
+UID:dcacd473abaf@notice-watch
+DTSTAMP:20260101T000000Z
+DTSTART;VALUE=DATE:20261028
+DTEND;VALUE=DATE:20261110
+SUMMARY:[공지 기간] 2026년 동계 계절학기 대학영어 진단
+ 평가 안내(1차)
+DESCRIPTION:공지 본문에서 자동으로 뽑은 기간이다. 원문
+ 으로 확인할 것.\nhttps://www.khu.ac.kr/kor/user/bbs/BMSR00040/view.
+ do?menuNo=200317&boardId=323425
+URL:https://www.khu.ac.kr/kor/user/bbs/BMSR00040/view.do?menuNo=200317&bo
+ ardId=323425
+END:VEVENT
+BEGIN:VEVENT
 UID:0acce86d39a6@notice-watch
 DTSTAMP:20260101T000000Z
 DTSTART;VALUE=DATE:20261113
