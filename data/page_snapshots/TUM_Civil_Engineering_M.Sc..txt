@@ -71,6 +71,7 @@ All information about the organizsation of the M.Sc. Civil Engineering program c
 Contact BAföG Confirmations: Martina Römpp
 Contact Study with special needs (disabilities or chronical illnesses)
 Contact Examination Board
+(s. contact “Examinations”)
 Fees for the program
 The tuition fees for international students from third countries for this degree program are
 6,000 euros per semester
