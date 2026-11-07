@@ -9,6 +9,7 @@
 """
 from __future__ import annotations
 
+import hashlib
 import json
 import sys
 from datetime import datetime
@@ -47,6 +48,21 @@ def write_calendar(store: crawler.Store, cfg: dict) -> None:
         OUT.write_text(json.dumps(d, ensure_ascii=False, separators=(",", ":")), encoding="utf-8")
 
 
+def manual_items(cfg: dict) -> list[dict]:
+    """config.yaml 의 manual_items(웹에서 못 읽는 대상의 공지 제목, local_titles.py 가 채운다)를 목록 항목 모양으로."""
+    grp = {s["name"]: s.get("group", "") for s in cfg.get("sources", [])}
+    out = []
+    for m in cfg.get("manual_items") or []:
+        if not m.get("title"):
+            continue
+        key = f"{m.get('source', '')}|{m['title']}"
+        out.append({"id": "m" + hashlib.md5(key.encode()).hexdigest()[:10], "grp": m.get("group") or grp.get(m.get("source"), "기타"),
+                    "source": m.get("source", ""), "date": m.get("date", ""), "title": m["title"], "url": m.get("url", ""),
+                    "change": "", "kind": "manual", "found_at": m.get("added", ""), "is_read": 0,
+                    "summary": [m["note"]] if m.get("note") else [], "title_ko": None, "sum_mode": "", "sum_state": "manual"})
+    return out
+
+
 def main() -> int:
     DATA.mkdir(exist_ok=True)
     crawler.SNAP_DIR = DATA / "page_snapshots"   # 로컬 대시보드(app.py)의 데이터와 섞이지 않게 분리
@@ -54,8 +70,15 @@ def main() -> int:
     cfg = crawler.load_config()
 
     # 웹에서 잘못 저장된 대상이 있어도 나머지는 돌아가게: 검사에 실패한 대상은 오류로만 기록
+    # web_skip: GitHub 서버(해외)에서 접속이 막히는 대상. 웹에서는 건너뛰고 manual_items(내 PC에서 읽은 제목)로 대신 보여 준다
+    skip = set(cfg.get("web_skip") or [])
     valid = []
     for src in cfg["sources"]:
+        if src.get("name") in skip:
+            with store.lock:   # 예전 실패 기록이 상태표에 오류로 남지 않게
+                store.db.execute("DELETE FROM sources WHERE name=?", (src["name"],))
+                store.db.commit()
+            continue
         try:
             clean = crawler.clean_source(src)
         except ValueError as e:
@@ -111,6 +134,7 @@ def main() -> int:
         if not r["images"]:
             r.pop("images")
     items = crawler.collapse_reposts(items)[:MAX_ITEMS]   # 같은 게시판 재공지는 하나로
+    items = sorted(items + manual_items(cfg), key=lambda r: r["date"] or r["found_at"][:10], reverse=True)
     payload = {
         "generated_at": crawler.now_str(),
         "last_run": store.get_meta("last_run"),

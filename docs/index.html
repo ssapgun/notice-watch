@@ -797,6 +797,7 @@ const SUM_NOTE = {
   empty: "본문에 글이 거의 없다(첨부파일 위주). 원문에서 확인할 것.",
   blocked: "사이트의 robots.txt 가 상세 페이지 수집을 막아 정리하지 않았다.",
   no_detail: "상세 주소가 없어 정리하지 못했다.",
+  manual: "GitHub 서버에서 이 사이트에 접속하지 못해(해외 접속 차단 추정) 내 PC에서 읽은 제목만 넣었다. PC에서 python local_titles.py 로 갱신한다.",
 };
 function sumBlock(it, open) {
   const pts = Array.isArray(it.summary) ? it.summary : [];

@@ -283,6 +283,102 @@
    "note": "스마트건설 챌린지 입상 기술 전시, 건설연 창업 공모전 시상. 견학 추천.",
    "origin": "site",
    "updated": "2026-10-25T07:50:21Z"
+  },
+  {
+   "id": "521308c2ff71",
+   "exam": "정림학생건축상 2027",
+   "category": "공모전",
+   "label": "참가신청",
+   "type": "접수 마감",
+   "date": "2027-01-04",
+   "start": "",
+   "time": "",
+   "url": "https://www.junglimaward.com/",
+   "note": "참가신청 2026.10.26~2027.1.4. 과제 제출은 1/7~1/11.",
+   "origin": "site",
+   "updated": "2026-11-07T15:11:36Z",
+   "remind": [
+    "접수 마감"
+   ]
+  },
+  {
+   "id": "abc7f83c7bc7",
+   "exam": "정림학생건축상 2027",
+   "category": "공모전",
+   "label": "과제 제출",
+   "type": "접수 마감",
+   "date": "2027-01-11",
+   "start": "2027-01-07",
+   "time": "",
+   "url": "https://www.junglimaward.com/",
+   "note": "이메일 제출, 1/11 23:59:59 까지. 1차 발표 2/15, 최종 공개심사 3/6.",
+   "origin": "site",
+   "updated": "2026-11-07T15:11:36Z",
+   "remind": [
+    "접수 마감"
+   ]
+  },
+  {
+   "id": "3788eb92a329",
+   "exam": "건설산업교육원 스마트 건설산업 전문인력 양성과정 42기",
+   "category": "교육 프로그램",
+   "label": "",
+   "type": "접수 마감",
+   "date": "2026-12-03",
+   "start": "",
+   "time": "",
+   "url": "https://educon.or.kr/edu/edu_1/schedule_6.php",
+   "note": "국비무료(건축·토목) 10주 300시간. 교육 2026.12.23~2027.2.26.",
+   "origin": "site",
+   "updated": "2026-11-07T15:11:36Z",
+   "remind": [
+    "접수 마감"
+   ]
+  },
+  {
+   "id": "d25f3eb30af2",
+   "exam": "콘크리트기술경연대회 2026 (한국콘크리트학회)",
+   "category": "공모전",
+   "label": "본선",
+   "type": "행사",
+   "date": "2026-12-11",
+   "start": "",
+   "time": "",
+   "url": "https://www.kci.or.kr/pages_event/events02.vm",
+   "note": "견학·다음 해 참가 준비용.",
+   "origin": "site",
+   "updated": "2026-11-07T15:11:36Z"
+  },
+  {
+   "id": "bbca3bce8edf",
+   "exam": "제8회 건축재료시공 Creative Work 경진대회 (한국건축시공학회)",
+   "category": "공모전",
+   "label": "온라인 제출·평가",
+   "type": "행사",
+   "date": "2026-11-13",
+   "start": "",
+   "time": "",
+   "url": "https://kic.or.kr/conference/conference01_1.asp?AC=3",
+   "note": "",
+   "origin": "site",
+   "updated": "2026-11-07T15:11:36Z"
+  },
+  {
+   "id": "0451939b2dec",
+   "exam": "제21회 건설사업관리(CM) 표어 온라인 공모전",
+   "category": "공모전",
+   "label": "",
+   "type": "접수 마감",
+   "date": "2026-11-13",
+   "start": "",
+   "time": "",
+   "url": "https://www.cmak.or.kr/board/news_association/11552",
+   "note": "대상 제한 없음, 20자 이내 1인 3개. 발표 11/30.",
+   "origin": "site",
+   "updated": "2026-11-07T15:11:36Z",
+   "remind": [
+    "접수 마감"
+   ]
   }
  ],
  "hidden_auto": []
