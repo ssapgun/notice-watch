@@ -34,6 +34,8 @@ crawler.py        크롤링 엔진 (python crawler.py 로 화면 없이도 실�
 summarize.py      공지 정리·번역 (상세 페이지 본문 → 한국어 요약)
 notify.py         텔레그램 알림 (토큰이 있을 때만)
 calendar_events.py 일정 (사이트 '일정' 탭, docs/calendar.ics, 일정 미리 알림)
+briefing.py       아침 브리핑 (매일 06:40, 사이트 '브리핑' 탭 + 텔레그램). 지역·뉴스 분야는 briefing.yaml 에서 고친다
+                  시험: python briefing.py --no-telegram
 config.yaml       감시 대상 목록
 static/index.html 대시보드 화면
 notices.db        수집 결과 (자동 생성)

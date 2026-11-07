@@ -440,6 +440,21 @@ body{background:var(--sheet);background-image:none;font:18px/1.65 "Noto Sans KR"
 .sum .imgs{display:grid;gap:10px;margin:8px 0 4px}
 .sum .imgs a{display:block;max-width:760px}
 .sum .imgs img{display:block;max-width:100%;height:auto;border:1px solid var(--grid);background:#fff}
+
+/* 아침 브리핑 */
+.brief .bhead{display:flex;justify-content:space-between;align-items:baseline;gap:10px;flex-wrap:wrap;border-bottom:1px solid var(--rule);padding-bottom:8px;margin-bottom:14px}
+.brief .bhead h3{margin:0}
+.brief .bhead small{color:var(--pencil);font-size:14.5px}
+.brief .bgrid{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:12px;margin-bottom:18px}
+.brief .bcard{border:1px solid var(--grid);background:var(--paper);padding:12px 14px}
+.brief .bcard h4{margin:0 0 8px;font-size:17px;color:var(--ink)}
+.brief .wx{font-size:28px;font-weight:700;color:var(--ink);margin:2px 0}
+.brief .muted{color:var(--pencil);font-size:14.5px}
+.brief ul{margin:0;padding-left:18px}
+.brief li{margin:5px 0;line-height:1.45;overflow-wrap:anywhere}
+.brief li small{color:var(--pencil);font-size:13.5px;white-space:nowrap}
+.brief .bnews{display:grid;grid-template-columns:repeat(auto-fit,minmax(320px,1fr));gap:12px}
+.brief .bkey li{font-weight:500}
 </style>
 </head>
 <body>
@@ -466,6 +481,7 @@ body{background:var(--sheet);background-image:none;font:18px/1.65 "Noto Sans KR"
   <nav class="views" role="tablist" aria-label="화면">
     <button type="button" role="tab" id="tabNotices" aria-selected="true">공지 보기</button>
     <button type="button" role="tab" id="tabCal" aria-selected="false">일정</button>
+    <button type="button" role="tab" id="tabBriefing" aria-selected="false">브리핑</button>
     <button type="button" role="tab" id="tabManage" aria-selected="false">감시 대상 관리</button>
     <button type="button" role="tab" id="tabSettings" aria-selected="false">연결 설정</button>
   </nav>
@@ -527,6 +543,10 @@ body{background:var(--sheet);background-image:none;font:18px/1.65 "Noto Sans KR"
     <h3>날짜가 아직 없는 일정</h3>
     <div class="cal-undated" id="calUndated"></div>
     <div class="cal-sub" id="calSub"></div>
+  </section>
+
+  <section id="viewBriefing" class="manage brief" hidden>
+    <div id="briefBody"></div>
   </section>
 
   <section id="viewManage" class="manage" hidden>
@@ -1147,18 +1167,56 @@ $("#mNext").addEventListener("click", () => { mYM = [mYM[0] + (mYM[1] === 11 ? 1
 $("#mToday").addEventListener("click", () => { const t = kstToday(); mYM = [t.getFullYear(), t.getMonth()]; mSel = iso(t); renderMonth(); });
 $("#mGrid").addEventListener("click", e => { const b = e.target.closest("button[data-d]"); if (!b) return; mSel = b.dataset.d; renderMonth(); });
 
+// ════════ 아침 브리핑 ════════
+let BRIEF = null;
+const httpUrl = u => /^https?:\/\//i.test(u || "") ? u : "";
+async function renderBriefing() {
+  const box = $("#briefBody");
+  if (!BRIEF) {
+    box.innerHTML = `<p class="lead">불러오는 중</p>`;
+    try {
+      const r = await fetch("data/briefing.json?t=" + Date.now(), {cache: "no-store"});
+      if (!r.ok) throw new Error(r.status);
+      BRIEF = await r.json();
+    } catch (e) {
+      box.innerHTML = `<p class="lead">아직 만든 브리핑이 없다. 매일 아침 6시 40분에 만들어진다 (Actions 탭의 '아침 브리핑'을 손으로 돌려도 된다).</p>`;
+      return;
+    }
+  }
+  const b = BRIEF, w = b.weather, sch = b.schedule || {today: [], upcoming: []};
+  const link = (u, t) => httpUrl(u) ? `<a href="${esc(u)}" target="_blank" rel="noopener">${t}</a>` : t;
+  const ev = (e, withDate) => `<li>${withDate ? `<small>${esc(e.date.slice(5).replace("-", "."))}</small> ` : ""}<b>${esc(e.exam)}</b> ${esc(e.label || "")} · ${esc(e.type)}${e.time ? " " + esc(e.time) : ""}${httpUrl(e.url) ? " " + link(e.url, "공지") : ""}</li>`;
+  const wx = w ? `<div class="bcard"><h4>날씨 · ${esc(w.place)}</h4>
+      <div class="wx">${esc(w.now)}° <span class="muted">${esc(w.sky)}</span></div>
+      <div>최저 ${esc(w.min)}° / 최고 ${esc(w.max)}° · 강수확률 ${esc(w.rain_prob)}%${w.rain_hours ? ` (${esc(w.rain_hours)})` : ""}</div>
+      <div>미세먼지 ${esc(w.pm10_grade)}${w.pm10 != null ? ` (${esc(w.pm10)})` : ""} · 초미세먼지 ${esc(w.pm25_grade)}${w.pm25 != null ? ` (${esc(w.pm25)})` : ""}</div>
+      <div class="muted">${esc(w.source)}</div></div>` : `<div class="bcard"><h4>날씨</h4><p class="muted">날씨를 가져오지 못했다.</p></div>`;
+  const today = `<div class="bcard"><h4>오늘 일정</h4>${sch.today.length ? `<ul>${sch.today.map(e => ev(e, false)).join("")}</ul>` : `<p class="muted">없음</p>`}
+      ${sch.upcoming.length ? `<h4 style="margin-top:12px">다가오는 일정</h4><ul>${sch.upcoming.map(e => ev(e, true)).join("")}</ul>` : ""}</div>`;
+  const key = (b.ai_summary || []).length ? `<div class="bcard bkey"><h4>밤사이 핵심</h4><ul>${b.ai_summary.map(s => `<li>${esc(s)}</li>`).join("")}</ul><div class="muted">뉴스 제목만 보고 AI가 정리했다. 원문으로 확인할 것.</div></div>` : "";
+  const news = (b.news || []).map(c => `<div class="bcard"><h4>${esc(c.name)}</h4>${c.items.length
+      ? `<ul>${c.items.map(it => `<li>${link(it.url, esc(it.title))} <small>${esc(it.source)} · ${esc(it.time)}</small></li>`).join("")}</ul>`
+      : `<p class="muted">밤사이 새 기사 없음</p>`}</div>`).join("");
+  box.innerHTML = `<div class="bhead"><h3>아침 브리핑 · ${esc(b.date_label)}</h3><small>만든 시각 ${esc(b.generated_at)} · 전날 저녁 6시 이후 기사</small></div>
+    <div class="bgrid">${wx}${today}${key}</div>
+    <h3>밤사이 뉴스</h3><div class="bnews">${news}</div>
+    ${(b.errors || []).length ? `<p class="muted">일부를 가져오지 못했다: ${b.errors.map(esc).join(" / ")}</p>` : ""}`;
+}
+
 // ════════ 화면 전환 ════════
 function showView(v) {
-  ["notices", "cal", "manage", "settings"].forEach(n => {
+  ["notices", "cal", "briefing", "manage", "settings"].forEach(n => {
     $("#tab" + n[0].toUpperCase() + n.slice(1)).setAttribute("aria-selected", v === n);
     $("#view" + n[0].toUpperCase() + n.slice(1)).hidden = v !== n;
   });
   if (v === "manage") renderManage();
   if (v === "cal") renderCal();
+  if (v === "briefing") renderBriefing();
   if (v === "settings") { $("#repoInput").value = gh.repo; $("#branchInput").value = gh.branch; $("#tokenInput").value = gh.token ? "••••••••" : ""; }
 }
 $("#tabNotices").addEventListener("click", () => showView("notices"));
 $("#tabCal").addEventListener("click", () => showView("cal"));
+$("#tabBriefing").addEventListener("click", () => showView("briefing"));
 $("#tabManage").addEventListener("click", () => showView("manage"));
 $("#tabSettings").addEventListener("click", () => showView("settings"));
 
@@ -1298,6 +1356,7 @@ form.addEventListener("submit", async e => {
 
 // ════════ 시작 ════════
 $("#fUnread").checked = ui.unread; $("#fStar").checked = ui.star; $("#fHl").checked = !!ui.hl; $("#q").value = "";
+if (location.hash === "#briefing") showView("briefing");
 loadData().then(() => { renderAll(); watchRun(); }).catch(() => {
   $("#list").innerHTML = `<li class="empty"><b>아직 확인 결과가 없다</b>GitHub 저장소의 Actions 탭에서 '공지·입시 확인'을 한 번 실행하면 여기에 결과가 나온다.</li>`;
   $("#progText").textContent = "첫 실행 전";

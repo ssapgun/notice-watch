@@ -1,0 +1,56 @@
+name: 아침 브리핑
+
+on:
+  schedule:
+    # 한국 시간 매일 6시 40분 (UTC 21:40). 6시 7분 공지 확인이 끝난 뒤에 돈다
+    - cron: "40 21 * * *"
+  workflow_dispatch: {}   # Actions 탭에서 손으로 한 번 돌려 볼 때
+  push:
+    branches: [main]
+    paths: ["briefing.yaml", "briefing.py"]   # 설정·코드를 바꾸면 바로 한 번 만든다
+
+permissions:
+  contents: write
+
+concurrency:
+  group: briefing
+  cancel-in-progress: false
+
+jobs:
+  briefing:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    env:
+      TZ: Asia/Seoul
+      # 둘 다 선택. 없으면 '밤사이 핵심' 요약과 텔레그램을 건너뛴다 (crawl.yml 과 같은 비밀값)
+      ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
+      TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
+      TELEGRAM_CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: main
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          cache: pip
+
+      - run: pip install -r requirements.txt
+
+      - name: 브리핑 만들기
+        # push 로 돈 경우(설정 수정)는 텔레그램을 다시 보내지 않는다
+        run: python briefing.py ${{ github.event_name == 'push' && '--no-telegram' || '' }}
+
+      - name: 결과 저장
+        run: |
+          git config user.name "notice-bot"
+          git config user.email "notice-bot@users.noreply.github.com"
+          git add docs/data/briefing.json docs/data/briefing
+          if git diff --cached --quiet; then
+            echo "바뀐 내용 없음"
+          else
+            git commit -m "아침 브리핑 $(date '+%Y-%m-%d %H:%M')"
+            git pull --rebase
+            git push
+          fi
