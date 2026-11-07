@@ -47,6 +47,17 @@ URL:https://oia.khu.ac.kr/oiak_kor/user/bbs/BMSR00040/view.do?menuNo=5800
  010&boardId=551746
 END:VEVENT
 BEGIN:VEVENT
+UID:4b4797120d50@notice-watch
+DTSTAMP:20260101T000000Z
+DTSTART;VALUE=DATE:20261026
+DTEND;VALUE=DATE:20261110
+SUMMARY:[접수 마감] SSAFY 17기 (삼성 청년 SW·AI 아카데미)
+DESCRIPTION:29세 이하 미취업 청년(졸업·졸업예정자). 재
+ 학 중이면 대상 아닐 수 있음.\nhttps://linkareer.com/activity/3
+ 59338
+URL:https://linkareer.com/activity/359338
+END:VEVENT
+BEGIN:VEVENT
 UID:dcacd473abaf@notice-watch
 DTSTAMP:20260101T000000Z
 DTSTART;VALUE=DATE:20261028
