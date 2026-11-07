@@ -22,6 +22,7 @@
 | `notices.db`, `page_snapshots/` | PC 대시보드가 실행 중 만드는 데이터. 커밋 대상 아님 |
 | `build_site.py`, `.github/workflows/crawl.yml` | 웹 버전: GitHub Actions 가 6시간마다 실행, 결과를 `data/`(커밋됨)와 `docs/data/data.json` 에 저장 |
 | `docs/index.html` | 웹 버전 화면 (GitHub Pages). 읽음·별표는 브라우저 저장, 설정 수정은 GitHub API 로 config.yaml 커밋. `static/index.html` 과 CSS 를 맞춰 둔다 |
+| `docs/words.json` | 공지 보기 '오늘의 단어'(웹 버전만): AI·코딩, 건설, 일본어 단어(JLPT N5~N4), 일본어 문장. 날짜마다 묶음별로 돌아가며 보여 준다. 손으로 고친다 |
 
 ## 실행 / 확인
 ```
@@ -46,6 +47,7 @@ python crawler.py --export # 엑셀로 내보내기
 - 한 사이트가 실패해도 전체 확인은 계속돼야 한다 (`run_crawl` 의 try/except 유지).
 - 설정 저장은 반드시 `save_config` 를 거친다 (.bak 백업과 원자적 쓰기 때문).
 - 새 감시 대상을 넣을 때는 공식 교수·연구실 목록에서 기초·지반 또는 모듈러 연구실을 확인하고, `note` 에 근거를 적는다.
+- 진로용 분류(공모전·기자단·서포터즈·부트캠프·교육·외부장학·자격증)는 사용자 진로(시공사 → CM/PM·구조설계·시행사 또는 대학원)에 맞는 것만 include/exclude 로 거른다. 모음 사이트(링커리어·콘테스트코리아·드림스폰)는 첫 페이지만 읽는다.
 
 ## 수정 후 확인 순서
 1. `python -c "import crawler, app"` 로 문법 확인.

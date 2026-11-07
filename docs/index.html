@@ -93,6 +93,18 @@ button{font:inherit;color:inherit;cursor:pointer}
 .main{min-width:0}
 .searchbar{padding:14px 20px;border-bottom:1px solid var(--rule)}
 .searchbar input{width:100%;max-width:520px;padding:8px 12px;border:1px solid var(--ink-2);background:var(--paper);color:var(--ink);font:inherit}
+.words{border-bottom:1px solid var(--grid);padding:10px 20px 12px;background:var(--paper)}
+.words>summary{cursor:pointer;font-weight:600;color:var(--khu-ink,var(--ink-2))}
+.words .wtools{display:flex;gap:12px;align-items:center;margin:8px 0 4px;font-size:14px;color:var(--pencil)}
+.words .wgrid{display:grid;grid-template-columns:repeat(auto-fit,minmax(230px,1fr));gap:10px 18px}
+.words h4{margin:6px 0 4px;font-size:14px;color:var(--pencil);font-weight:600}
+.words ul{list-style:none;margin:0;padding:0;display:grid;gap:6px}
+.words li b{font-size:17px}
+.words li .rd{color:var(--ink-2);font-size:14px;margin-left:6px}
+.words li .lv{font-size:12px;color:var(--pencil);border:1px solid var(--grid);padding:0 4px;margin-left:6px}
+.words li small{display:block;color:var(--ink-2);font-size:14.5px;line-height:1.45}
+.words.hide-m li small,.words.hide-m li .rd{visibility:hidden}
+.words.hide-m li:hover small,.words.hide-m li:hover .rd,.words.hide-m li:focus-within small,.words.hide-m li:focus-within .rd{visibility:visible}
 .list{list-style:none;margin:0;padding:0}
 .row{display:grid;grid-template-columns:34px 92px 1fr 38px;gap:0 10px;padding:12px 20px 12px 14px;border-bottom:1px solid var(--grid);align-items:start}
 .row.unread{background:linear-gradient(90deg,var(--markup-bg),transparent 60%)}
@@ -505,6 +517,7 @@ body{background:var(--sheet);background-image:none;font:18px/1.65 "Noto Sans KR"
       </details>
       </nav>
       <main class="main">
+        <details class="words" id="words" hidden><summary>오늘의 단어</summary><div id="wordsBody"></div></details>
         <div class="searchbar">
           <input id="q" type="search" placeholder="제목·출처 검색 (예: 募集要項, 대학원, deadline)" aria-label="검색">
         </div>
@@ -1354,9 +1367,47 @@ form.addEventListener("submit", async e => {
   finally { $("#saveBtn").disabled = false; }
 });
 
+// ════════ 오늘의 단어 (docs/words.json) ════════
+// 날짜마다 묶음별로 몇 개씩 돌아가며 보여 준다. '다른 단어'는 이 화면에서만 넘긴다.
+let WORDS = null, wordShift = 0;
+const WORDS_PER = {"일본어 단어": 4};
+async function loadWords() {
+  try {
+    const r = await fetch("words.json?t=" + Date.now(), {cache: "no-store"});
+    if (!r.ok) return;
+    WORDS = await r.json();
+  } catch (e) { return; }
+  const box = $("#words");
+  box.hidden = false;
+  box.open = store.get("wordsOpen", true);
+  box.addEventListener("toggle", () => store.set("wordsOpen", box.open));
+  renderWords();
+}
+function renderWords() {
+  const day = Math.floor((Date.now() + 9 * 3600e3) / 86400e3) + wordShift;   // 한국 날짜 기준
+  const hide = store.get("wordsHide", false);
+  $("#words").classList.toggle("hide-m", hide);
+  const decks = WORDS.decks.map(d => {
+    const n = WORDS_PER[d.name] || 2, len = d.items.length;
+    const pick = Array.from({length: Math.min(n, len)}, (_, i) => d.items[((day * n + i) % len + len) % len]);
+    return `<div><h4>${esc(d.name)}</h4><ul>${pick.map(it => `<li tabindex="0"><b>${esc(it.w)}</b>${it.r ? `<span class="rd">${esc(it.r)}</span>` : ""}${it.lv ? `<span class="lv">${esc(it.lv)}</span>` : ""}<small>${esc(it.m)}</small></li>`).join("")}</ul></div>`;
+  }).join("");
+  $("#wordsBody").innerHTML = `<div class="wtools"><button class="linkbtn" type="button" data-w="prev">← 이전</button><button class="linkbtn" type="button" data-w="next">다른 단어 →</button>
+    <label><input type="checkbox" data-w="hide" ${hide ? "checked" : ""}> 뜻 가리기 (올리거나 누르면 보임)</label></div><div class="wgrid">${decks}</div>`;
+}
+$("#wordsBody").addEventListener("click", e => {
+  const w = e.target.dataset && e.target.dataset.w;
+  if (w === "next") { wordShift++; renderWords(); }
+  else if (w === "prev") { wordShift--; renderWords(); }
+});
+$("#wordsBody").addEventListener("change", e => {
+  if (e.target.dataset.w === "hide") { store.set("wordsHide", e.target.checked); renderWords(); }
+});
+
 // ════════ 시작 ════════
 $("#fUnread").checked = ui.unread; $("#fStar").checked = ui.star; $("#fHl").checked = !!ui.hl; $("#q").value = "";
 if (location.hash === "#briefing") showView("briefing");
+loadWords();
 loadData().then(() => { renderAll(); watchRun(); }).catch(() => {
   $("#list").innerHTML = `<li class="empty"><b>아직 확인 결과가 없다</b>GitHub 저장소의 Actions 탭에서 '공지·입시 확인'을 한 번 실행하면 여기에 결과가 나온다.</li>`;
   $("#progText").textContent = "첫 실행 전";
