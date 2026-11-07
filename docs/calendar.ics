@@ -73,6 +73,27 @@ URL:https://oia.khu.ac.kr/oiak_kor/user/bbs/BMSR00040/view.do?menuNo=5800
  010&boardId=551746
 END:VEVENT
 BEGIN:VEVENT
+UID:bbca3bce8edf@notice-watch
+DTSTAMP:20260101T000000Z
+DTSTART;VALUE=DATE:20261113
+DTEND;VALUE=DATE:20261114
+SUMMARY:[행사] 제8회 건축재료시공 Creative Work 경진대회 (
+ 한국건축시공학회) 온라인 제출·평가
+DESCRIPTION:https://kic.or.kr/conference/conference01_1.asp?AC=3
+URL:https://kic.or.kr/conference/conference01_1.asp?AC=3
+END:VEVENT
+BEGIN:VEVENT
+UID:0451939b2dec@notice-watch
+DTSTAMP:20260101T000000Z
+DTSTART;VALUE=DATE:20261113
+DTEND;VALUE=DATE:20261114
+SUMMARY:[접수 마감] 제21회 건설사업관리(CM) 표어 온라인 
+ 공모전
+DESCRIPTION:대상 제한 없음\, 20자 이내 1인 3개. 발표 11/30.\
+ nhttps://www.cmak.or.kr/board/news_association/11552
+URL:https://www.cmak.or.kr/board/news_association/11552
+END:VEVENT
+BEGIN:VEVENT
 UID:76c7be5caa64@notice-watch
 DTSTAMP:20260101T000000Z
 DTSTART;VALUE=DATE:20261120
@@ -124,6 +145,17 @@ DESCRIPTION:스마트건설 챌린지 입상 기술 전시\, 건설연
 URL:https://www.heraldk.com/article/2026061413000075036
 END:VEVENT
 BEGIN:VEVENT
+UID:3788eb92a329@notice-watch
+DTSTAMP:20260101T000000Z
+DTSTART;VALUE=DATE:20261203
+DTEND;VALUE=DATE:20261204
+SUMMARY:[접수 마감] 건설산업교육원 스마트 건설산업 전
+ 문인력 양성과정 42기
+DESCRIPTION:국비무료(건축·토목) 10주 300시간. 교육 2026.12.
+ 23~2027.2.26.\nhttps://educon.or.kr/edu/edu_1/schedule_6.php
+URL:https://educon.or.kr/edu/edu_1/schedule_6.php
+END:VEVENT
+BEGIN:VEVENT
 UID:3a5db0016e90@notice-watch
 DTSTAMP:20260101T000000Z
 DTSTART;VALUE=DATE:20261204
@@ -158,6 +190,17 @@ DESCRIPTION:응시료 33\,000원. 회차 중 하나만 고르면 된다.
  o?menuNo=5800010&boardId=551746
 URL:https://oia.khu.ac.kr/oiak_kor/user/bbs/BMSR00040/view.do?menuNo=5800
  010&boardId=551746
+END:VEVENT
+BEGIN:VEVENT
+UID:d25f3eb30af2@notice-watch
+DTSTAMP:20260101T000000Z
+DTSTART;VALUE=DATE:20261211
+DTEND;VALUE=DATE:20261212
+SUMMARY:[행사] 콘크리트기술경연대회 2026 (한국콘크리트
+ 학회) 본선
+DESCRIPTION:견학·다음 해 참가 준비용.\nhttps://www.kci.or.kr/p
+ ages_event/events02.vm
+URL:https://www.kci.or.kr/pages_event/events02.vm
 END:VEVENT
 BEGIN:VEVENT
 UID:86192c525115@notice-watch
@@ -251,5 +294,25 @@ DESCRIPTION:응시료 33\,000원. 회차 중 하나만 고르면 된다.
  o?menuNo=5800010&boardId=551746
 URL:https://oia.khu.ac.kr/oiak_kor/user/bbs/BMSR00040/view.do?menuNo=5800
  010&boardId=551746
+END:VEVENT
+BEGIN:VEVENT
+UID:521308c2ff71@notice-watch
+DTSTAMP:20260101T000000Z
+DTSTART;VALUE=DATE:20270104
+DTEND;VALUE=DATE:20270105
+SUMMARY:[접수 마감] 정림학생건축상 2027 참가신청
+DESCRIPTION:참가신청 2026.10.26~2027.1.4. 과제 제출은 1/7~1/11.\
+ nhttps://www.junglimaward.com/
+URL:https://www.junglimaward.com/
+END:VEVENT
+BEGIN:VEVENT
+UID:abc7f83c7bc7@notice-watch
+DTSTAMP:20260101T000000Z
+DTSTART;VALUE=DATE:20270107
+DTEND;VALUE=DATE:20270112
+SUMMARY:[접수 마감] 정림학생건축상 2027 과제 제출
+DESCRIPTION:이메일 제출\, 1/11 23:59:59 까지. 1차 발표 2/15\, 
+ 최종 공개심사 3/6.\nhttps://www.junglimaward.com/
+URL:https://www.junglimaward.com/
 END:VEVENT
 END:VCALENDAR
