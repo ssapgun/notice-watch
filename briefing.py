@@ -257,8 +257,9 @@ def main() -> int:
     (ARCHIVE / f"{today.isoformat()}.json").write_text(text, encoding="utf-8")
     cutoff = (today - timedelta(days=KEEP_DAYS)).isoformat()
     for f in ARCHIVE.glob("*.json"):
-        if f.stem < cutoff:
+        if f.stem != "index" and f.stem < cutoff:
             f.unlink()
+    write_index()
     n_news = sum(len(c["items"]) for c in b["news"])
     print(f"브리핑 저장: 뉴스 {n_news}건, 오늘 일정 {len(b['schedule']['today'])}건, 오류 {len(b['errors'])}건")
     for e in b["errors"] + [f"{c['name']} · {x}" for c in b["news"] for x in c.get("errors", [])]:
@@ -273,6 +274,13 @@ def main() -> int:
     elif not args.no_telegram:
         print("텔레그램 꺼짐 (토큰 없음)")
     return 0
+
+
+
+def write_index() -> None:
+    """사이트 '브리핑' 탭의 이전 날짜 목록 (최신순)."""
+    dates = sorted((f.stem for f in ARCHIVE.glob("*.json") if f.stem != "index"), reverse=True)
+    (ARCHIVE / "index.json").write_text(json.dumps({"dates": dates}, ensure_ascii=False), encoding="utf-8")
 
 
 if __name__ == "__main__":

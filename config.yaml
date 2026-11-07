@@ -1592,7 +1592,7 @@ sources:
   group: 외부장학
   type: board
   enabled: true
-  note: 독일 대학원 유학 장학(DAAD) 한국사무소 첫 화면 소식. 장학 설명회·모집 안내가 올라온다. 대학원 장학은 보통 입학 전년도 7~10월 마감.
+  note: 독일 대학원 유학 장학(DAAD) 한국사무소 첫 화면 소식. 장학 설명회·모집 안내가 올라온다. 대학원 장학은 보통 입학 전년도 7~10월 마감. GitHub 서버 접속을 403으로 막아(web_skip) 내 PC에서 local_titles.py 로 제목을 넣는다.
   list_url: https://www.daad-korea.org/ko/
   pages: 1
   row_selector: li.c-news-teaser__navigation-item
@@ -2097,6 +2097,7 @@ web_skip:
 - 건설기술교육원 국가기간전략훈련 (BIM·스마트건설)
 - 대한토목학회 공지
 - 대한토목학회 대외기관 행사·교육
+- DAAD 한국사무소 소식 (독일 유학 장학)
 manual_items:
 - source: 건설기술교육원 국가기간전략훈련 (BIM·스마트건설)
   title: '[26년 12월/건축BIM(서울)]교육생 선발 안내'
@@ -2148,6 +2149,26 @@ manual_items:
   date: '2026-11-03'
   url: https://www.ksce.or.kr/not/default.asp?page=1&bidx=56531&sfield=>xt=&gbn=10&bcat=&ctop=MN0096&htop=MN0031&ptop=&idx=&bgbn=R
   added: '2026-11-08 00:10:55'
+- source: DAAD 한국사무소 소식 (독일 유학 장학)
+  title: 2026 독일어의 날
+  date: ''
+  url: https://www.daad-korea.org/ko/2026/11/03/2026-%eb%8f%85%ec%9d%bc%ec%96%b4%ec%9d%98-%eb%82%a0/
+  added: '2026-11-08 00:39:58'
+- source: DAAD 한국사무소 소식 (독일 유학 장학)
+  title: 독일 유학 및 장학금 설명회 (전남대학교)
+  date: ''
+  url: https://www.daad-korea.org/ko/2026/09/22/%eb%8f%85%ec%9d%bc-%ec%9c%a0%ed%95%99-%eb%b0%8f-%ec%9e%a5%ed%95%99%ea%b8%88-%ec%84%a4%eb%aa%85%ed%9a%8c-%ec%a0%84%eb%82%a8%eb%8c%80%ed%95%99%ea%b5%90/
+  added: '2026-11-08 00:39:58'
+- source: DAAD 한국사무소 소식 (독일 유학 장학)
+  title: 해외 유학 박람회 2026
+  date: ''
+  url: https://www.daad-korea.org/ko/2026/09/16/%ed%95%b4%ec%99%b8-%ec%9c%a0%ed%95%99-%eb%b0%95%eb%9e%8c%ed%9a%8c-2026-2/
+  added: '2026-11-08 00:39:58'
+- source: DAAD 한국사무소 소식 (독일 유학 장학)
+  title: 서울 옥토버페스트에서 만나는 DAAD
+  date: ''
+  url: https://www.daad-korea.org/ko/2026/08/25/%ec%84%9c%ec%9a%b8-%ec%98%a5%ed%86%a0%eb%b2%84%ed%8e%98%ec%8a%a4%ed%8a%b8%ec%97%90%ec%84%9c-%eb%a7%8c%eb%82%98%eb%8a%94-daad-2/
+  added: '2026-11-08 00:39:58'
 renamed_sources:
   링커리어 교육 (AI·코딩·BIM 부트캠프): 링커리어 교육 (AI·코딩)
   링커리어 대외활동 (아카데미·직무체험): 링커리어 대외활동 (AI·SW 아카데미)

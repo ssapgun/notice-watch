@@ -491,15 +491,24 @@ def parse_list(html: str, page_url: str, src: dict) -> list[dict]:
     return items
 
 
+def kw_in(k: str, t: str) -> bool:
+    """t(소문자)에 키워드 k 가 있는가. SH·LH·CM·AI 처럼 3글자 이하 영문 키워드는 영단어 일부(Short, Claim)에 걸리지 않게
+    앞뒤에 다른 영문자가 붙어 있으면 맞지 않는 것으로 본다 (한글이 붙은 'LH가든'은 맞음)."""
+    k = str(k).lower()
+    if len(k) <= 3 and re.fullmatch(r"[a-z0-9&]+", k):
+        return re.search(rf"(?<![a-z]){re.escape(k)}(?![a-z])", t) is not None
+    return k in t
+
+
 def keyword_ok(title: str, src: dict) -> bool:
     """include: 이 중 하나라도 있으면 통과 / require: 그와 별도로 이 중 하나도 있어야 통과 / exclude: 하나라도 있으면 숨김"""
     inc, exc, req = src.get("include") or [], src.get("exclude") or [], src.get("require") or []
     t = title.lower()
-    if inc and not any(k.lower() in t for k in inc):
+    if inc and not any(kw_in(k, t) for k in inc):
         return False
-    if req and not any(k.lower() in t for k in req):
+    if req and not any(kw_in(k, t) for k in req):
         return False
-    return not any(k.lower() in t for k in exc)
+    return not any(kw_in(k, t) for k in exc)
 
 
 def highlight_hits(it: dict, cfg: dict, key: str = "keywords") -> list[str]:

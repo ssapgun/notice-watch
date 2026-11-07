@@ -466,6 +466,10 @@ body{background:var(--sheet);background-image:none;font:18px/1.65 "Noto Sans KR"
 .brief .bhead{display:flex;justify-content:space-between;align-items:baseline;gap:10px;flex-wrap:wrap;border-bottom:1px solid var(--rule);padding-bottom:8px;margin-bottom:14px}
 .brief .bhead h3{margin:0}
 .brief .bhead small{color:var(--pencil);font-size:14.5px}
+.bdates{display:flex;gap:8px;align-items:center;flex-wrap:wrap;margin:0 0 12px;font-size:15px}
+.bdates select{font:inherit;padding:4px 6px;border:1px solid var(--grid);background:var(--paper);color:var(--ink)}
+.bdates button{font:inherit;padding:4px 10px;border:1px solid var(--grid);background:var(--paper);color:var(--ink);cursor:pointer}
+.bdates button:disabled{opacity:.4;cursor:default}
 .brief .bgrid{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:12px;margin-bottom:18px}
 .brief .bcard{border:1px solid var(--grid);background:var(--paper);padding:12px 14px}
 .brief .bcard h4{margin:0 0 8px;font-size:17px;color:var(--ink)}
@@ -569,6 +573,7 @@ body{background:var(--sheet);background-image:none;font:18px/1.65 "Noto Sans KR"
   </section>
 
   <section id="viewBriefing" class="manage brief" hidden>
+    <div class="bdates" id="briefDates" hidden></div>
     <div id="briefBody"></div>
   </section>
 
@@ -1228,14 +1233,40 @@ $("#mToday").addEventListener("click", () => { const t = kstToday(); mYM = [t.ge
 $("#mGrid").addEventListener("click", e => { const b = e.target.closest("button[data-d]"); if (!b) return; mSel = b.dataset.d; renderMonth(); });
 
 // ════════ 아침 브리핑 ════════
-let BRIEF = null;
+let BRIEF = null, BDATES = [], bDate = "";   // bDate: 보고 있는 이전 브리핑 날짜 ("" = 최신)
+// 이전 브리핑: docs/data/briefing/index.json 의 날짜 목록 → 날짜.json
+async function loadBriefDates() {
+  try {
+    const r = await fetch("data/briefing/index.json?t=" + Date.now(), {cache: "no-store"});
+    if (r.ok) BDATES = (await r.json()).dates || [];
+  } catch (e) {}
+  renderBriefDates();
+}
+function renderBriefDates() {
+  const box = $("#briefDates");
+  box.hidden = BDATES.length < 2;
+  if (box.hidden) return;
+  const cur = bDate || BDATES[0], i = BDATES.indexOf(cur);
+  box.innerHTML = `<button type="button" data-bd="${esc(BDATES[i + 1] || "")}" ${BDATES[i + 1] ? "" : "disabled"}>‹ 이전 날</button>
+    <select id="briefSel" aria-label="브리핑 날짜">${BDATES.map(d => `<option value="${esc(d)}" ${d === cur ? "selected" : ""}>${esc(d)}${d === BDATES[0] ? " (최신)" : ""}</option>`).join("")}</select>
+    <button type="button" data-bd="${esc(i > 0 ? BDATES[i - 1] : "")}" ${i > 0 ? "" : "disabled"}>다음 날 ›</button>`;
+}
+async function pickBrief(d) {
+  bDate = d === BDATES[0] ? "" : d;
+  BRIEF = null;
+  renderBriefDates();
+  await renderBriefing();
+}
+document.addEventListener("click", e => { const b = e.target.closest("#briefDates button[data-bd]"); if (b && b.dataset.bd) pickBrief(b.dataset.bd); });
+document.addEventListener("change", e => { if (e.target.id === "briefSel") pickBrief(e.target.value); });
 const httpUrl = u => /^https?:\/\//i.test(u || "") ? u : "";
 async function renderBriefing() {
   const box = $("#briefBody");
   if (!BRIEF) {
     box.innerHTML = `<p class="lead">불러오는 중</p>`;
     try {
-      const r = await fetch("data/briefing.json?t=" + Date.now(), {cache: "no-store"});
+      if (!BDATES.length) loadBriefDates();
+      const r = await fetch((bDate ? `data/briefing/${bDate}.json` : "data/briefing.json") + "?t=" + Date.now(), {cache: "no-store"});
       if (!r.ok) throw new Error(r.status);
       BRIEF = await r.json();
     } catch (e) {
