@@ -125,6 +125,11 @@ def main() -> int:
             "SELECT id, grp, source, date, title, url, change, kind, found_at, is_read,"
             " summary, title_ko, sum_mode, sum_state, images FROM items "
             "ORDER BY COALESCE(NULLIF(date,''), substr(found_at,1,10)) DESC, id DESC").fetchall()]
+    # 분류는 지금 설정을 따른다 (대상을 다른 분류로 옮기면 예전 글도 함께 옮겨 보인다). 설정에서 지운 대상의 글은 뺀다
+    grp_of = {s["name"]: s.get("group", "") for s in cfg["sources"]}
+    renamed = cfg.get("renamed_sources") or {}   # 이름을 바꾼 대상: 예전 이름으로 모인 글도 새 이름으로
+    rows = [{**r, "source": renamed.get(r["source"], r["source"])} for r in rows]
+    rows = [{**r, "grp": grp_of[r["source"]]} for r in rows if r["source"] in grp_of]
     items = [r for r in rows if ok(r)]
     for r in items:
         r["summary"] = summarize.clean_points(json.loads(r["summary"])) if r["summary"] else []
@@ -144,6 +149,7 @@ def main() -> int:
         "sources": cfg["sources"],
         "excluded": cfg.get("excluded", []),
         "links": cfg.get("links", []),
+        "group_folders": cfg.get("group_folders", []),
         "topics": cfg.get("topics", []),
         "calendar": calendar_payload(cfg, events),
         "highlight": {k: v for k, v in (cfg.get("highlight") or {}).items() if k in ("keywords", "exclude", "alert")},

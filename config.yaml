@@ -160,12 +160,12 @@ exams:
   category: 교육 프로그램
   status: 미발표
   url: http://www.ncla.co.kr/
-  note: 건설 관련 학과 대학(원)생·졸업생 대상, 50명 내외. 23기는 2026.5.8 발표·5/22 마감, 6/22~7/24(온라인 4주+서울대 1주). 우수 수료생 한미글로벌 신입 채용 서류 면제. 공지보기 '부트캠프·교육'에서 공지 게시판을 감시한다.
+  note: 건설 관련 학과 대학(원)생·졸업생 대상, 50명 내외. 23기는 2026.5.8 발표·5/22 마감, 6/22~7/24(온라인 4주+서울대 1주). 우수 수료생 한미글로벌 신입 채용 서류 면제. 공지보기 '건설 교육'에서 공지 게시판을 감시한다.
 - name: 현대건설 기술교육원 건설실무 교육 체험 데이
   category: 교육 프로그램
   status: 미발표
   url: https://edu.hdec.co.kr/WEB/Community/NoticeView.aspx?SEQ=11542
-  note: 청년 구직자 대상 교육과정·직무 체험과 1:1 진로 멘토링. 2026년은 8/28 영등포 기술교육원, 8/23까지 홈페이지 신청. 교육원 홈페이지는 자바스크립트라 직접 감시하지 못하고, 공지보기 '부트캠프·교육'의 콘테스트코리아·링커리어 게시판에서 잡는다.
+  note: 청년 구직자 대상 교육과정·직무 체험과 1:1 진로 멘토링. 2026년은 8/28 영등포 기술교육원, 8/23까지 홈페이지 신청. 교육원 홈페이지는 자바스크립트라 직접 감시하지 못하고, 공지보기 '건설 교육'의 콘테스트코리아·링커리어 게시판에서 잡는다.
 - name: KSCE 2027 CONVENTION (대한토목학회)
   category: 학술대회
   status: 미발표
@@ -285,7 +285,7 @@ exams:
   category: 공모전
   status: 참고(지난 일정)
   url: https://www.kalis.or.kr/www/contest/m_55/view.do?idx=31
-  note: 2026 접수 8/5~8/30, 발표 9/11. 공지보기 '공모전'의 국토안전관리원 게시판에서 잡힌다.
+  note: 2026 접수 8/5~8/30, 발표 9/11. 공지보기 '공모전·대외활동'의 국토안전관리원 게시판에서 잡힌다.
 - name: 서울시·SH 빈집활용 건축디자인 공모전
   category: 공모전
   status: 참고(지난 일정)
@@ -356,6 +356,56 @@ exams:
   status: 접수 중
   url: https://www.aik.or.kr/board/?_0000_method=view&ncode=d001&num=8679&page=1
   note: 대한건축학회 건축계소식·드림스폰에 올라온 공고. 신청 기간·자격은 원문 확인.
+- name: 미래에셋 해외교환 장학생 (미래에셋박현주재단)
+  category: 외부장학
+  status: 참고(지난 일정)
+  url: https://www.mju.ac.kr/bbs/mjukr/145/235221/artclView.do
+  note: '연 2회(봄·가을 파견). 36기(2027 봄 파견): 접수 2026.9.30~10.6, 최종 발표 12/3. 250명, 미주·유럽 850만 원 / 아시아 650만 원. 이공계 가능, 평점 3.0/4.5 이상, 학자금 8구간 이내. 35기는 4/15~4/21 접수. 교환학생 선발 예정자만. 재단 사이트는 개편 중이라 자동 확인 못 함.'
+- name: 일본 문부과학성(MEXT) 국비유학 — 연구유학생(석·박사)
+  category: 외부장학
+  status: 참고(지난 일정)
+  url: https://www.studyinjapan.go.jp/ko/planning/scholarships/mext-scholarships/
+  note: 주한일본대사관 추천. 2027년도 모집은 2026년 5월 공고, 온라인 접수번호 신청 5/25 마감. 1992.4.2 이후 출생, 학비·항공료 + 월 약 14만 3천 엔. 일본 대학원 진학용. 대사관 사이트는 자동 접속을 막아 직접 볼 것.
+- name: 한국고등교육재단(KFAS) 해외유학 장학
+  category: 외부장학
+  status: 참고(지난 일정)
+  url: http://www.kfas.or.kr/
+  note: 해외 대학원 박사 유학 장학(학비·생활비). 2024년 모집은 6/24~7/12. 매년 여름 공고. 재단 사이트는 robots.txt 가 수집을 막아 직접 볼 것.
+- name: DAAD 독일 대학원 장학
+  category: 외부장학
+  status: 미발표
+  url: https://www.daad-korea.org/ko/search-scholarshiprogramm/undergraduate-graduate/
+  note: 석·박사 장학은 보통 입학 전년도 7~10월 마감(과정별 다름). 한국사무소 소식은 공지보기 '외부장학'에서 잡힌다.
+- name: 관정이종환교육재단 국외유학 장학
+  category: 외부장학
+  status: 미발표
+  url: https://biz.korea.ac.kr/news/notice_view?no=5683
+  note: 국내대학 장학은 매년 10월 말 선발계획 발표(2026년도는 2025.10.20). 국외유학 장학 일정은 확인 못 함. 재단 사이트는 접속이 안 돼 학교 공지로 확인.
+- name: KT&G 상상위더스 (대학생 해외봉사단)
+  category: 봉사활동
+  status: 참고(지난 일정)
+  url: https://www.ktngwelfare.org/enter/bbs/enotice
+  note: '2005년부터 운영, 하계·동계 연 2회. 2027 동계: 접수 2026.9.16~10.6, 인도네시아, 차수별 13명, 비용 전액 지원. 공지보기 ''봉사활동''에서 잡힌다.'
+- name: 한국해비타트 집짓기 봉사 / 볼보 뉴홈 빌더즈
+  category: 봉사활동
+  status: 상시
+  url: https://www.habitat.or.kr/welfare/schedule
+  note: 건축 현장 봉사. 개인은 '자원봉사 일정/신청' 달력에서 신청(3~11월 화~토). 대학생 봉사단 '볼보 뉴홈 빌더즈' 2기는 2026.8.28~9.9 모집, 30명, 11월 발대.
+- name: 삼성 청년 SW·AI 아카데미 (SSAFY) 17기
+  category: 교육 프로그램
+  status: 접수 중
+  url: https://linkareer.com/activity/359338
+  note: 접수 2026.10.26~11.9, 29세 이하 미취업 청년(졸업자·졸업예정자), 전공 무관. 적성진단 11/14(비전공)·11/21(전공)은 커뮤니티 자료라 공식 공고로 확인할 것. 재학 중이면 대상이 아닐 수 있다. 일정 탭에 마감일 넣어 둠.
+- name: 삼성물산 협력사 건설·안전관리자 양성과정
+  category: 교육 프로그램
+  status: 참고(지난 일정)
+  url: https://www.asiae.co.kr/en/article/2026051409205655855
+  note: '2026 여름: 신청 ~6/26, 교육 7/1~8/12(6주, 무료), 전문학사 이상 34세 이하 청년 구직자, 협력사 채용 연계. 졸업 후 시공 현장 진입용 참고.'
+- name: 대한건설협회 건설사 공동채용설명회
+  category: 교육 프로그램
+  status: 참고(지난 일정)
+  url: https://www.asiae.co.kr/en/article/2025091816351871856
+  note: 2025년 9월, 6년 만에 재개. 현대건설·GS건설 등 23개사 참여. 매년 열리는지는 확인 못 함. 졸업 학년 하반기 참고.
 academic_calendar:
   sources:
   - 학교 공지 - 학사
@@ -847,7 +897,7 @@ sources:
   url: https://www.ntu.edu.sg/cee/admissions/graduate/detail/cee-master-of-engineering-(m.eng)-(by-research)
   content_selector: article
 - name: 콘테스트코리아 공모전 (아이디어·건축·창업)
-  group: 공모전
+  group: 공모전·대외활동
   type: board
   enabled: true
   note: 공모전 모음 사이트의 '아이디어·건축·창업' 분야 첫 페이지. 건설·건축 관련 제목만 남긴다. 날짜는 접수기간(연도 없음)이라 비어 있다.
@@ -897,7 +947,7 @@ sources:
   - 사진공모전
   - 캐릭터
 - name: 콘테스트코리아 공모전 (학문·과학·IT)
-  group: 공모전
+  group: 공모전·대외활동
   type: board
   enabled: true
   note: 학술·IT 분야 공모전 중 건설·공학 관련 제목만.
@@ -948,7 +998,7 @@ sources:
   - 사진공모전
   - 캐릭터
 - name: 링커리어 공모전 (건설·도시·AI)
-  group: 공모전
+  group: 공모전·대외활동
   type: board
   enabled: true
   note: 링커리어 공모전 첫 화면(최신·추천 카드). LH·SH·CM·국토·건축·AI 데이터 공모만 남긴다. 날짜 없음(카드에 마감일만 있음).
@@ -1021,7 +1071,7 @@ sources:
   - 사진공모전
   - 캐릭터
 - name: 한국CM협회 협회소식
-  group: 공모전
+  group: 공모전·대외활동
   type: board
   enabled: true
   note: CM(건설사업관리) 협회 공지. CM 공모전·표어 공모·교육·건설사업관리사 검정 안내만.
@@ -1044,7 +1094,7 @@ sources:
   - 건설사업관리사
   - 아카데미
 - name: 대한건축학회 건축계소식
-  group: 공모전
+  group: 공모전·대외활동
   type: board
   enabled: true
   note: '대한건축학회에 올라오는 외부 기관 공지 중 장학생 모집·경진대회·공모전·학생 대상·아카데미·강구조/모듈러 관련만 (예: 엔지니어링인재육성재단 장학생, SH 스마트 건설기술 경진대회, CM·시공 경진대회). 설계공모·채용·위원 모집·설문 제외'
@@ -1096,7 +1146,7 @@ sources:
   - 심사위원
   - 연구진
 - name: 위비티 건축·건설 공모전
-  group: 공모전
+  group: 공모전·대외활동
   type: board
   enabled: true
   note: 공모전 모음 사이트 위비티의 '건축/건설/인테리어' 분야 첫 페이지. 인테리어 소품·어린이·사진 공모는 뺀다. 날짜 없음.
@@ -1113,7 +1163,7 @@ sources:
   - 웹툰
   - 패션
 - name: 국토안전관리원 공모전·서포터즈
-  group: 공모전
+  group: 공모전·대외활동
   type: board
   enabled: true
   note: 국토안전관리원 '공모전/참여' 게시판. 국토안전 AI 콘텐츠 공모전(2026 접수 8/5~8/30), 크리에이터 서포터즈 '국토누리'(4기 2024.3) 공고가 올라온다.
@@ -1122,7 +1172,7 @@ sources:
   row_selector: table.tbl.t-list tbody > tr
   title_selector: a.ellip
 - name: 한국콘크리트학회 콘크리트기술경연대회
-  group: 공모전
+  group: 공모전·대외활동
   type: watch
   enabled: true
   note: 매년 12월 초 본선(2026은 12/11, 2025는 12/12). 행사 목록에 새 연도가 생기면 알린다.
@@ -1131,7 +1181,7 @@ sources:
   - 경연대회
   - '2027'
 - name: 한국건축구조기술사회 건축구조경진대회
-  group: 공모전
+  group: 공모전·대외활동
   type: watch
   enabled: true
   note: 구조설계 진로 핵심 대회. 2026은 참가신청 7/10까지, 작품 접수 9/28~10/1, 본선 10월 중순. 접수 안내 문구가 바뀌면 알린다.
@@ -1141,7 +1191,7 @@ sources:
   - '2027'
   - 신청
 - name: 한국건설관리학회 전국대학생학술발표대회
-  group: 공모전
+  group: 공모전·대외활동
   type: watch
   enabled: true
   note: 학부 논문·공정관리·원가관리 경진. 매년 11월 개최(2026은 11/6, 2025는 11/20). 새 연도 안내가 생기면 알린다.
@@ -1150,7 +1200,7 @@ sources:
   - 학술발표대회
   - '2027'
 - name: 한국건축시공학회 경진대회
-  group: 공모전
+  group: 공모전·대외활동
   type: watch
   enabled: true
   note: 건축재료시공 Creative Work 경진대회. 제8회는 2026-11-13 온라인 제출·평가. 새 회차가 올라오면 알린다.
@@ -1159,7 +1209,7 @@ sources:
   - 경진대회
   - Creative
 - name: 정림학생건축상
-  group: 공모전
+  group: 공모전·대외활동
   type: watch
   enabled: true
   note: 정림건축문화재단. 2027회는 참가신청 2026.10.26~2027.1.4, 과제 제출 1/7~1/11, 1차 발표 2/15, 최종 공개심사 3/6. 2027년 2월 졸업 예정자 참가 가능.
@@ -1171,7 +1221,7 @@ sources:
   - 발표
   - '2028'
 - name: 스마트건설 창업 아이디어 공모전 (국토부·건설연)
-  group: 공모전
+  group: 공모전·대외활동
   type: watch
   enabled: true
   note: 2026은 3/23~5/1 접수. 접수 일정 문구가 바뀌면(2027 공고) 알린다.
@@ -1181,58 +1231,57 @@ sources:
   - '2027'
   - 공모전
 - name: 콘테스트코리아 대외활동 (서포터즈·기자단)
-  group: 기자단·서포터즈
+  group: 공모전·대외활동
   type: board
   enabled: true
-  note: 기자단·서포터즈 중 국토·건설·과학기술·공공기관 관련만. 범위를 넓히려면 include를 비운다.
+  note: 기자단·서포터즈 중 건설·건축·토목·국토·주거·재해/건설안전 관련만 (식약처·기상청처럼 분야가 다른 곳은 뺀다).
   list_url: https://www.contestkorea.com/sub/list.php?int_gbn=2&Txt_bcode=040110001
   pages: 1
   row_selector: div.list_style_2 > ul > li
   title_selector: div.title a
   title_text_selector: span.txt
   include:
-  - 건축
   - 건설
+  - 건축
   - 토목
-  - BIM
-  - 스마트건설
-  - 모듈러
   - 국토
-  - 도시
-  - 공간
-  - 구조
-  - 인프라
   - 주택
-  - 교통
-  - 철도
-  - 도로
-  - 디지털트윈
-  - 안전
-  - 지반
-  - 과학
-  - 기술
-  - 공학
-  - 에너지
-  - 기상
-  - 환경
+  - 주거
+  - 도시
+  - 부동산
   - LH
-  - 공사
-  - 공단
-  - 정책기자단
-  - 건축학회
-  - 건설협회
-  - 국토교통부
-  - 국토안전관리원
-  - HUG
+  - SH
   - GH
+  - HUG
+  - 토지주택
   - 주택도시
+  - 국토교통
+  - 국토안전
+  - 건설협회
+  - 건축학회
+  - 도로공사
+  - 철도
+  - 인프라
+  - 재해
+  - 재난
+  - 건설안전
+  - 안전관리
+  - 안전보건
+  - 스마트건설
+  - BIM
   - 도시혁신스쿨
-  - 주거복지
   require:
   - 기자단
   - 서포터즈
+  exclude:
+  - 금융
+  - 기상
+  - 뷰티
+  - 식품
+  - 의약
+  - 패션
 - name: 국토연구원 공지 (기자단·공모·교육)
-  group: 기자단·서포터즈
+  group: 공모전·대외활동
   type: board
   enabled: true
   note: 국토연구원 공지사항. 대학생 기자단(2기 모집 이력)·공모전·교육 공고만.
@@ -1251,66 +1300,67 @@ sources:
   - 청년
   - 교육
 - name: 링커리어 대외활동 (기자단·서포터즈)
-  group: 기자단·서포터즈
+  group: 공모전·대외활동
   type: board
   enabled: true
-  note: 링커리어 대외활동 첫 화면 중 기자단·서포터즈·앰배서더만, 그중 국토·건설·공공·과학기술 쪽.
+  note: 기자단·서포터즈 중 건설·건축·토목·국토·주거·재해/건설안전 관련만 (식약처·기상청처럼 분야가 다른 곳은 뺀다).
   list_url: https://linkareer.com/list/activity
   pages: 1
   row_selector: div[class*=ActivityListCardItem__StyledWrapper]
   title_selector: div.card-content a
   include:
-  - 국토
   - 건설
   - 건축
-  - 도시
+  - 토목
+  - 국토
   - 주택
+  - 주거
+  - 도시
   - 부동산
   - LH
   - SH
-  - 공사
-  - 공단
-  - 정부
-  - 정책
-  - 국민
-  - 과학
-  - 기술
-  - 에너지
-  - 환경
-  - 기상
-  - 안전
-  - 철도
-  - 도로
-  - 교통
-  - 공공
-  - 청년
-  - 산업
-  - 건축학회
-  - 건설협회
-  - 국토교통부
-  - 국토안전관리원
-  - HUG
   - GH
+  - HUG
+  - 토지주택
   - 주택도시
+  - 국토교통
+  - 국토안전
+  - 건설협회
+  - 건축학회
+  - 도로공사
+  - 철도
+  - 인프라
+  - 재해
+  - 재난
+  - 건설안전
+  - 안전관리
+  - 안전보건
+  - 스마트건설
+  - BIM
   - 도시혁신스쿨
-  - 주거복지
   require:
   - 기자단
   - 서포터즈
   - 앰배서더
   - 홍보단
-  - 정책패널
   - 기자
   - 패널
   - 자문단
   - 프렌즈
   - 래포터즈
   - 크리에이터
-- name: 콘테스트코리아 대외활동 (교육·강연·멘토링)
-  group: 부트캠프·교육
+  exclude:
+  - 금융
+  - 기상
+  - 뷰티
+  - 식품
+  - 의약
+  - 패션
+- name: 콘테스트코리아 교육·멘토링 (건설)
+  group: 건설 교육
   type: board
   enabled: true
-  note: '부트캠프·아카데미·직무체험(예: 현대건설 기술교육원 건설실무 교육 체험 데이) 모집 공고용.'
+  note: '콘테스트코리아 ''교육·강연·멘토링'' 중 건설사 직무체험·건설 아카데미(예: 현대건설 건설실무 교육 체험 데이)·BIM 교육만.'
   list_url: https://www.contestkorea.com/sub/list.php?int_gbn=2&Txt_bcode=040410001
   pages: 1
   row_selector: div.list_style_2 > ul > li
@@ -1355,43 +1405,60 @@ sources:
   - 디벨로퍼
   - 엔지니어링
   - 도시혁신스쿨
-  - SeSAC
-  - 새싹
-- name: 링커리어 대외활동 (아카데미·직무체험)
-  group: 부트캠프·교육
+- name: 차세대 건설리더 아카데미 (한미글로벌)
+  group: 건설 교육
   type: board
   enabled: true
-  note: 링커리어 대외활동 첫 화면 중 건설사 직무체험·AI/SW 아카데미(예 SSAFY)만. 현대건설 건설실무 교육 체험데이 같은 공고용.
-  list_url: https://linkareer.com/list/activity
+  note: 한미글로벌·서울대 운영. 매년 5월 모집(23기 2026.5, 5/22 마감). 공지 게시판 글 목록. 날짜 형식(25-05-12)이라 날짜 칸이 빈다.
+  list_url: https://ncla.co.kr/bbs/board.php?bo_table=notice&page={page}
   pages: 1
-  row_selector: div[class*=ActivityListCardItem__StyledWrapper]
-  title_selector: div.card-content a
+  row_selector: div.default-board-list div.tbody > div.tr
+  title_selector: a.link
+  exclude:
+  - Recruitment Announcement
+- name: 건설산업교육원 (에듀콘) 모집공고
+  group: 건설 교육
+  type: board
+  enabled: true
+  note: 국토교통부 국비무료 '스마트 건설산업 전문인력 양성과정(건축·토목)'·플랜트·해외 비즈니스 외국어(일본어 포함) 과정 모집 공지.
+  list_url: https://educon.or.kr/edu/customer/notice.php?page={page}&code=notice
+  pages: 1
+  row_selector: table > tr
+  title_selector: a
+  exclude:
+  - 홍보영상
+  - 홍보 영상
+- name: 건설기술교육원 국가기간전략훈련 (BIM·스마트건설)
+  group: 건설 교육
+  type: watch
+  enabled: true
+  note: BIM 전문과정(건축·토목)·스마트건설·해외플랜트 PM 국비과정. 첫 화면 공지 상자(con_smcont3)의 선발 안내가 바뀌면 알린다. GitHub 서버에서는 접속이 막혀(web_skip) 내 PC에서 local_titles.py 로 제목을 넣는다.
+  url: https://www.kicte.or.kr/portal/country/mainViewAction.do
+  content_selector: div.con_smcont3
+  keywords:
+  - 선발
+  - 모집
+  - 교육생
+  - 합격
+- name: 링커리어 교육 (BIM·건설)
+  group: 건설 교육
+  type: board
+  enabled: true
+  note: 링커리어 교육(국비·부트캠프) 첫 화면 중 BIM·건설·공정관리·PF 과정만.
+  list_url: https://linkareer.com/list/education
+  pages: 1
+  row_selector: table.education-list-table tbody > tr
+  title_selector: a.education-link
   include:
+  - BIM
   - 건설
   - 건축
   - 토목
-  - 현대건설
-  - 삼성물산
-  - 대우건설
-  - GS건설
-  - DL이앤씨
-  - 포스코이앤씨
-  - 한미글로벌
-  - 엔지니어링
-  - BIM
-  - 직무체험
-  - 체험데이
-  - 체험 데이
-  - SSAFY
-  - 싸피
-  - AI
-  - 인공지능
-  - SW
-  - 부트캠프
-  - 아카데미
-  - 데이터
   - 스마트건설
   - Revit
+  - 캐드
+  - CAD
+  - 디지털트윈
   - MIDAS
   - 마이다스
   - 공정관리
@@ -1402,19 +1469,38 @@ sources:
   - 투자개발
   - PF
   - 디벨로퍼
-  - 도시혁신스쿨
-  - SeSAC
-  - 새싹
+  - 부동산
+  - 엔지니어링
+- name: 링커리어 대외활동 (AI·SW 아카데미)
+  group: AI·코딩 교육
+  type: board
+  enabled: true
+  note: 링커리어 대외활동 첫 화면 중 AI·SW 아카데미(SSAFY 등)·데이터 프로그램만.
+  list_url: https://linkareer.com/list/activity
+  pages: 1
+  row_selector: div[class*=ActivityListCardItem__StyledWrapper]
+  title_selector: div.card-content a
+  include:
+  - SSAFY
+  - 싸피
+  - AI
+  - 인공지능
+  - SW
+  - 부트캠프
+  - 아카데미
+  - 데이터
+  - 코딩
   exclude:
   - 금융
   - 마케팅
   - 뷰티
   - 크리에이터
-- name: 링커리어 교육 (AI·코딩·BIM 부트캠프)
-  group: 부트캠프·교육
+  - 학회
+- name: 링커리어 교육 (AI·코딩)
+  group: AI·코딩 교육
   type: board
   enabled: true
-  note: 링커리어 교육(국비·부트캠프) 첫 화면 중 AI·파이썬·데이터·BIM·건설 과정만. 날짜는 마감일.
+  note: 링커리어 교육(국비·부트캠프) 첫 화면 중 AI·파이썬·데이터·코딩 과정만. 날짜는 마감일. BIM·건설 과정은 '건설 교육'의 링커리어 교육 (BIM·건설).
   list_url: https://linkareer.com/list/education
   pages: 1
   row_selector: table.education-list-table tbody > tr
@@ -1432,29 +1518,8 @@ sources:
   - 부트캠프
   - SSAFY
   - 싸피
-  - BIM
-  - 건설
-  - 건축
-  - 토목
-  - 디지털트윈
-  - 스마트건설
-  - 캐드
-  - CAD
-  - Revit
-  - MIDAS
-  - 마이다스
-  - 공정관리
-  - 프리마베라
-  - Primavera
-  - 플랜트
-  - 해외건설
-  - 투자개발
-  - PF
-  - 디벨로퍼
-  - 엔지니어링
-  - 도시혁신스쿨
-  - SeSAC
-  - 새싹
+  - 코딩
+  - SW
   exclude:
   - 마케팅
   - 디자인
@@ -1465,41 +1530,37 @@ sources:
   - 상품기획
   - UX/UI
   - 회계
-- name: 차세대 건설리더 아카데미 (한미글로벌)
-  group: 부트캠프·교육
+- name: 콘테스트코리아 교육 (AI·코딩)
+  group: AI·코딩 교육
   type: board
   enabled: true
-  note: 한미글로벌·서울대 운영. 매년 5월 모집(23기 2026.5, 5/22 마감). 공지 게시판 글 목록. 날짜 형식(25-05-12)이라 날짜 칸이 빈다.
-  list_url: https://ncla.co.kr/bbs/board.php?bo_table=notice&page={page}
+  note: 콘테스트코리아 '교육·강연·멘토링' 첫 페이지 중 AI·데이터·파이썬 부트캠프만.
+  list_url: https://www.contestkorea.com/sub/list.php?int_gbn=2&Txt_bcode=040410001
   pages: 1
-  row_selector: div.default-board-list div.tbody > div.tr
-  title_selector: a.link
+  row_selector: div.list_style_2 > ul > li
+  title_selector: div.title a
+  title_text_selector: span.txt
+  include:
+  - AI
+  - 인공지능
+  - 파이썬
+  - Python
+  - 데이터
+  - 머신러닝
+  - 딥러닝
+  - LLM
+  - 생성형
+  - 부트캠프
+  - SSAFY
+  - 싸피
+  - SW
+  - 코딩
   exclude:
-  - Recruitment Announcement
-- name: 건설산업교육원 (에듀콘) 모집공고
-  group: 부트캠프·교육
-  type: board
-  enabled: true
-  note: 국토교통부 국비무료 '스마트 건설산업 전문인력 양성과정(건축·토목)'·플랜트·해외 비즈니스 외국어(일본어 포함) 과정 모집 공지.
-  list_url: https://educon.or.kr/edu/customer/notice.php?page={page}&code=notice
-  pages: 1
-  row_selector: table > tr
-  title_selector: a
-  exclude:
-  - 홍보영상
-  - 홍보 영상
-- name: 건설기술교육원 국가기간전략훈련 (BIM·스마트건설)
-  group: 부트캠프·교육
-  type: watch
-  enabled: true
-  note: BIM 전문과정(건축·토목)·스마트건설·해외플랜트 PM 국비과정. 첫 화면 공지 상자(con_smcont3)의 선발 안내가 바뀌면 알린다. GitHub 서버에서는 접속이 막혀(web_skip) 내 PC에서 local_titles.py 로 제목을 넣는다.
-  url: https://www.kicte.or.kr/portal/country/mainViewAction.do
-  content_selector: div.con_smcont3
-  keywords:
-  - 선발
-  - 모집
-  - 교육생
-  - 합격
+  - 경력보유여성
+  - 마케팅
+  - 디자인
+  - 반도체
+  - 배터리
 - name: 드림스폰 장학금
   group: 외부장학
   type: board
@@ -1527,6 +1588,79 @@ sources:
   - 향토
   - 저소득
   - 출신
+- name: DAAD 한국사무소 소식 (독일 유학 장학)
+  group: 외부장학
+  type: board
+  enabled: true
+  note: 독일 대학원 유학 장학(DAAD) 한국사무소 첫 화면 소식. 장학 설명회·모집 안내가 올라온다. 대학원 장학은 보통 입학 전년도 7~10월 마감.
+  list_url: https://www.daad-korea.org/ko/
+  pages: 1
+  row_selector: li.c-news-teaser__navigation-item
+  title_selector: a
+- name: KT&G복지재단 자원봉사센터 공지
+  group: 봉사활동
+  type: board
+  enabled: true
+  note: KT&G복지재단 자원봉사센터. 대학생 해외봉사단 '상상위더스'(2027 동계는 2026.9.16~10.6 접수, 인도네시아) 등 봉사단 모집 공지.
+  list_url: https://www.ktngwelfare.org/enter/bbs/enotice
+  pages: 1
+  row_selector: table.tbl_list_1.tbl_notice tbody > tr
+  title_selector: a.submitInfo
+  include:
+  - 상상위더스
+  - 봉사단
+  - 대학생
+  - 해외봉사
+  - 봉사자
+  - 모집
+  exclude:
+  - 물품
+  - 확인서
+  - 리워드
+  - 협력동아리
+- name: 한국해비타트 자원봉사 일정
+  group: 봉사활동
+  type: watch
+  enabled: true
+  note: 집짓기·주거환경개선 건축봉사(3~11월 화~토, 미성년 불가). 봉사 일정 달력에 서울·경기·인천 일정이 새로 생기면 알린다. 공지 게시판은 시공업체 공고 위주라 쓰지 않는다.
+  url: https://www.habitat.or.kr/welfare/schedule
+  keywords:
+  - 서울
+  - 경기
+  - 인천
+- name: 콘테스트코리아 봉사·탐방
+  group: 봉사활동
+  type: board
+  enabled: true
+  note: 콘테스트코리아 '인턴·체험·탐방·봉사·동아리' 분야 첫 페이지 중 봉사만.
+  list_url: https://www.contestkorea.com/sub/list.php?int_gbn=2&Txt_bcode=040210001
+  pages: 1
+  row_selector: div.list_style_2 > ul > li
+  title_selector: div.title a
+  title_text_selector: span.txt
+  include:
+  - 봉사
+  - 해비타트
+  - 집짓기
+  - 재능기부
+  - 멘토링
+  exclude:
+  - 유료
+  - 참가비
+- name: 링커리어 대외활동 (봉사)
+  group: 봉사활동
+  type: board
+  enabled: true
+  note: 링커리어 대외활동 첫 화면 중 봉사단·해외봉사만.
+  list_url: https://linkareer.com/list/activity
+  pages: 1
+  row_selector: div[class*=ActivityListCardItem__StyledWrapper]
+  title_selector: div.card-content a
+  include:
+  - 봉사
+  - 해비타트
+  - 집짓기
+  - 재능기부
 - name: 큐넷 (국가기술자격 시행계획)
   group: 자격증
   type: watch
@@ -1936,6 +2070,18 @@ links:
 - name: DataQ (ADsP·SQLD)
   url: https://www.dataq.or.kr/
   note: robots.txt 가 수집을 막는다. 시험 일정 직접 확인
+- name: 미래에셋박현주재단
+  url: https://foundation.miraeasset.com/
+  note: 사이트 개편 중(503). 해외교환 장학 공고 직접 확인
+- name: Study in Japan 장학금 (MEXT)
+  url: https://www.studyinjapan.go.jp/ko/planning/scholarships/
+  note: 일본 정부·민간 장학 목록
+- name: 한국고등교육재단 KFAS
+  url: http://www.kfas.or.kr/
+  note: robots.txt 가 수집을 막는다. 해외유학 장학 공고 직접 확인
+- name: 1365 자원봉사포털
+  url: https://www.1365.go.kr/vols/main.do
+  note: 봉사 검색은 직접 (검색 결과가 자바스크립트)
 excluded:
 - 'POSTECH: 건축·토목·구조 학과가 없음 (학과 목록 확인. 가장 가까운 곳이 친환경소재대학원·환경공학부)'
 - 연세대 건축공학과 -> 연세대 건설환경공학과로 교체 (지반 연구실은 건설환경공학과에 있음)
@@ -2002,3 +2148,23 @@ manual_items:
   date: '2026-11-03'
   url: https://www.ksce.or.kr/not/default.asp?page=1&bidx=56531&sfield=>xt=&gbn=10&bcat=&ctop=MN0096&htop=MN0031&ptop=&idx=&bgbn=R
   added: '2026-11-08 00:10:55'
+renamed_sources:
+  링커리어 교육 (AI·코딩·BIM 부트캠프): 링커리어 교육 (AI·코딩)
+  링커리어 대외활동 (아카데미·직무체험): 링커리어 대외활동 (AI·SW 아카데미)
+  콘테스트코리아 대외활동 (교육·강연·멘토링): 콘테스트코리아 교육·멘토링 (건설)
+group_folders:
+- name: 학교·대학원 입시
+  groups:
+  - 경희대
+  - 국내 대학원
+  - 일본
+  - 독일
+  - 싱가포르
+- name: 진로·대외활동
+  groups:
+  - 공모전·대외활동
+  - 건설 교육
+  - AI·코딩 교육
+  - 외부장학
+  - 봉사활동
+  - 자격증

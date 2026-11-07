@@ -379,6 +379,23 @@
    "remind": [
     "접수 마감"
    ]
+  },
+  {
+   "id": "4b4797120d50",
+   "exam": "SSAFY 17기 (삼성 청년 SW·AI 아카데미)",
+   "category": "교육 프로그램",
+   "label": "",
+   "type": "접수 마감",
+   "date": "2026-11-09",
+   "start": "2026-10-26",
+   "time": "",
+   "url": "https://linkareer.com/activity/359338",
+   "note": "29세 이하 미취업 청년(졸업·졸업예정자). 재학 중이면 대상 아닐 수 있음.",
+   "remind": [
+    "접수 마감"
+   ],
+   "origin": "site",
+   "updated": "2026-11-07T15:29:22Z"
   }
  ],
  "hidden_auto": []

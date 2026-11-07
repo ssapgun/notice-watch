@@ -76,6 +76,10 @@ button{font:inherit;color:inherit;cursor:pointer}
 .groups button[aria-current="true"]{border-left-color:var(--ink);background:var(--sheet);font-weight:600}
 .groups .n{font-size:15px;color:var(--pencil)}
 .groups .n.has{color:var(--markup);font-weight:600}
+.groups .fold button{font-size:14px;font-weight:600;color:var(--pencil);padding-top:10px;letter-spacing:.02em}
+.groups .fold button .ar{display:inline-block;width:1em}
+.groups li.infold button{padding-left:26px}
+.groups .gtog{font-size:12px;color:var(--pencil);margin-left:4px}
 .opts{padding:0 18px;display:grid;gap:8px;font-size:16px}
 .opts label{display:flex;gap:8px;align-items:center;cursor:pointer}
 .opts input{accent-color:var(--ink);width:16px;height:16px}
@@ -196,6 +200,11 @@ button{font:inherit;color:inherit;cursor:pointer}
 .cal-ev .ty.t-시험{border-color:var(--markup);color:var(--markup)}
 .cal-ev .ty.t-접수마감,.cal-ev .ty.t-공지기간{border-color:var(--amber);color:var(--amber)}
 .cal-ev small{display:block;color:var(--pencil);font-size:14.5px;margin-top:2px;overflow-wrap:anywhere}
+.ufold{margin:6px 0 4px;border-top:1px solid var(--grid)}
+.ufold>summary{cursor:pointer;padding:8px 2px;font-weight:600;font-size:16px;color:var(--ink-2)}
+.ufold>summary .n{font-weight:400;color:var(--pencil);font-size:14px;margin-left:6px}
+.ufold .cal-undated{margin:4px 0 14px}
+.utools{display:flex;gap:14px;font-size:15px;margin:2px 0 6px}
 .cal-undated{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:10px;margin:8px 0 26px}
 .cal-card{border:1px solid var(--grid);padding:10px 12px;font-size:15.5px}
 .cal-card .st{float:right;font-size:13.5px;border:1px solid var(--grid);padding:0 6px;color:var(--ink-2)}
@@ -554,7 +563,8 @@ body{background:var(--sheet);background-image:none;font:18px/1.65 "Noto Sans KR"
     </div>
     <ol class="cal-list" id="calList"></ol>
     <h3>날짜가 아직 없는 일정</h3>
-    <div class="cal-undated" id="calUndated"></div>
+    <div class="utools"><button class="linkbtn" type="button" data-uall="open">모두 펼치기</button><button class="linkbtn" type="button" data-uall="close">모두 접기</button></div>
+    <div id="calUndated"></div>
     <div class="cal-sub" id="calSub"></div>
   </section>
 
@@ -775,12 +785,24 @@ function renderSummary() {
   const SS = Object.fromEntries(DATA.sources.map(s => [s.name, subName(s)]));
   const subs = ui.group ? subsHtml(subList(DATA.sources, ui.group),
     sb => unread.filter(it => it.grp === ui.group && (!sb || SS[it.source] === sb)).length) : "";
+  // 분류 묶음(config group_folders): 묶음 이름을 누르면 안의 분류를 열고 닫는다. 고른 분류를 다시 누르면 게시판 목록을 접는다
+  const folds = DATA.group_folders || [], foldOf = g => (folds.find(f => (f.groups || []).includes(g)) || {}).name;
+  const cnt = g => unread.filter(it => !g || it.grp === g).length;
+  const seen = new Set(), subOpen = ui.subsOpen !== false;
   $("#groups").innerHTML = groups.map(g => {
-    const n = unread.filter(it => !g || it.grp === g).length;
-    return `<li><button type="button" data-g="${esc(g)}" aria-current="${g === ui.group}"><span>${esc(g || "전체")}</span><span class="n ${n ? "has" : ""}">${n ? n + " 새 항목" : ""}</span></button></li>`
-      + (g && g === ui.group && subs ? `<li class="subnest">${subs}</li>` : "");
+    const f = g && foldOf(g);
+    let head = "";
+    if (f && !seen.has(f)) {
+      seen.add(f);
+      const fg = folds.find(x => x.name === f).groups, n = fg.reduce((a, x) => a + cnt(x), 0), open = !foldClosed.has(f);
+      head = `<li class="fold"><button type="button" data-fold="${esc(f)}" aria-expanded="${open}"><span><span class="ar">${open ? "▾" : "▸"}</span>${esc(f)}</span><span class="n ${n ? "has" : ""}">${n && !open ? n + " 새 항목" : ""}</span></button></li>`;
+    }
+    if (f && foldClosed.has(f) && g !== ui.group) return head;
+    const n = cnt(g), mine = g && g === ui.group && subs;
+    return head + `<li class="${f ? "infold" : ""}"><button type="button" data-g="${esc(g)}" aria-current="${g === ui.group}"><span>${esc(g || "전체")}${mine ? `<span class="gtog">${subOpen ? "▾" : "▸"}</span>` : ""}</span><span class="n ${n ? "has" : ""}">${n ? n + " 새 항목" : ""}</span></button></li>`
+      + (mine && subOpen ? `<li class="subnest">${subs}</li>` : "");
   }).join("");
-  $("#subsM").innerHTML = subs;
+  $("#subsM").innerHTML = subOpen ? subs : "";
   const by = Object.fromEntries(DATA.status.map(s => [s.name, s]));
   $("#srcTable").innerHTML = enabled.map(s => {
     const r = by[s.name] || {};
@@ -983,10 +1005,17 @@ $("#checkBtn").addEventListener("click", async () => {
 });
 
 // ════════ 공지 보기 이벤트 ════════
+const foldClosed = new Set(store.get("foldClosed", []));
 function pickGroup(e) {
   const b = e.target.closest("button"); if (!b) return;
+  if (b.dataset.fold !== undefined) {
+    const f = b.dataset.fold;
+    foldClosed.has(f) ? foldClosed.delete(f) : foldClosed.add(f);
+    store.set("foldClosed", [...foldClosed]); renderSummary(); return;
+  }
   if (b.dataset.sub !== undefined) ui.sub = b.dataset.sub;
-  else { ui.group = b.dataset.g; ui.sub = ""; }
+  else if (b.dataset.g && b.dataset.g === ui.group && !ui.sub) ui.subsOpen = ui.subsOpen === false;   // 같은 분류를 다시 누르면 게시판 목록 접기/펴기
+  else { ui.group = b.dataset.g; ui.sub = ""; ui.subsOpen = true; }
   store.set("ui", ui); renderAll();
 }
 $("#groups").addEventListener("click", pickGroup);
@@ -1041,15 +1070,32 @@ function renderCal() {
   });
   $("#calList").innerHTML = rows.join("") || `<li class="empty"><b>다가오는 일정이 없다</b>'새 일정 추가'로 넣거나 구글 캘린더 '공지·입시 일정'에 넣는다.</li>`;
   const un = (C.undated || []).filter(u => !calCat || u.category === calCat);
-  $("#calUndated").innerHTML = un.map(u => `<div class="cal-card"><span class="st">${esc(u.status)}</span>
-    <b>${u.url ? `<a href="${esc(u.url)}" target="_blank" rel="noopener">${esc(u.name)}</a>` : esc(u.name)}</b><p>${esc(u.note)}</p></div>`).join("") || "<p>없음</p>";
+  // 분류별로 접는다. 지난 일정(참고) 카드는 각 분류의 뒤로
+  const card = u => `<div class="cal-card"><span class="st">${esc(u.status)}</span>
+    <b>${u.url ? `<a href="${esc(u.url)}" target="_blank" rel="noopener">${esc(u.name)}</a>` : esc(u.name)}</b><p>${esc(u.note)}</p></div>`;
+  const ug = {};
+  un.forEach(u => (ug[u.category || "기타"] ||= []).push(u));
+  const past = u => /참고|지난/.test(u.status || "") ? 1 : 0;
+  $("#calUndated").innerHTML = Object.entries(ug).map(([c, list]) => {
+    list.sort((a, b) => past(a) - past(b));
+    const live = list.filter(u => !past(u)).length;
+    return `<details class="ufold" data-uc="${esc(c)}"${undatedClosed.has(c) ? "" : " open"}><summary>${esc(c)}<span class="n">${list.length}개${live < list.length ? ` · 지난 일정 ${list.length - live}` : ""}</span></summary><div class="cal-undated">${list.map(card).join("")}</div></details>`;
+  }).join("") || "<p>없음</p>";
   applyCalView();
   $("#calSync").textContent = (C.synced_at ? `일정 갱신 ${short(C.synced_at)}` : "") + (calNote ? " · " + calNote : "");
   $("#calCatList").innerHTML = cats.map(c => `<option value="${esc(c)}">`).join("");
   $("#calSub").innerHTML = C.ics_url ? `<b>읽기 전용 구독 주소 (.ics)</b><br>구글 캘린더 양방향 동기화를 켰다면 이 구독은 넣지 않는다(같은 일정이 두 번 보인다). 다른 달력 앱에서 보기만 할 때 쓴다.
     <code>${esc(C.ics_url)}</code><button class="btn" id="icsCopy" type="button">주소 복사</button>` : "";
 }
+const undatedClosed = new Set(store.get("undatedClosed", []));
+document.addEventListener("toggle", e => {
+  const d = e.target; if (!d.classList || !d.classList.contains("ufold")) return;
+  d.open ? undatedClosed.delete(d.dataset.uc) : undatedClosed.add(d.dataset.uc);
+  store.set("undatedClosed", [...undatedClosed]);
+}, true);
 document.addEventListener("click", e => {
+  const u = e.target.closest("[data-uall]");
+  if (u) { document.querySelectorAll("#calUndated details.ufold").forEach(d => { d.open = u.dataset.uall === "open"; }); return; }
   const b = e.target.closest("#calFilter button"); if (b) { calCat = b.dataset.c; renderCal(); return; }
   if (e.target.id === "icsCopy") { try { navigator.clipboard.writeText(DATA.calendar.ics_url); e.target.textContent = "복사했다"; } catch (err) {} }
 });
