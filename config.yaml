@@ -70,13 +70,12 @@ highlight:
   - 엔지니어링산업 경진대회
   - 스마트건설 챌린지
 site_url: https://ssapgun.github.io/notice-watch/
-# exams: 날짜가 아직 없는 시험·공모전·프로그램 카드. 날짜가 정해진 일정은 schedule.json 에 둔다(웹 '일정' 탭·구글 캘린더에서 고친다)
 exams:
 - name: 건축기사 (2027 정기)
   category: 국가기술자격
   status: 미발표
   url: https://www.q-net.or.kr/rcv001.do?gSite=Q.&id=rcv00104
-  note: 2027년 시행계획 발표 전. 참고로 2026년 필기 원서접수는 1회 1/12~1/15, 2회 4/20~4/23, 3회 7/20~7/23. 응시자격은 큐넷 응시자격 자가진단으로 먼저 확인할 것.
+  note: 2027년 시행계획 발표 전. 참고로 2026년 필기 원서접수는 1회 1/12~1/15, 2회 4/20~4/23, 3회 7/20~7/23. 응시자격은 큐넷 응시자격 자가진단으로 먼저 확인할 것. 2027 시행계획이 큐넷 첫 화면에 올라오면 공지보기 '자격증'에서 알린다.
 - name: JLPT N3 (2027 제1회)
   category: 어학 · 일본어
   status: 미발표
@@ -157,6 +156,31 @@ exams:
   status: 미발표
   url: https://blog.google/intl/ko-kr/company-news/technology/the-global-machine-learning-training-program-born-out-of-south-korea/
   note: 과정은 있으나 모집 시기·대상은 확인하지 못했다.
+- name: 차세대 건설리더 아카데미 24기 (한미글로벌·서울대)
+  category: 교육 프로그램
+  status: 미발표
+  url: http://www.ncla.co.kr/
+  note: 건설 관련 학과 대학(원)생·졸업생 대상, 50명 내외. 23기는 2026.5.8 발표·5/22 마감, 6/22~7/24(온라인 4주+서울대 1주). 우수 수료생 한미글로벌 신입 채용 서류 면제. 공지보기 '공모전·대외활동'에서 홈페이지 변경을 감시한다.
+- name: 현대건설 기술교육원 건설실무 교육 체험 데이
+  category: 교육 프로그램
+  status: 미발표
+  url: https://edu.hdec.co.kr/
+  note: 청년 구직자 대상 교육과정·직무 체험과 1:1 진로 멘토링. 2026년은 8/28 영등포 기술교육원, 8/23까지 홈페이지 신청. 교육원 홈페이지는 자바스크립트라 직접 감시하지 못하고, 콘테스트코리아 '교육·강연·멘토링' 게시판에서 잡는다.
+- name: KSCE 2027 CONVENTION (대한토목학회)
+  category: 학술대회
+  status: 미발표
+  url: https://www.ksce.or.kr/
+  note: 매년 10월. 2026년은 10/21~23 정선 하이원리조트(52회). 공지보기 '학회'의 대한토목학회 게시판에서 잡힌다.
+- name: 한국지반공학회 2027 봄 학술발표회
+  category: 학술대회
+  status: 미발표
+  url: https://conference.kgshome.org/
+  note: 기초·지반 분야. 2026년은 봄 3/26~27(서울 과학기술컨벤션센터), 가을 9/17~18(소노캄 델피노).
+- name: SEWC 2027 (제10회 Structural Engineers World Congress)
+  category: 학술대회
+  status: 미정
+  url: https://www.ksce.or.kr/not/default.asp?gbn=10&htop=MN0031&ctop=MN0096
+  note: 국제 구조공학 학술대회. 대한토목학회 대외기관 게시판 2026-11-05 안내. 개최 날짜·장소는 아직 확인하지 않았다.
 academic_calendar:
   sources:
   - 학교 공지 - 학사
@@ -887,6 +911,241 @@ sources:
   - 부고
   - 선거
   - 임원
+- name: 콘테스트코리아 공모전 (아이디어·건축·창업)
+  group: 공모전·대외활동
+  type: board
+  enabled: true
+  note: 공모전 모음 사이트의 '아이디어·건축·창업' 분야 첫 페이지. 건설·건축 관련 제목만 남긴다. 날짜는 접수기간(연도 없음)이라 비어 있다.
+  list_url: https://www.contestkorea.com/sub/list.php?int_gbn=1&Txt_bcode=031410001
+  pages: 1
+  row_selector: div.list_style_2 > ul > li
+  title_selector: div.title a
+  title_text_selector: span.txt
+  include:
+  - 건축
+  - 건설
+  - 토목
+  - BIM
+  - 스마트건설
+  - 모듈러
+  - 국토
+  - 도시
+  - 공간
+  - 구조
+  - 인프라
+  - 주택
+  - 교통
+  - 철도
+  - 도로
+  - 디지털트윈
+  - 안전
+  - 지반
+- name: 콘테스트코리아 공모전 (학문·과학·IT)
+  group: 공모전·대외활동
+  type: board
+  enabled: true
+  note: 학술·IT 분야 공모전 중 건설·공학 관련 제목만.
+  list_url: https://www.contestkorea.com/sub/list.php?int_gbn=1&Txt_bcode=030310001
+  pages: 1
+  row_selector: div.list_style_2 > ul > li
+  title_selector: div.title a
+  title_text_selector: span.txt
+  include:
+  - 건축
+  - 건설
+  - 토목
+  - BIM
+  - 스마트건설
+  - 모듈러
+  - 국토
+  - 도시
+  - 공간
+  - 구조
+  - 인프라
+  - 주택
+  - 교통
+  - 철도
+  - 도로
+  - 디지털트윈
+  - 안전
+  - 지반
+  - 공학
+- name: 콘테스트코리아 대외활동 (서포터즈·기자단)
+  group: 공모전·대외활동
+  type: board
+  enabled: true
+  note: 기자단·서포터즈 중 국토·건설·과학기술·공공기관 관련만. 범위를 넓히려면 include를 비운다.
+  list_url: https://www.contestkorea.com/sub/list.php?int_gbn=2&Txt_bcode=040110001
+  pages: 1
+  row_selector: div.list_style_2 > ul > li
+  title_selector: div.title a
+  title_text_selector: span.txt
+  include:
+  - 건축
+  - 건설
+  - 토목
+  - BIM
+  - 스마트건설
+  - 모듈러
+  - 국토
+  - 도시
+  - 공간
+  - 구조
+  - 인프라
+  - 주택
+  - 교통
+  - 철도
+  - 도로
+  - 디지털트윈
+  - 안전
+  - 지반
+  - 과학
+  - 기술
+  - 공학
+  - 에너지
+  - 기상
+  - 환경
+  - LH
+  - 공사
+  - 공단
+  - 정책기자단
+  require:
+  - 기자단
+  - 서포터즈
+- name: 콘테스트코리아 대외활동 (교육·강연·멘토링)
+  group: 공모전·대외활동
+  type: board
+  enabled: true
+  note: '부트캠프·아카데미·직무체험(예: 현대건설 기술교육원 건설실무 교육 체험 데이) 모집 공고용.'
+  list_url: https://www.contestkorea.com/sub/list.php?int_gbn=2&Txt_bcode=040410001
+  pages: 1
+  row_selector: div.list_style_2 > ul > li
+  title_selector: div.title a
+  title_text_selector: span.txt
+  include:
+  - 부트캠프
+  - 아카데미
+  - 교육생
+  - 체험
+  - 현대건설
+  - 한미글로벌
+  - 차세대
+  - 건축
+  - 건설
+  - 토목
+  - BIM
+  - 스마트건설
+  - 모듈러
+  - 국토
+  - 도시
+  - 공간
+  - 구조
+  - 인프라
+  - 주택
+  - 교통
+  - 철도
+  - 도로
+  - 디지털트윈
+  - 안전
+  - 지반
+- name: 국토연구원 공지 (기자단·공모·교육)
+  group: 공모전·대외활동
+  type: board
+  enabled: true
+  note: 국토연구원 공지사항. 대학생 기자단(2기 모집 이력)·공모전·교육 공고만.
+  list_url: https://www.krihs.re.kr/board.es?mid=a10604000000&bid=0018&nPage={page}
+  pages: 1
+  row_selector: table.tstyle_list tbody > tr
+  title_selector: a
+  include:
+  - 기자단
+  - 공모
+  - 대학생
+  - 서포터즈
+  - 경진대회
+  - 인턴
+  - 아카데미
+  - 청년
+  - 교육
+- name: 차세대 건설리더 아카데미 (한미글로벌)
+  group: 공모전·대외활동
+  type: watch
+  enabled: true
+  note: 게시판이 자바스크립트라 첫 화면 문구 변경을 감지한다. 23기는 2026.5 모집(5/22 마감), 6/22~7/24 서울대와 운영.
+  url: http://www.ncla.co.kr/
+  keywords:
+  - 모집
+  - 접수
+  - 신청
+  - 교육생
+  - 24기
+- name: 대한토목학회 공지
+  group: 학회
+  type: board
+  enabled: true
+  note: 학술대회·공모·학생 대상 공지만.
+  list_url: https://www.ksce.or.kr/not/default.asp?gbn=6&htop=MN0031&ctop=MN0048&page={page}
+  pages: 1
+  row_selector: table tbody > tr
+  title_selector: a
+  include:
+  - 학술대회
+  - 컨벤션
+  - CONVENTION
+  - 학술발표
+  - 공모
+  - 경진대회
+  - 대학생
+  - 학생
+  - 학회상
+  - 심포지엄
+- name: 대한토목학회 대외기관 행사·교육
+  group: 학회
+  type: board
+  enabled: true
+  note: 다른 기관 행사 안내 게시판. 채용·위원 모집은 걸러내고 학술대회·공모·교육만.
+  list_url: https://www.ksce.or.kr/not/default.asp?gbn=10&htop=MN0031&ctop=MN0096&page={page}
+  pages: 1
+  row_selector: table tbody > tr
+  title_selector: a
+  include:
+  - 학술대회
+  - 학술발표
+  - 심포지엄
+  - 컨퍼런스
+  - Conference
+  - Congress
+  - 워크숍
+  - 세미나
+  - 공모
+  - 경진대회
+  - 대학생
+  - 아카데미
+  - 교육생
+  exclude:
+  - 위원
+  - 심의
+  - 사업자
+  - 채용
+- name: 한국지반공학회 행사·세미나
+  group: 학회
+  type: board
+  enabled: true
+  note: 기초·지반 분야 학회. 봄(3월)·가을(9월) 학술발표회와 KSCE 컨벤션 안내가 올라온다.
+  list_url: https://kgshome.org/board/seminar
+  pages: 1
+  row_selector: table.board-table tbody > tr
+  title_selector: a
+- name: 큐넷 (국가기술자격 시행계획)
+  group: 자격증
+  type: watch
+  enabled: true
+  note: 큐넷 첫 화면에서 '2027 시행계획' 등 문구가 새로 생기면 알린다. 2027년 기사 시험 일정은 2026.11 기준 미발표.
+  url: https://www.q-net.or.kr/man001.do?gSite=Q
+  keywords:
+  - 시행계획
+  - '2027'
+  - 기사
 topics:
 - name: 채용·취업
   groups:
