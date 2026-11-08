@@ -28,6 +28,7 @@ import yaml
 import calendar_events
 import crawler
 import notify
+import planner
 import summarize
 
 BASE = Path(__file__).resolve().parent
@@ -214,6 +215,11 @@ def telegram_text(b: dict, site_url: str) -> str:
                                              + (f" {e['time']}" if e["time"] else "") for e in sch["today"]))
     else:
         parts.append("오늘 일정: 없음")
+    pl = b.get("planner")
+    if pl:
+        lines = [f"- {i['title']} ({i['course']}, {planner.fmt_min(i['cost'])})" for i in pl["items"]]
+        lines += [f"! {', '.join(w['courses'])}: 마감 {w['deadline']}까지 {planner.fmt_min(w['short'])} 부족" for w in pl["warnings"]]
+        parts.append(f"오늘 할 강의 ({planner.fmt_min(pl['total'])})\n" + ("\n".join(lines) or "오늘 배정된 강의 없음"))
     if sch["upcoming"]:
         parts.append("다가오는 일정\n" + "\n".join(f"- {e['date'][5:].replace('-', '.')} {e['exam']} {e['type']}"
                                                 for e in sch["upcoming"][:5]))
@@ -239,7 +245,7 @@ def main() -> int:
          "date_label": f"{today.month}월 {today.day}일 ({WEEKDAYS[today.weekday()]})",
          "weather": None, "schedule": {"today": [], "upcoming": []}, "news": [], "ai_summary": [], "errors": []}
     for name, fn in (("weather", lambda: weather(cfg)), ("schedule", lambda: schedule(cfg, today)),
-                     ("news", lambda: news(cfg))):
+                     ("news", lambda: news(cfg)), ("planner", lambda: planner.for_briefing(today))):
         try:
             b[name] = fn()
         except Exception as e:   # 한 부분이 실패해도 나머지는 만든다

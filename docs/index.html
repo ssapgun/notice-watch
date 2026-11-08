@@ -476,6 +476,44 @@ body{background:var(--sheet);background-image:none;font:18px/1.65 "Noto Sans KR"
 .brief .bhead{display:flex;justify-content:space-between;align-items:baseline;gap:10px;flex-wrap:wrap;border-bottom:1px solid var(--rule);padding-bottom:8px;margin-bottom:14px}
 .brief .bhead h3{margin:0}
 .brief .bhead small{color:var(--pencil);font-size:14.5px}
+.plan h3{margin:18px 0 6px}
+.pmeta{color:var(--pencil);font-size:15px;margin:2px 0 8px}
+.pwarn{margin:0 0 8px;padding:8px 12px;background:var(--markup-bg);border-left:3px solid var(--markup);font-size:16px}
+.pwarn b{color:var(--markup)}
+.pwarn small{display:block;color:var(--ink-2);font-size:14.5px}
+.pwarnt{color:var(--markup)}
+.plist{list-style:none;margin:0;padding:0}
+.plist li{border-bottom:1px solid var(--grid)}
+.plist label{display:flex;gap:10px;align-items:flex-start;padding:8px 2px;cursor:pointer}
+.plist input{margin-top:5px;width:17px;height:17px;flex:none;accent-color:var(--khu)}
+.plist small{display:block;color:var(--pencil);font-size:14.5px}
+.plist li.pdone span{text-decoration:line-through;color:var(--pencil)}
+.plist li.empty{padding:14px 2px;border:0;color:var(--ink-2)}
+.plist li.empty b{display:block}
+.pbox{margin:14px 0;border-top:1px solid var(--grid);padding-top:8px}
+.pbox>summary,.pcourse>summary{cursor:pointer}
+.pbox>summary{font-weight:600}
+.pdays{display:grid;grid-template-columns:repeat(auto-fill,minmax(250px,1fr));gap:10px;margin-top:10px}
+.pday{border:1px solid var(--grid);padding:8px 12px;font-size:15.5px}
+.pday h4{margin:0 0 4px;font-size:16px}
+.pday small{color:var(--pencil);font-size:14px;font-weight:400}
+.pday ul{margin:0;padding-left:18px}
+.pcourse{border-bottom:1px solid var(--grid);padding:8px 0}
+.pcourse small{color:var(--pencil);font-size:14.5px}
+.pbar{display:block;height:6px;background:var(--grid);margin:6px 0 2px}
+.pbar i{display:block;height:100%;background:var(--khu)}
+.pedit{display:flex;gap:16px;flex-wrap:wrap;align-items:center;margin:8px 0;font-size:15.5px}
+.pedit input{font:inherit;width:9em;padding:3px 6px;border:1px solid var(--grid);background:var(--paper);color:var(--ink)}
+.pedit input[type=number]{width:5em}
+.pform{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:10px;margin:10px 0}
+.pform label,.plan .pwide{display:grid;gap:4px;font-size:15.5px}
+.pform .pwide{grid-column:1/-1}
+.pform input,.pform select,.pform textarea,.plan .pwide input{font:inherit;width:100%;padding:6px 8px;border:1px solid var(--grid);background:var(--paper);color:var(--ink)}
+.pprev{font-size:15.5px;max-height:260px;overflow:auto;margin-bottom:10px}
+.pprev small{color:var(--pencil)}
+.phours{display:grid;grid-template-columns:repeat(7,minmax(0,1fr));gap:6px;margin-bottom:10px}
+.phours label{display:grid;gap:3px;text-align:center;font-size:15px}
+.phours input{font:inherit;width:100%;padding:4px;text-align:center;border:1px solid var(--grid);background:var(--paper);color:var(--ink)}
 .bdates{display:flex;gap:8px;align-items:center;flex-wrap:wrap;margin:0 0 12px;font-size:15px}
 .bdates select{font:inherit;padding:4px 6px;border:1px solid var(--grid);background:var(--paper);color:var(--ink)}
 .bdates button{font:inherit;padding:4px 10px;border:1px solid var(--grid);background:var(--paper);color:var(--ink);cursor:pointer}
@@ -517,6 +555,7 @@ body{background:var(--sheet);background-image:none;font:18px/1.65 "Noto Sans KR"
     <button type="button" role="tab" id="tabNotices" aria-selected="true">공지 보기</button>
     <button type="button" role="tab" id="tabCal" aria-selected="false">일정</button>
     <button type="button" role="tab" id="tabBriefing" aria-selected="false">브리핑</button>
+    <button type="button" role="tab" id="tabPlanner" aria-selected="false">플래너</button>
     <button type="button" role="tab" id="tabManage" aria-selected="false">감시 대상 관리</button>
     <button type="button" role="tab" id="tabSettings" aria-selected="false">연결 설정</button>
   </nav>
@@ -586,6 +625,37 @@ body{background:var(--sheet);background-image:none;font:18px/1.65 "Noto Sans KR"
     <div class="bdates" id="briefDates" hidden></div>
     <div id="briefBody"></div>
     <details class="words" id="wordsB" hidden><summary>오늘의 단어</summary><div class="wbody"></div></details>
+  </section>
+
+  <section id="viewPlanner" class="manage plan" hidden>
+    <p class="msg bad" id="planMsg" hidden></p>
+    <div id="planWarn"></div>
+    <h3>오늘 할 강의</h3>
+    <p class="pmeta" id="planToday"></p>
+    <ul class="plist" id="planTodayList"></ul>
+    <details class="pbox" id="planNext"><summary>앞으로 14일 계획</summary><div class="pdays" id="planDays"></div></details>
+    <h3>강의별 진도</h3>
+    <div id="planCourses"></div>
+    <details class="pbox" id="planAdd"><summary>강의 추가</summary>
+      <div class="pform">
+        <label>강의 이름<input id="planName" placeholder="예: 한솔아카데미 건축구조"></label>
+        <label>이 날까지 끝내기 (없으면 비움)<input type="date" id="planDeadline"></label>
+        <label>일정 탭에서 가져오기<select id="planDeadlinePick"></select></label>
+        <label>복습 배율 (재생 시간 × 배율 = 실제 공부 시간)<input type="number" id="planMult" value="1.3" step="0.1" min="1" max="5"></label>
+        <label>시간을 못 찾은 줄의 기본 길이(분)<input type="number" id="planDefMin" value="30" min="1"></label>
+        <label class="pwide">목차 붙여넣기 (한 줄에 한 차시, 시간은 35:20 · 1:02:10 · 1시간 5분 · 40분 모두 가능)<textarea id="planToc" rows="8"></textarea></label>
+      </div>
+      <div id="planPrev" class="pprev"></div>
+      <button class="btn" type="button" id="planAddBtn">강의 추가</button> <span id="planAddMsg" class="pmeta"></span>
+    </details>
+    <details class="pbox" id="planSet"><summary>공부 시간 설정</summary>
+      <p class="pmeta">요일별로 쓸 수 있는 시간(시간 단위). 0이면 쉬는 요일이다. 계획은 이 시간과 마감일, 최근 7일 소화율로 코드가 다시 계산한다.</p>
+      <div class="phours" id="planHours">
+        <label>월<input type="number" step="0.5" min="0"></label><label>화<input type="number" step="0.5" min="0"></label><label>수<input type="number" step="0.5" min="0"></label><label>목<input type="number" step="0.5" min="0"></label><label>금<input type="number" step="0.5" min="0"></label><label>토<input type="number" step="0.5" min="0"></label><label>일<input type="number" step="0.5" min="0"></label>
+      </div>
+      <label class="pwide">쉬는 날 (2026-11-20, 2026-11-21 처럼 쉼표로)<input id="planOff"></label>
+    </details>
+    <p class="pmeta">저장소가 공개라 강의 이름과 진도는 누구나 볼 수 있다.</p>
   </section>
 
   <section id="viewManage" class="manage" hidden>
@@ -702,6 +772,7 @@ body{background:var(--sheet);background-image:none;font:18px/1.65 "Noto Sans KR"
   </form>
 </dialog>
 
+<script src="planner.js"></script>
 <script>
 const $ = s => document.querySelector(s);
 const esc = s => String(s ?? "").replace(/[&<>"]/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
@@ -1269,6 +1340,7 @@ async function pickBrief(d) {
   renderBriefDates();
   await renderBriefing();
 }
+document.addEventListener("click", e => { if (e.target.id === "briefToPlan") { e.preventDefault(); showView("planner"); } });
 document.addEventListener("click", e => { const b = e.target.closest("#briefDates button[data-bd]"); if (b && b.dataset.bd) pickBrief(b.dataset.bd); });
 document.addEventListener("change", e => { if (e.target.id === "briefSel") pickBrief(e.target.value); });
 const httpUrl = u => /^https?:\/\//i.test(u || "") ? u : "";
@@ -1296,30 +1368,35 @@ async function renderBriefing() {
       <div class="muted">${esc(w.source)}</div></div>` : `<div class="bcard"><h4>날씨</h4><p class="muted">날씨를 가져오지 못했다.</p></div>`;
   const today = `<div class="bcard"><h4>오늘 일정</h4>${sch.today.length ? `<ul>${sch.today.map(e => ev(e, false)).join("")}</ul>` : `<p class="muted">없음</p>`}
       ${sch.upcoming.length ? `<h4 style="margin-top:12px">다가오는 일정</h4><ul>${sch.upcoming.map(e => ev(e, true)).join("")}</ul>` : ""}</div>`;
+  const pm = v => { v = Math.round(v); const h = Math.floor(v / 60), r = v % 60; return h ? (r ? `${h}시간 ${r}분` : `${h}시간`) : `${v}분`; };
+  const plan = b.planner ? `<div class="bcard"><h4>오늘 할 강의 · ${pm(b.planner.total)}</h4>${b.planner.items.length ? `<ul>${b.planner.items.map(i => `<li>${esc(i.title)} <small>${esc(i.course)} · ${pm(i.cost)}</small></li>`).join("")}</ul>` : `<p class="muted">오늘 배정된 강의가 없다.</p>`}
+      ${(b.planner.warnings || []).map(w => `<p class="pwarn"><b>마감 위험</b> ${esc(w.courses.join(", "))} · ${esc(w.deadline)} · ${pm(w.short)} 부족</p>`).join("")}<div class="muted"><a href="#planner" id="briefToPlan">플래너에서 체크하기</a> · 소화율 ${Math.round(b.planner.eta * 100)}%</div></div>` : "";
   const key = (b.ai_summary || []).length ? `<div class="bcard bkey"><h4>밤사이 핵심</h4><ul>${b.ai_summary.map(s => `<li>${esc(s)}</li>`).join("")}</ul><div class="muted">뉴스 제목만 보고 AI가 정리했다. 원문으로 확인할 것.</div></div>` : "";
   const news = (b.news || []).map(c => `<div class="bcard"><h4>${esc(c.name)}</h4>${c.items.length
       ? `<ul>${c.items.map(it => `<li>${link(it.url, esc(it.title))} <small>${esc(it.source)} · ${esc(it.time)}</small></li>`).join("")}</ul>`
       : `<p class="muted">밤사이 새 기사 없음</p>`}</div>`).join("");
   box.innerHTML = `<div class="bhead"><h3>아침 브리핑 · ${esc(b.date_label)}</h3><small>만든 시각 ${esc(b.generated_at)} · 전날 저녁 6시 이후 기사</small></div>
-    <div class="bgrid">${wx}${today}${key}</div>
+    <div class="bgrid">${wx}${today}${plan}${key}</div>
     <h3>밤사이 뉴스</h3><div class="bnews">${news}</div>
     ${(b.errors || []).length ? `<p class="muted">일부를 가져오지 못했다: ${b.errors.map(esc).join(" / ")}</p>` : ""}`;
 }
 
 // ════════ 화면 전환 ════════
 function showView(v) {
-  ["notices", "cal", "briefing", "manage", "settings"].forEach(n => {
+  ["notices", "cal", "briefing", "planner", "manage", "settings"].forEach(n => {
     $("#tab" + n[0].toUpperCase() + n.slice(1)).setAttribute("aria-selected", v === n);
     $("#view" + n[0].toUpperCase() + n.slice(1)).hidden = v !== n;
   });
   if (v === "manage") renderManage();
   if (v === "cal") renderCal();
   if (v === "briefing") renderBriefing();
+  if (v === "planner") loadPlanner();
   if (v === "settings") { $("#repoInput").value = gh.repo; $("#branchInput").value = gh.branch; $("#tokenInput").value = gh.token ? "••••••••" : ""; }
 }
 $("#tabNotices").addEventListener("click", () => showView("notices"));
 $("#tabCal").addEventListener("click", () => showView("cal"));
 $("#tabBriefing").addEventListener("click", () => showView("briefing"));
+$("#tabPlanner").addEventListener("click", () => showView("planner"));
 $("#tabManage").addEventListener("click", () => showView("manage"));
 $("#tabSettings").addEventListener("click", () => showView("settings"));
 
@@ -1499,9 +1576,145 @@ function wordsChange(e) {
   if (e.target.dataset.w === "hide") { store.set("wordsHide", e.target.checked); renderWords(); }
 }
 
+// ════════ 자동 플래너 (docs/planner.js 로 계산, docs/planner.json 에 저장) ════════
+let PL = null, plOps = [], plTimer = null, plBusy = false, plErr = "";
+const PL_PATH = "docs/planner.json";
+const plToday = () => iso(kstToday());   // 한국 날짜 'YYYY-MM-DD'
+const fmtMin = m => { m = Math.round(m); const h = Math.floor(m / 60), r = m % 60; return h ? (r ? `${h}시간 ${r}분` : `${h}시간`) : `${m}분`; };
+const newId = () => Math.random().toString(36).slice(2, 10);
+const dayLabel = d => { const [, m, dd] = d.split("-").map(Number); return `${m}/${dd} (${"월화수목금토일"[Planner.weekday(d)]})`; };
+
+async function plFetch() {
+  if (ghReady()) {
+    const f = await ghApi(`/contents/${PL_PATH}?ref=${encodeURIComponent(gh.branch)}`);
+    return {data: JSON.parse(b64decode(f.content)), sha: f.sha};
+  }
+  const r = await fetch("planner.json?t=" + Date.now(), {cache: "no-store"});
+  if (!r.ok) throw new Error(r.status);
+  return {data: await r.json(), sha: null};
+}
+async function loadPlanner() {
+  try { PL = (await plFetch()).data; plErr = ""; }
+  catch (e) { plErr = "플래너를 불러오지 못했다: " + e.message; PL = PL || {settings: {}, courses: [], log: {}}; }
+  PL.courses = PL.courses || []; PL.log = PL.log || {};
+  renderPlanner();
+  plRecordToday();
+}
+// 고칠 때마다 최신 파일을 받아 같은 변경을 적용해 저장한다 (다른 기기·아침 브리핑과 겹쳐도 지우지 않게)
+function plChange(op) {
+  if (!ghReady()) { showView("settings"); $("#setMsg").textContent = "플래너를 저장하려면 먼저 연결 설정을 한다."; return false; }
+  op(PL);
+  plOps.push(op);
+  renderPlanner();
+  clearTimeout(plTimer);
+  plTimer = setTimeout(plFlush, 1500);
+  return true;
+}
+async function plFlush() {
+  if (plBusy || !plOps.length) return;
+  plBusy = true;
+  const ops = plOps.splice(0);
+  plErr = "";
+  try {
+    for (let attempt = 0; ; attempt++) {
+      try {
+        const {data, sha} = await plFetch();
+        data.courses = data.courses || []; data.log = data.log || {};
+        ops.forEach(op => op(data));
+        await ghApi(`/contents/${PL_PATH}`, {method: "PUT", body: JSON.stringify({message: "플래너 갱신 " + plToday(), content: b64encode(JSON.stringify(data, null, 1) + "\n"), sha, branch: gh.branch})});
+        PL = JSON.parse(JSON.stringify(data));
+        plOps.forEach(op => op(PL));
+        break;
+      } catch (e) { if (attempt >= 2) throw e; await new Promise(r => setTimeout(r, 800)); }
+    }
+  } catch (e) {
+    plErr = "저장하지 못했다. 다시 불러왔으니 확인할 것: " + e.message;
+    await loadPlanner();
+  }
+  plBusy = false;
+  renderPlanner();
+  if (plOps.length) plFlush();
+}
+function plRecordToday() {     // 소화율 계산용 오늘 계획량 (아침 브리핑이 먼저 남겼으면 그대로 둔다)
+  const today = plToday();
+  if (!PL.courses.length || PL.log[today] || !ghReady()) return;
+  const r = Planner.compute(PL, today);
+  const done = PL.courses.reduce((a, c) => a + c.items.filter(it => it.done === today).reduce((x, it) => x + Planner.costOf(it, c), 0), 0);
+  const planned = Math.round((r.days[0].total + done) * 10) / 10;
+  plChange(p => { p.log = p.log || {}; if (!p.log[today]) p.log[today] = {planned}; });
+}
+const plFindItem = (p, cid, iid) => { const c = p.courses.find(x => x.id === cid); return c && c.items.find(x => x.id === iid); };
+const plSetDone = (cid, iid, val) => plChange(p => { const it = plFindItem(p, cid, iid); if (it) { if (val) it.done = val; else delete it.done; } });
+
+function renderPlanner() {
+  if (!PL) return;
+  const today = plToday(), r = Planner.compute(PL, today), st = Planner.settingsOf(PL);
+  $("#planMsg").hidden = !plErr; $("#planMsg").textContent = plErr;
+  $("#planWarn").innerHTML = r.warnings.map(w => `<p class="pwarn"><b>${w.overdue ? "마감 지남" : "지금 속도로는 마감을 못 맞춘다"}</b> ${esc(w.courses.join(", "))} · 마감 ${esc(w.deadline)} · ${fmtMin(w.short)} 부족 <small>(필요 ${fmtMin(w.need)}, 쓸 수 있는 시간 ${fmtMin(w.have)})</small></p>`).join("");
+  const first = r.days[0];
+  const doneToday = PL.courses.flatMap(c => c.items.filter(it => it.done === today).map(it => ({c, it})));
+  const li = (cid, iid, course, title, cost, done, late) => `<li class="${done ? "pdone" : ""}"><label><input type="checkbox" data-pc="${esc(cid)}" data-pi="${esc(iid)}" ${done ? "checked" : ""}><span>${esc(title)}<small>${esc(course)} · ${fmtMin(cost)}${late ? " · 마감 지남" : ""}</small></span></label></li>`;
+  $("#planToday").textContent = `${dayLabel(today)} · 계획 ${fmtMin(first.total)} · 소화율 ${Math.round(r.eta * 100)}%`;
+  $("#planTodayList").innerHTML = first.items.map(i => li(i.cid, i.iid, i.course, i.title, i.cost, false, i.late)).join("")
+    + doneToday.map(({c, it}) => li(c.id, it.id, c.name, it.title, Planner.costOf(it, c), true, false)).join("")
+    || `<li class="empty"><b>${PL.courses.length ? "오늘 배정된 강의가 없다" : "아직 강의가 없다"}</b>${PL.courses.length ? "" : "아래 '강의 추가'에서 목차를 붙여넣는다."}</li>`;
+  $("#planDays").innerHTML = r.days.slice(1, 15).map(d => `<div class="pday"><h4>${dayLabel(d.date)} <small>${fmtMin(d.total)} / ${fmtMin(d.avail)}</small></h4><ul>${d.items.map(i => `<li>${esc(i.title)} <small>${esc(i.course)} · ${fmtMin(i.cost)}${i.late ? " · 마감 지남" : ""}</small></li>`).join("")}</ul></div>`).join("") || "<p>남은 계획이 없다.</p>";
+  const box = $("#planCourses");
+  const open = new Set([...box.querySelectorAll("details[open]")].map(d => d.dataset.cid));
+  const lastDay = {};
+  r.days.forEach(d => d.items.forEach(i => { lastDay[i.cid] = d.date; }));
+  box.innerHTML = PL.courses.map(c => {
+    const done = c.items.filter(it => it.done).length, pct = c.items.length ? Math.round(done / c.items.length * 100) : 0;
+    const left = c.items.filter(it => !it.done).reduce((a, it) => a + Planner.costOf(it, c), 0);
+    return `<details class="pcourse" data-cid="${esc(c.id)}" ${open.has(c.id) ? "open" : ""}><summary><b>${esc(c.name)}</b> <small>${done}/${c.items.length}차시 · 남은 ${fmtMin(left)}${c.deadline ? ` · 마감 ${esc(c.deadline)}` : " · 마감 없음"}${lastDay[c.id] ? ` · 예상 완료 ${esc(lastDay[c.id])}` : ""}</small><span class="pbar"><i style="width:${pct}%"></i></span></summary>
+      <div class="pedit"><label>마감일 <input type="date" data-pdl="${esc(c.id)}" value="${esc(c.deadline || "")}"></label><label>복습 배율 <input type="number" step="0.1" min="1" max="5" data-pmu="${esc(c.id)}" value="${esc(c.mult || 1)}"></label><button class="linkbtn" type="button" data-pdel="${esc(c.id)}">강의 삭제</button></div>
+      <ul class="plist">${c.items.map(it => li(c.id, it.id, `재생 ${fmtMin(it.min)}`, it.title, Planner.costOf(it, c), !!it.done, false)).join("")}</ul></details>`;
+  }).join("") || "<p>강의가 없다.</p>";
+  document.querySelectorAll("#planHours input").forEach((inp, i) => { if (document.activeElement !== inp) inp.value = (st.hours[i] || 0) / 60; });
+  if (document.activeElement !== $("#planOff")) $("#planOff").value = (st.off || []).join(", ");
+  $("#planDeadlinePick").innerHTML = `<option value="">일정에서 고르기</option>` + ((DATA && DATA.calendar && DATA.calendar.events) || []).filter(e => e.date >= today).map(e => `<option value="${esc(e.date)}">${esc(e.date)} · ${esc(e.exam)} ${esc(e.type)}</option>`).join("");
+}
+function planPreview() {
+  const items = Planner.parse($("#planToc").value, +$("#planDefMin").value || 30);
+  const total = items.reduce((a, it) => a + it.min, 0), noTime = items.filter(it => it.noTime).length;
+  $("#planPrev").innerHTML = items.length ? `<p><b>${items.length}개 차시</b> · 재생 ${fmtMin(total)}${noTime ? ` · <span class="pwarnt">시간을 못 찾은 줄 ${noTime}개는 기본 ${+$("#planDefMin").value || 30}분으로 넣는다</span>` : ""}</p><ol>${items.slice(0, 200).map(it => `<li>${esc(it.title)} <small>${it.noTime ? "시간 없음" : fmtMin(it.min)}</small></li>`).join("")}</ol>` : "";
+  return items;
+}
+$("#planToc").addEventListener("input", planPreview);
+$("#planDefMin").addEventListener("input", planPreview);
+$("#planDeadlinePick").addEventListener("change", e => { if (e.target.value) $("#planDeadline").value = e.target.value; });
+$("#planAddBtn").addEventListener("click", () => {
+  const name = $("#planName").value.trim(), items = planPreview();
+  if (!name || !items.length) { $("#planAddMsg").textContent = "강의 이름과 목차를 넣어야 한다."; return; }
+  const course = {id: newId(), name, deadline: $("#planDeadline").value || "", mult: +$("#planMult").value || 1,
+                  items: items.map(it => ({id: newId(), title: it.title, min: it.min}))};
+  if (!plChange(p => { if (!p.courses.some(c => c.id === course.id)) p.courses.push(JSON.parse(JSON.stringify(course))); })) return;
+  $("#planName").value = ""; $("#planToc").value = ""; $("#planDeadline").value = ""; $("#planPrev").innerHTML = "";
+  $("#planAddMsg").textContent = `'${name}' 추가함 (${items.length}개 차시).`;
+});
+$("#viewPlanner").addEventListener("change", e => {
+  const t = e.target, d = t.dataset;
+  if (d.pi) { plSetDone(d.pc, d.pi, t.checked ? plToday() : ""); return; }
+  if (d.pdl) { plChange(p => { const c = p.courses.find(x => x.id === d.pdl); if (c) c.deadline = t.value; }); return; }
+  if (d.pmu) { const v = Math.max(1, +t.value || 1); plChange(p => { const c = p.courses.find(x => x.id === d.pmu); if (c) c.mult = v; }); return; }
+  if (t.closest("#planHours") || t.id === "planOff") {
+    const hours = [...document.querySelectorAll("#planHours input")].map(x => Math.max(0, +x.value || 0) * 60);
+    const off = $("#planOff").value.split(/[,\s]+/).filter(x => /^\d{4}-\d{2}-\d{2}$/.test(x));
+    plChange(p => { p.settings = Object.assign({}, p.settings, {hours, off}); });
+  }
+});
+$("#viewPlanner").addEventListener("click", e => {
+  const id = e.target.dataset && e.target.dataset.pdel;
+  if (!id) return;
+  e.preventDefault();
+  const c = PL.courses.find(x => x.id === id);
+  if (c && confirm(`'${c.name}' 강의와 진도를 지운다. 계속할까?`)) plChange(p => { p.courses = p.courses.filter(x => x.id !== id); });
+});
+
 // ════════ 시작 ════════
 $("#fUnread").checked = ui.unread; $("#fStar").checked = ui.star; $("#fHl").checked = !!ui.hl; $("#q").value = "";
 if (location.hash === "#briefing") showView("briefing");
+if (location.hash === "#planner") showView("planner");
 loadWords();
 loadData().then(() => { renderAll(); watchRun(); }).catch(() => {
   $("#list").innerHTML = `<li class="empty"><b>아직 확인 결과가 없다</b>GitHub 저장소의 Actions 탭에서 '공지·입시 확인'을 한 번 실행하면 여기에 결과가 나온다.</li>`;
