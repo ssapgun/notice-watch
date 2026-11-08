@@ -14,12 +14,14 @@
   --sheet:#F6F7F4; --paper:#FFFFFF; --ink:#1E2B3C; --ink-2:#4A5666; --pencil:#7A8390;
   --grid:#E3E7E2; --rule:#1E2B3C; --markup:#C62D25; --markup-bg:#FBEDEB; --amber:#A86A12;
   --focus:#2F6FB5;
+  --st-live:#1B7A43; --st-live-bg:#E6F4EB; --st-soon:#2F6FB5; --st-soon-bg:#E8F0F9; --st-always:#6B4FA3; --st-always-bg:#F0EBF8;
 }
 @media (prefers-color-scheme: dark){
   :root{ /* 다크 모드는 청사진 */
     --sheet:#0E2236; --paper:#12293F; --ink:#EAF1F7; --ink-2:#B9C8D6; --pencil:#8AA0B5;
     --grid:#183552; --rule:#D5E2EE; --markup:#FF8A7A; --markup-bg:#3A2630; --amber:#F2B65A;
     --focus:#8CC4FF;
+    --st-live:#7FE0A6; --st-live-bg:#173A2B; --st-soon:#8CC4FF; --st-soon-bg:#183552; --st-always:#C9B3F2; --st-always-bg:#2C2748;
   }
 }
 *{box-sizing:border-box}
@@ -207,7 +209,15 @@ button{font:inherit;color:inherit;cursor:pointer}
 .utools{display:flex;gap:14px;font-size:15px;margin:2px 0 6px}
 .cal-undated{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:10px;margin:8px 0 26px}
 .cal-card{border:1px solid var(--grid);padding:10px 12px;font-size:15.5px}
-.cal-card .st{float:right;font-size:13.5px;border:1px solid var(--grid);padding:0 6px;color:var(--ink-2)}
+.cal-card .st{float:right;margin-left:8px;font-size:13.5px;border:1px solid var(--grid);padding:0 6px;color:var(--ink-2)}
+.cal-card .st.s-live{color:var(--st-live);background:var(--st-live-bg);border-color:var(--st-live);font-weight:600}
+.cal-card .st.s-soon{color:var(--st-soon);background:var(--st-soon-bg);border-color:var(--st-soon)}
+.cal-card .st.s-always{color:var(--st-always);background:var(--st-always-bg);border-color:var(--st-always)}
+.cal-card .st.s-wait{color:var(--amber);border-color:var(--amber)}
+.cal-card .st.s-past,.cal-card .st.s-no{color:var(--pencil);border-style:dashed}
+.cal-card.past{opacity:.72}
+.cal-card .cnote{margin-top:4px;font-size:14.5px}
+.cal-card .cnote>summary{cursor:pointer;color:var(--pencil);width:max-content}
 .cal-card b{display:block;margin-bottom:4px}
 .cal-card p{margin:0;color:var(--ink-2);line-height:1.5}
 .cal-sub{border-top:1px solid var(--rule);padding-top:14px;font-size:15.5px;color:var(--ink-2)}
@@ -530,7 +540,7 @@ body{background:var(--sheet);background-image:none;font:18px/1.65 "Noto Sans KR"
       </details>
       </nav>
       <main class="main">
-        <details class="words" id="words" hidden><summary>오늘의 단어</summary><div id="wordsBody"></div></details>
+        <details class="words" id="words" hidden><summary>오늘의 단어</summary><div class="wbody"></div></details>
         <div class="searchbar">
           <input id="q" type="search" placeholder="제목·출처 검색 (예: 募集要項, 대학원, deadline)" aria-label="검색">
         </div>
@@ -575,6 +585,7 @@ body{background:var(--sheet);background-image:none;font:18px/1.65 "Noto Sans KR"
   <section id="viewBriefing" class="manage brief" hidden>
     <div class="bdates" id="briefDates" hidden></div>
     <div id="briefBody"></div>
+    <details class="words" id="wordsB" hidden><summary>오늘의 단어</summary><div class="wbody"></div></details>
   </section>
 
   <section id="viewManage" class="manage" hidden>
@@ -1076,8 +1087,9 @@ function renderCal() {
   $("#calList").innerHTML = rows.join("") || `<li class="empty"><b>다가오는 일정이 없다</b>'새 일정 추가'로 넣거나 구글 캘린더 '공지·입시 일정'에 넣는다.</li>`;
   const un = (C.undated || []).filter(u => !calCat || u.category === calCat);
   // 분류별로 접는다. 지난 일정(참고) 카드는 각 분류의 뒤로
-  const card = u => `<div class="cal-card"><span class="st">${esc(u.status)}</span>
-    <b>${u.url ? `<a href="${esc(u.url)}" target="_blank" rel="noopener">${esc(u.name)}</a>` : esc(u.name)}</b><p>${esc(u.note)}</p></div>`;
+  const stKind = s => /접수|진행/.test(s) ? "live" : /미발표/.test(s) ? "soon" : /상시|수시/.test(s) ? "always" : /참고|지난/.test(s) ? "past" : /대상 아님/.test(s) ? "no" : "wait";   // wait: 미정·복학 후
+  const card = u => { const k = stKind(u.status || ""); return `<div class="cal-card ${k === "past" ? "past" : ""}"><span class="st s-${k}">${esc(u.status)}</span>
+    <b>${u.url ? `<a href="${esc(u.url)}" target="_blank" rel="noopener">${esc(u.name)}</a>` : esc(u.name)}</b>${u.note ? `<details class="cnote"><summary>설명</summary><p>${esc(u.note)}</p></details>` : ""}</div>`; };
   const ug = {};
   un.forEach(u => (ug[u.category || "기타"] ||= []).push(u));
   const past = u => /참고|지난/.test(u.status || "") ? 1 : 0;
@@ -1455,32 +1467,37 @@ async function loadWords() {
     if (!r.ok) return;
     WORDS = await r.json();
   } catch (e) { return; }
-  const box = $("#words");
-  box.hidden = false;
-  box.open = store.get("wordsOpen", true);
-  box.addEventListener("toggle", () => store.set("wordsOpen", box.open));
+  [["#words", "wordsOpen"], ["#wordsB", "wordsOpenB"]].forEach(([sel, key]) => {   // 공지 보기·브리핑 두 곳
+    const box = $(sel);
+    box.hidden = false;
+    box.open = store.get(key, true);
+    box.addEventListener("toggle", () => store.set(key, box.open));
+    box.addEventListener("click", wordsClick);
+    box.addEventListener("change", wordsChange);
+  });
   renderWords();
 }
 function renderWords() {
   const day = Math.floor((Date.now() + 9 * 3600e3) / 86400e3) + wordShift;   // 한국 날짜 기준
   const hide = store.get("wordsHide", false);
-  $("#words").classList.toggle("hide-m", hide);
+  document.querySelectorAll("details.words").forEach(d => d.classList.toggle("hide-m", hide));
   const decks = WORDS.decks.map(d => {
     const n = WORDS_PER[d.name] || 2, len = d.items.length;
     const pick = Array.from({length: Math.min(n, len)}, (_, i) => d.items[((day * n + i) % len + len) % len]);
     return `<div><h4>${esc(d.name)}</h4><ul>${pick.map(it => `<li tabindex="0"><b>${esc(it.w)}</b>${it.r ? `<span class="rd">${esc(it.r)}</span>` : ""}${it.lv ? `<span class="lv">${esc(it.lv)}</span>` : ""}<small>${esc(it.m)}</small></li>`).join("")}</ul></div>`;
   }).join("");
-  $("#wordsBody").innerHTML = `<div class="wtools"><button class="linkbtn" type="button" data-w="prev">← 이전</button><button class="linkbtn" type="button" data-w="next">다른 단어 →</button>
+  const html = `<div class="wtools"><button class="linkbtn" type="button" data-w="prev">← 이전</button><button class="linkbtn" type="button" data-w="next">다른 단어 →</button>
     <label><input type="checkbox" data-w="hide" ${hide ? "checked" : ""}> 뜻 가리기 (올리거나 누르면 보임)</label></div><div class="wgrid">${decks}</div>`;
+  document.querySelectorAll("details.words .wbody").forEach(b => { b.innerHTML = html; });
 }
-$("#wordsBody").addEventListener("click", e => {
+function wordsClick(e) {
   const w = e.target.dataset && e.target.dataset.w;
   if (w === "next") { wordShift++; renderWords(); }
   else if (w === "prev") { wordShift--; renderWords(); }
-});
-$("#wordsBody").addEventListener("change", e => {
+}
+function wordsChange(e) {
   if (e.target.dataset.w === "hide") { store.set("wordsHide", e.target.checked); renderWords(); }
-});
+}
 
 // ════════ 시작 ════════
 $("#fUnread").checked = ui.unread; $("#fStar").checked = ui.star; $("#fHl").checked = !!ui.hl; $("#q").value = "";
