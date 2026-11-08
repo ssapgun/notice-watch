@@ -1742,7 +1742,7 @@ function renderReady() {
       <h4>공고에서 확인한 조건 <a href="${esc(httpUrl(p.source))}" target="_blank" rel="noopener">출처</a> · <a href="${esc(httpUrl(p.url))}" target="_blank" rel="noopener">공고</a></h4>
       <ul class="rdconds">${checks.map(x => `<li>${mark(x.ok)} ${esc(x.c.label)}</li>`).join("")}</ul>
       ${p.prep && p.prep.length ? `<h4>준비하면 좋은 것 <small>공고 조건이 아니라 참고용</small></h4><p class="rdprep">${got.map(id => `<span class="have">${esc(label(id))}</span>`).join("")}${miss.map(id => `<span>${esc(label(id))}</span>`).join("")}</p>` : ""}
-      <h4>합격 후기</h4>${rdStats(p, sp)}
+      <h4>합격 후기 <a href="https://search.naver.com/search.naver?where=blog&amp;query=${encodeURIComponent(p.name + " 합격 후기")}" target="_blank" rel="noopener">블로그 후기 찾기</a></h4>${rdStats(p, sp)}
       <details class="pbox"><summary>후기 표본 추가 (읽고 숫자만 입력)</summary>
         <div class="rdsample" data-sf="${esc(p.id)}">
           <label>학년<input name="grade" type="number" min="1" max="6"></label><label>학점<input name="gpa" type="number" step="0.01" min="0" max="4.5"></label>

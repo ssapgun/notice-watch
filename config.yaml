@@ -165,7 +165,7 @@ exams:
   category: 교육 프로그램
   status: 미발표
   url: https://edu.hdec.co.kr/WEB/Community/NoticeView.aspx?SEQ=11542
-  note: 청년 구직자 대상 교육과정·직무 체험과 1:1 진로 멘토링. 2026년은 8/28 영등포 기술교육원, 8/23까지 홈페이지 신청. 교육원 홈페이지는 자바스크립트라 직접 감시하지 못하고, 공지보기 '건설 교육'의 콘테스트코리아·링커리어 게시판에서 잡는다.
+  note: 청년 구직자 대상 교육과정·직무 체험과 1:1 진로 멘토링. 2026년은 8/28 영등포 기술교육원, 8/23까지 홈페이지 신청. 교육원 홈페이지는 자바스크립트라 직접 감시하지 못하고, 공지보기 '건설 교육'의 콘테스트코리아 게시판에서 잡는다.
 - name: KSCE 2027 CONVENTION (대한토목학회)
   category: 학술대회
   status: 미발표
@@ -210,7 +210,7 @@ exams:
   category: 교육 프로그램
   status: 미발표
   url: https://linkareer.com/activity/284377
-  note: PF·투자개발(PPP)·계약·공정·원가 실습. 시행사·PM 이직용. 25기 기준 접수 2025.11.24~12.28, 교육 2025.12.29~2026.1.23. 26기 공고는 아직 확인 못 함(협회 사이트는 자바스크립트라 자동 확인 불가, 링커리어·콘테스트코리아에서 '해외건설' 제목으로 잡는다).
+  note: PF·투자개발(PPP)·계약·공정·원가 실습. 시행사·PM 이직용. 25기 기준 접수 2025.11.24~12.28, 교육 2025.12.29~2026.1.23. 26기 공고는 아직 확인 못 함(협회 사이트는 자바스크립트라 자동 확인 불가, 위비티·콘테스트코리아에서 '해외건설' 제목으로 잡는다).
 - name: 건설산업교육원 스마트 건설산업 전문인력 양성과정 42기
   category: 교육 프로그램
   status: 접수 중
@@ -320,7 +320,7 @@ exams:
   category: 기자단·서포터즈
   status: 참고(지난 일정)
   url: https://linkareer.com/activity/231546
-  note: 2025 접수 3/13~3/28. GH 홈페이지는 robots.txt 가 수집을 막아 링커리어에서 'GH' 제목으로 잡는다.
+  note: 2025 접수 3/13~3/28. GH 홈페이지는 robots.txt 가 수집을 막아 위비티·콘테스트코리아에서 'GH' 제목으로 잡는다.
 - name: 대한건설협회 대학생 서포터즈
   category: 기자단·서포터즈
   status: 참고(지난 일정)
@@ -997,79 +997,6 @@ sources:
   - 초등
   - 사진공모전
   - 캐릭터
-- name: 링커리어 공모전 (건설·도시·AI)
-  group: 공모전·대외활동
-  type: board
-  enabled: true
-  note: 링커리어 공모전 첫 화면(최신·추천 카드). LH·SH·CM·국토·건축·AI 데이터 공모만 남긴다. 날짜 없음(카드에 마감일만 있음).
-  list_url: https://linkareer.com/list/contest
-  pages: 1
-  row_selector: div[class*=ActivityListCardItem__StyledWrapper]
-  title_selector: div.card-content a
-  include:
-  - 건설
-  - 건축
-  - 토목
-  - 국토
-  - 도시
-  - 주택
-  - 공간
-  - 부동산
-  - LH
-  - SH
-  - 토지주택
-  - 주택도시
-  - CM
-  - 건설사업관리
-  - 엔지니어링
-  - BIM
-  - 스마트시티
-  - 디지털트윈
-  - 인프라
-  - 철도
-  - 도로
-  - 교통
-  - 구조
-  - 안전
-  - 에너지
-  - 데이터
-  - AI
-  - 인공지능
-  - 해커톤
-  - 아이디어톤
-  - 시공
-  - 내진
-  - 콘크리트
-  - 디벨로퍼
-  - 도시정비
-  - 빈집
-  - GH
-  - HUG
-  - 국토교통
-  - 국토안전
-  - Buildathon
-  - 디지털건축
-  - 모듈러
-  - MIDAS
-  - 마이다스
-  exclude:
-  - 숏폼
-  - 뮤직
-  - 시나리오
-  - 문학
-  - 굿즈
-  - 사진
-  - 영상 공모
-  - 쇼츠
-  - 숏츠
-  - 패키지
-  - 피부
-  - 학생회
-  - 인테리어 소품
-  - 어린이
-  - 초등
-  - 사진공모전
-  - 캐릭터
 - name: 한국CM협회 협회소식
   group: 공모전·대외활동
   type: board
@@ -1299,15 +1226,86 @@ sources:
   - 아카데미
   - 청년
   - 교육
-- name: 링커리어 대외활동 (기자단·서포터즈)
+- name: 위비티 과학·공학 공모전
   group: 공모전·대외활동
   type: board
   enabled: true
-  note: 기자단·서포터즈 중 건설·건축·토목·국토·주거·재해/건설안전 관련만 (식약처·기상청처럼 분야가 다른 곳은 뺀다).
-  list_url: https://linkareer.com/list/activity
+  note: 위비티 '과학/공학' 분야 첫 페이지 중 AI·데이터·건설 관련만. 날짜 없음.
+  list_url: https://www.wevity.com/?c=find&s=1&gub=1&cidx=22
   pages: 1
-  row_selector: div[class*=ActivityListCardItem__StyledWrapper]
-  title_selector: div.card-content a
+  row_selector: ul.list > li
+  title_selector: div.tit a
+  include:
+  - AI
+  - 인공지능
+  - 데이터
+  - 해커톤
+  - 아이디어톤
+  - 데이터톤
+  - 건설
+  - 건축
+  - 토목
+  - 구조
+  - 내진
+  - 콘크리트
+  - 스마트
+  - 디지털트윈
+  - 로봇
+  - 안전
+  - 에너지
+  - 엔지니어링
+  - 국토
+  - 도시
+  exclude:
+  - 어린이
+  - 초등
+  - 청소년
+  - 숏폼
+  - 쇼츠
+  - 숏츠
+  - 뮤직
+  - 시나리오
+  - 의료
+- name: 위비티 SW·해커톤
+  group: 공모전·대외활동
+  type: board
+  enabled: true
+  note: 위비티 '게임/소프트웨어' 분야 첫 페이지 중 AI·데이터·해커톤만. 날짜 없음.
+  list_url: https://www.wevity.com/?c=find&s=1&gub=1&cidx=21
+  pages: 1
+  row_selector: ul.list > li
+  title_selector: div.tit a
+  include:
+  - AI
+  - 인공지능
+  - 데이터
+  - 해커톤
+  - 아이디어톤
+  - 데이터톤
+  - 메이크톤
+  - LLM
+  - 생성형
+  - 소프트웨어
+  - SW
+  exclude:
+  - 어린이
+  - 초등
+  - 청소년
+  - 숏폼
+  - 쇼츠
+  - 숏츠
+  - 뮤직
+  - 시나리오
+  - 게임
+- name: 위비티 대외활동 (기자단·서포터즈)
+  group: 공모전·대외활동
+  type: board
+  enabled: true
+  note: 위비티 '대외활동/서포터즈' 분야 첫 페이지 중 건설·건축·토목·국토·주거·재해/건설안전 관련 기자단·서포터즈만.
+  list_url: https://www.wevity.com/?c=find&s=1&gub=1&cidx=27
+  pages: 1
+  row_selector: ul.list > li
+  title_selector: div.tit a
   include:
   - 건설
   - 건축
@@ -1338,6 +1336,13 @@ sources:
   - 스마트건설
   - BIM
   - 도시혁신스쿨
+  exclude:
+  - 식품
+  - 의약
+  - 기상
+  - 금융
+  - 뷰티
+  - 패션
   require:
   - 기자단
   - 서포터즈
@@ -1349,13 +1354,6 @@ sources:
   - 프렌즈
   - 래포터즈
   - 크리에이터
-  exclude:
-  - 금융
-  - 기상
-  - 뷰티
-  - 식품
-  - 의약
-  - 패션
 - name: 콘테스트코리아 교육·멘토링 (건설)
   group: 건설 교육
   type: board
@@ -1440,96 +1438,6 @@ sources:
   - 모집
   - 교육생
   - 합격
-- name: 링커리어 교육 (BIM·건설)
-  group: 건설 교육
-  type: board
-  enabled: true
-  note: 링커리어 교육(국비·부트캠프) 첫 화면 중 BIM·건설·공정관리·PF 과정만.
-  list_url: https://linkareer.com/list/education
-  pages: 1
-  row_selector: table.education-list-table tbody > tr
-  title_selector: a.education-link
-  include:
-  - BIM
-  - 건설
-  - 건축
-  - 토목
-  - 스마트건설
-  - Revit
-  - 캐드
-  - CAD
-  - 디지털트윈
-  - MIDAS
-  - 마이다스
-  - 공정관리
-  - 프리마베라
-  - Primavera
-  - 플랜트
-  - 해외건설
-  - 투자개발
-  - PF
-  - 디벨로퍼
-  - 부동산
-  - 엔지니어링
-- name: 링커리어 대외활동 (AI·SW 아카데미)
-  group: AI·코딩 교육
-  type: board
-  enabled: true
-  note: 링커리어 대외활동 첫 화면 중 AI·SW 아카데미(SSAFY 등)·데이터 프로그램만.
-  list_url: https://linkareer.com/list/activity
-  pages: 1
-  row_selector: div[class*=ActivityListCardItem__StyledWrapper]
-  title_selector: div.card-content a
-  include:
-  - SSAFY
-  - 싸피
-  - AI
-  - 인공지능
-  - SW
-  - 부트캠프
-  - 아카데미
-  - 데이터
-  - 코딩
-  exclude:
-  - 금융
-  - 마케팅
-  - 뷰티
-  - 크리에이터
-  - 학회
-- name: 링커리어 교육 (AI·코딩)
-  group: AI·코딩 교육
-  type: board
-  enabled: true
-  note: 링커리어 교육(국비·부트캠프) 첫 화면 중 AI·파이썬·데이터·코딩 과정만. 날짜는 마감일. BIM·건설 과정은 '건설 교육'의 링커리어 교육 (BIM·건설).
-  list_url: https://linkareer.com/list/education
-  pages: 1
-  row_selector: table.education-list-table tbody > tr
-  title_selector: a.education-link
-  include:
-  - AI
-  - 인공지능
-  - 파이썬
-  - Python
-  - 데이터
-  - 머신러닝
-  - 딥러닝
-  - LLM
-  - 생성형
-  - 부트캠프
-  - SSAFY
-  - 싸피
-  - 코딩
-  - SW
-  exclude:
-  - 마케팅
-  - 디자인
-  - 경영사무
-  - 반도체
-  - 배터리
-  - 핀테크
-  - 상품기획
-  - UX/UI
-  - 회계
 - name: 콘테스트코리아 교육 (AI·코딩)
   group: AI·코딩 교육
   type: board
@@ -1647,20 +1555,23 @@ sources:
   exclude:
   - 유료
   - 참가비
-- name: 링커리어 대외활동 (봉사)
+- name: 위비티 봉사활동
   group: 봉사활동
   type: board
   enabled: true
-  note: 링커리어 대외활동 첫 화면 중 봉사단·해외봉사만.
-  list_url: https://linkareer.com/list/activity
+  note: 위비티 '봉사활동' 분야 첫 페이지. 날짜 없음.
+  list_url: https://www.wevity.com/?c=find&s=1&gub=1&cidx=89
   pages: 1
-  row_selector: div[class*=ActivityListCardItem__StyledWrapper]
-  title_selector: div.card-content a
-  include:
-  - 봉사
-  - 해비타트
-  - 집짓기
-  - 재능기부
+  row_selector: ul.list > li
+  title_selector: div.tit a
+  exclude:
+  - 유료
+  - 참가비
+  - 어린이
+  - 초등
+  - 민주당
+  - 국민의힘
+  - 정당
 - name: 큐넷 (국가기술자격 시행계획)
   group: 자격증
   type: watch
@@ -2024,10 +1935,10 @@ links:
   note: robots.txt 가 수집을 막아 자동 확인하지 않는다. 엔지니어링산업 경진대회(BIM·설계 아이디어)는 매년 3월 공고
 - name: LH 한국토지주택공사
   url: https://www.lh.or.kr
-  note: 공모전 전용 게시판이 없어 링커리어·콘테스트코리아 공모전에서 'LH' 제목으로 잡는다
+  note: 공모전 전용 게시판이 없어 위비티·콘테스트코리아 공모전에서 'LH' 제목으로 잡는다
 - name: SH 서울주택도시개발공사
   url: https://www.i-sh.co.kr
-  note: 첫 화면이 자바스크립트라 자동 확인하지 않는다. 공모는 링커리어·콘테스트코리아에서 'SH' 제목으로 잡는다
+  note: 첫 화면이 자바스크립트라 자동 확인하지 않는다. 공모는 위비티·콘테스트코리아에서 'SH' 제목으로 잡는다
 - name: 한국장학재단
   url: https://www.kosaf.go.kr
   note: 접속이 느려(시간 초과) 자동 확인하지 않는다. 국가장학금·이공계 장학은 직접 확인
@@ -2082,6 +1993,15 @@ links:
 - name: 1365 자원봉사포털
   url: https://www.1365.go.kr/vols/main.do
   note: 봉사 검색은 직접 (검색 결과가 자바스크립트)
+- name: 링커리어 공모전
+  url: https://linkareer.com/list/contest
+  note: 이용약관이 자동 접속을 금지해 자동 확인하지 않는다. 직접 열어서 볼 것
+- name: 링커리어 대외활동
+  url: https://linkareer.com/list/activity
+  note: 이용약관이 자동 접속을 금지해 자동 확인하지 않는다. 직접 열어서 볼 것
+- name: 링커리어 교육 (AI·BIM 부트캠프)
+  url: https://linkareer.com/list/education
+  note: 이용약관이 자동 접속을 금지해 자동 확인하지 않는다. 직접 열어서 볼 것
 excluded:
 - 'POSTECH: 건축·토목·구조 학과가 없음 (학과 목록 확인. 가장 가까운 곳이 친환경소재대학원·환경공학부)'
 - 연세대 건축공학과 -> 연세대 건설환경공학과로 교체 (지반 연구실은 건설환경공학과에 있음)
@@ -2093,6 +2013,7 @@ excluded:
 - McKinsey 보고서 — 이용약관 3조가 크롤링·AI 이용·재게시 금지. 바로가기(links)로만 둔다
 - 한국지반공학회 — 관심 분야가 지반보다 강구조라 보류
 - RWTH Resilient Civil Engineering (DAAD) — GitHub 서버 접속 403 차단. 감시 끄고 바로가기로 옮김
+- 링커리어 — 이용약관 제39조가 자동화 프로그램으로 서비스에 접근하는 행위를 금지. 자동 확인을 끄고 바로가기(links)로만 둔다. 합격 후기도 자동 수집하지 않는다
 web_skip:
 - 건설기술교육원 국가기간전략훈련 (BIM·스마트건설)
 - 대한토목학회 공지
@@ -2170,8 +2091,6 @@ manual_items:
   url: https://www.daad-korea.org/ko/2026/08/25/%ec%84%9c%ec%9a%b8-%ec%98%a5%ed%86%a0%eb%b2%84%ed%8e%98%ec%8a%a4%ed%8a%b8%ec%97%90%ec%84%9c-%eb%a7%8c%eb%82%98%eb%8a%94-daad-2/
   added: '2026-11-08 00:39:58'
 renamed_sources:
-  링커리어 교육 (AI·코딩·BIM 부트캠프): 링커리어 교육 (AI·코딩)
-  링커리어 대외활동 (아카데미·직무체험): 링커리어 대외활동 (AI·SW 아카데미)
   콘테스트코리아 대외활동 (교육·강연·멘토링): 콘테스트코리아 교육·멘토링 (건설)
 group_folders:
 - name: 학교·대학원 입시
