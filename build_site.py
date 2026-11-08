@@ -150,6 +150,8 @@ def main() -> int:
         "excluded": cfg.get("excluded", []),
         "links": cfg.get("links", []),
         "group_folders": cfg.get("group_folders", []),
+        "sub_rules": cfg.get("sub_rules", {}),
+        "flat_groups": cfg.get("flat_groups", []),
         "topics": cfg.get("topics", []),
         "calendar": calendar_payload(cfg, events),
         "highlight": {k: v for k, v in (cfg.get("highlight") or {}).items() if k in ("keywords", "exclude", "alert")},

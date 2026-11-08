@@ -869,9 +869,10 @@ function renderSummary() {
   $("#errCount").style.color = errs.length ? "var(--markup)" : "";
   $("#viewing").textContent = (ui.group || "전체") + (ui.sub ? " / " + ui.sub : "");
   const groups = ["", ...new Set(enabled.map(s => s.group))];
-  const SS = Object.fromEntries(DATA.sources.map(s => [s.name, subName(s)]));
-  const subs = ui.group ? subsHtml(subList(DATA.sources, ui.group),
-    sb => unread.filter(it => it.grp === ui.group && (!sb || SS[it.source] === sb)).length) : "";
+  const subNames = ui.group ? subList(DATA.sources, ui.group) : [];
+  if (ui.sub && !subNames.includes(ui.sub)) ui.sub = "";   // 소분류 체계가 바뀌면 전체 보기로
+  const subs = ui.group ? subsHtml(subNames,
+    sb => unread.filter(it => it.grp === ui.group && (!sb || subOfItem(it) === sb)).length) : "";
   // 분류 묶음(config group_folders): 묶음 이름을 누르면 안의 분류를 열고 닫는다. 고른 분류를 다시 누르면 게시판 목록을 접는다
   const folds = DATA.group_folders || [], foldOf = g => (folds.find(f => (f.groups || []).includes(g)) || {}).name;
   const cnt = g => unread.filter(it => !g || it.grp === g).length;
@@ -949,7 +950,18 @@ function renderTopics(topics, countOf) {
 }
 // 소분류(학교·학회·게시판): 분류를 고르면 그 안에서 다시 고른다
 const subName = s => s.sub || s.name;
+// 소분류: sub_rules 가 있는 분류는 글 제목으로(첫 번째로 맞는 규칙), flat_groups 는 소분류 없음, 나머지는 게시판별
+const kwIn = (k, t) => { k = String(k).toLowerCase(); return k.length <= 3 && /^[a-z0-9&]+$/.test(k) ? new RegExp(`(?<![a-z])${k}(?![a-z])`).test(t) : t.includes(k); };
+function subOfItem(it) {
+  const rules = (DATA.sub_rules || {})[it.grp];
+  if (rules) { const t = it.title.toLowerCase(), r = rules.find(x => x.keywords.some(k => kwIn(k, t))); return r ? r.name : "기타"; }
+  const s = DATA.sources.find(x => x.name === it.source);
+  return s ? subName(s) : "";
+}
 function subList(sources, g) {
+  if ((DATA.flat_groups || []).includes(g)) return [];
+  const rules = (DATA.sub_rules || {})[g];
+  if (rules) { const have = new Set(DATA.items.filter(it => it.grp === g && shown(it)).map(subOfItem)); return [...rules.map(r => r.name), "기타"].filter(n => have.has(n)); }
   const out = [];
   sources.filter(s => s.enabled !== false && s.group === g).forEach(s => { const n = subName(s); if (!out.includes(n)) out.push(n); });
   return out;
@@ -1022,8 +1034,7 @@ function revMark(on) {
 }
 function renderItems() {
   const q = ui.q.toLowerCase();
-  const SS = Object.fromEntries(DATA.sources.map(s => [s.name, subName(s)]));
-  let items = DATA.items.filter(it => shown(it) && (!ui.group || it.grp === ui.group) && (!ui.sub || SS[it.source] === ui.sub)
+  let items = DATA.items.filter(it => shown(it) && (!ui.group || it.grp === ui.group) && (!ui.sub || subOfItem(it) === ui.sub)
     && (!q || (it.title + it.source + (it.change || "") + (it.title_ko || "") + (it.summary || []).join(" ")).toLowerCase().includes(q))
     && (!ui.unread || isUnread(it)) && (!ui.star || starSet.has(it.id)) && (!ui.hl || hlHits(it, DATA.highlight).length));
   items = [...items.filter(isUnread), ...items.filter(it => !isUnread(it))];
@@ -1116,7 +1127,7 @@ $("#topics").addEventListener("change", e => {
 $("#fStar").addEventListener("change", e => { ui.star = e.target.checked; store.set("ui", ui); renderItems(); });
 $("#fHl").addEventListener("change", e => { ui.hl = e.target.checked; store.set("ui", ui); renderItems(); });
 let qt; $("#q").addEventListener("input", e => { clearTimeout(qt); qt = setTimeout(() => { ui.q = e.target.value.trim(); renderItems(); }, 150); });
-$("#readAll").addEventListener("click", () => { DATA.items.filter(it => { const src = DATA.sources.find(s => s.name === it.source); return shown(it) && (!ui.group || it.grp === ui.group) && (!ui.sub || (src && subName(src) === ui.sub)); }).forEach(it => readSet.add(it.id)); saveSets(); renderAll(); });
+$("#readAll").addEventListener("click", () => { DATA.items.filter(it => shown(it) && (!ui.group || it.grp === ui.group) && (!ui.sub || subOfItem(it) === ui.sub)).forEach(it => readSet.add(it.id)); saveSets(); renderAll(); });
 $("#list").addEventListener("click", e => {
   const row = e.target.closest(".row"); if (!row) return;
   const id = +row.dataset.id;
