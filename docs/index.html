@@ -476,6 +476,34 @@ body{background:var(--sheet);background-image:none;font:18px/1.65 "Noto Sans KR"
 .brief .bhead{display:flex;justify-content:space-between;align-items:baseline;gap:10px;flex-wrap:wrap;border-bottom:1px solid var(--rule);padding-bottom:8px;margin-bottom:14px}
 .brief .bhead h3{margin:0}
 .brief .bhead small{color:var(--pencil);font-size:14.5px}
+.rdcats{display:flex;flex-wrap:wrap;gap:6px;margin:10px 0}
+.rdcats button{font:inherit;font-size:15px;padding:3px 10px;border:1px solid var(--grid);background:var(--paper);color:var(--ink-2);cursor:pointer}
+.rdcats button[aria-pressed="true"]{border-color:var(--khu);color:var(--khu);font-weight:700}
+.rdcard{border-bottom:1px solid var(--grid);padding:9px 0}
+.rdcard>summary{cursor:pointer}
+.rdcard>summary small{color:var(--pencil);font-size:14.5px}
+.rdcard h4{margin:10px 0 4px;font-size:16px}
+.rdcard h4 small{color:var(--pencil);font-weight:400;font-size:14px}
+.rdcard .cal-st{display:inline-block;font-size:13.5px;border:1px solid var(--grid);padding:0 6px;margin-right:8px}
+.rdcard .cal-st.s-live{color:var(--st-live);background:var(--st-live-bg);border-color:var(--st-live);font-weight:600}
+.rdcard .cal-st.s-wait{color:var(--amber);border-color:var(--amber)}
+.rdcard .cal-st.s-past{color:var(--pencil);border-style:dashed}
+.rdconds{list-style:none;margin:0;padding:0;font-size:15.5px}
+.rdconds li{padding:3px 0}
+.rdconds span{display:inline-block;width:3em;font-size:13.5px;font-weight:600}
+.rdok{color:var(--st-live)} .rdno{color:var(--markup)} .rdq{color:var(--amber)}
+.rdprep{display:flex;flex-wrap:wrap;gap:6px;margin:4px 0;font-size:14.5px}
+.rdprep span{border:1px dashed var(--pencil);color:var(--pencil);padding:1px 8px}
+.rdprep span.have{border:1px solid var(--st-live);color:var(--st-live);background:var(--st-live-bg)}
+.rdstat{margin:2px 0;font-size:15.5px}
+.rdstat small{display:block;color:var(--pencil);font-size:14px}
+.rdskills{display:flex;flex-wrap:wrap;gap:4px 14px;font-size:15px}
+.rdsample{display:grid;grid-template-columns:repeat(auto-fit,minmax(110px,1fr));gap:8px;margin:8px 0;align-items:end;font-size:15px}
+.rdsample label{display:grid;gap:3px}
+.rdsample .pwide{grid-column:1/-1}
+.rdsample input,.rdsample select,.rdresult select{font:inherit;width:100%;padding:4px 6px;border:1px solid var(--grid);background:var(--paper);color:var(--ink)}
+.rdresult{font-size:15px;margin:8px 0 2px}
+.rdresult select{width:auto}
 .plan h3{margin:18px 0 6px}
 .pmeta{color:var(--pencil);font-size:15px;margin:2px 0 8px}
 .pwarn{margin:0 0 8px;padding:8px 12px;background:var(--markup-bg);border-left:3px solid var(--markup);font-size:16px}
@@ -556,6 +584,7 @@ body{background:var(--sheet);background-image:none;font:18px/1.65 "Noto Sans KR"
     <button type="button" role="tab" id="tabCal" aria-selected="false">일정</button>
     <button type="button" role="tab" id="tabBriefing" aria-selected="false">브리핑</button>
     <button type="button" role="tab" id="tabPlanner" aria-selected="false">플래너</button>
+    <button type="button" role="tab" id="tabReady" aria-selected="false">지원 준비도</button>
     <button type="button" role="tab" id="tabManage" aria-selected="false">감시 대상 관리</button>
     <button type="button" role="tab" id="tabSettings" aria-selected="false">연결 설정</button>
   </nav>
@@ -656,6 +685,30 @@ body{background:var(--sheet);background-image:none;font:18px/1.65 "Noto Sans KR"
       <label class="pwide">쉬는 날 (2026-11-20, 2026-11-21 처럼 쉼표로)<input id="planOff"></label>
     </details>
     <p class="pmeta">저장소가 공개라 강의 이름과 진도는 누구나 볼 수 있다.</p>
+  </section>
+
+  <section id="viewReady" class="manage ready" hidden>
+    <p class="pmeta">합격 확률이 아니다. 공고에 적힌 조건으로 지원 가능 여부를 가리고, 준비 항목과 후기 표본을 함께 보여 준다. 공고가 바뀌었을 수 있으니 지원 전에 원문을 확인할 것.</p>
+    <details class="pbox" id="rdSpecBox"><summary>내 스펙 (이 기기에만 저장, 올리지 않음)</summary>
+      <div class="pform" id="rdForm">
+        <label>상태<select data-rd="status"><option value="">미입력</option><option>재학</option><option>휴학</option><option>졸업예정</option><option>졸업</option></select></label>
+        <label>학년<input type="number" min="1" max="6" data-rd="grade"></label>
+        <label>등록 학기 수<input type="number" min="0" data-rd="semesters"></label>
+        <label>학점<input type="number" step="0.01" min="0" max="4.5" data-rd="gpa"></label>
+        <label>학점 척도<select data-rd="scale"><option>4.3</option><option>4.5</option></select></label>
+        <label>생년월일<input type="date" data-rd="birth"></label>
+        <label>학자금 지원구간<input type="number" min="0" max="10" data-rd="income"></label>
+        <label>최근 1년 봉사시간<input type="number" min="0" data-rd="volunteer"></label>
+        <label>건설 관련 학과<select data-rd="constMajor"><option value="">미입력</option><option value="yes">예</option><option value="no">아니오</option></select></label>
+        <label>미취업<select data-rd="jobless"><option value="">미입력</option><option value="yes">예</option><option value="no">아니오</option></select></label>
+        <label>교환학생 파견 예정<select data-rd="exchange"><option value="">미입력</option><option value="yes">예</option><option value="no">아니오</option></select></label>
+        <label>SNS 1년 이상 운영<select data-rd="sns"><option value="">미입력</option><option value="yes">예</option><option value="no">아니오</option></select></label>
+        <div class="pwide"><span>보유 역량·자격</span><div class="rdskills" id="rdSkills"></div></div>
+      </div>
+    </details>
+    <div class="calfilter rdcats" id="rdCats"></div>
+    <p class="pmeta" id="rdSummary"></p>
+    <div id="rdList"></div>
   </section>
 
   <section id="viewManage" class="manage" hidden>
@@ -1394,7 +1447,7 @@ async function renderBriefing() {
 
 // ════════ 화면 전환 ════════
 function showView(v) {
-  ["notices", "cal", "briefing", "planner", "manage", "settings"].forEach(n => {
+  ["notices", "cal", "briefing", "planner", "ready", "manage", "settings"].forEach(n => {
     $("#tab" + n[0].toUpperCase() + n.slice(1)).setAttribute("aria-selected", v === n);
     $("#view" + n[0].toUpperCase() + n.slice(1)).hidden = v !== n;
   });
@@ -1402,12 +1455,14 @@ function showView(v) {
   if (v === "cal") renderCal();
   if (v === "briefing") renderBriefing();
   if (v === "planner") loadPlanner();
+  if (v === "ready") loadReady();
   if (v === "settings") { $("#repoInput").value = gh.repo; $("#branchInput").value = gh.branch; $("#tokenInput").value = gh.token ? "••••••••" : ""; }
 }
 $("#tabNotices").addEventListener("click", () => showView("notices"));
 $("#tabCal").addEventListener("click", () => showView("cal"));
 $("#tabBriefing").addEventListener("click", () => showView("briefing"));
 $("#tabPlanner").addEventListener("click", () => showView("planner"));
+$("#tabReady").addEventListener("click", () => showView("ready"));
 $("#tabManage").addEventListener("click", () => showView("manage"));
 $("#tabSettings").addEventListener("click", () => showView("settings"));
 
@@ -1587,6 +1642,144 @@ function wordsChange(e) {
   if (e.target.dataset.w === "hide") { store.set("wordsHide", e.target.checked); renderWords(); }
 }
 
+// ════════ 지원 준비도 (docs/readiness.json). 합격 확률이 아니다: 공고 조건 판정 + 준비 항목 + 후기 표본 통계 ════════
+let RD = null, rdErr = "", rdCat = "";
+const RD_PATH = "docs/readiness.json";
+const rdSpec = () => store.get("rdSpec", {});          // 내 스펙·지원 결과는 공개 저장소에 올리지 않고 이 기기에만 저장
+const rdResults = () => store.get("rdResults", {});
+async function rdFetch() {
+  if (ghReady()) {
+    const f = await ghApi(`/contents/${RD_PATH}?ref=${encodeURIComponent(gh.branch)}`);
+    return {data: JSON.parse(b64decode(f.content)), sha: f.sha};
+  }
+  const r = await fetch("readiness.json?t=" + Date.now(), {cache: "no-store"});
+  if (!r.ok) throw new Error(r.status);
+  return {data: await r.json(), sha: null};
+}
+async function loadReady() {
+  try { RD = (await rdFetch()).data; rdErr = ""; } catch (e) { rdErr = "불러오지 못했다: " + e.message; }
+  renderReadyForm(); renderReady();
+}
+async function rdSave(op) {
+  if (!ghReady()) { showView("settings"); $("#setMsg").textContent = "후기 표본을 저장하려면 먼저 연결 설정을 한다."; return false; }
+  for (let attempt = 0; ; attempt++) {
+    try {
+      const {data, sha} = await rdFetch();
+      op(data);
+      await ghApi(`/contents/${RD_PATH}`, {method: "PUT", body: JSON.stringify({message: "지원 준비도 후기 표본 갱신", content: b64encode(JSON.stringify(data, null, 1) + "\n"), sha, branch: gh.branch})});
+      RD = data; rdErr = ""; renderReady();
+      return true;
+    } catch (e) {
+      if (attempt >= 2) { rdErr = "저장하지 못했다: " + e.message; renderReady(); return false; }
+      await new Promise(r => setTimeout(r, 800));
+    }
+  }
+}
+function rdAge(birth) {
+  const t = iso(kstToday()), [y, md] = [+t.slice(0, 4), t.slice(5)];
+  return y - +birth.slice(0, 4) - (md < birth.slice(5) ? 1 : 0);
+}
+// 조건 판정: true 충족 / false 미달 / null 입력이 없거나 직접 확인할 항목
+function rdCheck(c, sp) {
+  const num = v => v === undefined || v === "" || v === null ? null : +v;
+  switch (c.t) {
+    case "status": return sp.status ? c.in.includes(sp.status) : null;
+    case "grade": return num(sp.grade) === null ? null : c.in.includes(+sp.grade);
+    case "minSem": return num(sp.semesters) === null ? null : +sp.semesters >= c.v;
+    case "volMin": return num(sp.volunteer) === null ? null : +sp.volunteer >= c.v;
+    case "incomeMax": return num(sp.income) === null ? null : +sp.income <= c.v;
+    case "ageMax": return sp.birth ? rdAge(sp.birth) <= c.v : null;
+    case "bornAfter": return sp.birth ? sp.birth >= c.v : null;
+    case "flag": return sp[c.f] === "yes" ? c.v === true : sp[c.f] === "no" ? c.v === false : null;
+    case "gpa": {
+      if (num(sp.gpa) === null) return null;
+      const scale = sp.scale || "4.5", other = Object.keys(c.v)[0];
+      return +sp.gpa >= (c.v[scale] !== undefined ? c.v[scale] : c.v[other] * +scale / +other);
+    }
+    default: return null;
+  }
+}
+const median = a => { const s = [...a].sort((x, y) => x - y), m = s.length >> 1; return s.length % 2 ? s[m] : (s[m - 1] + s[m]) / 2; };
+function rdStats(p, sp) {
+  const S = p.samples || [], n = S.length;
+  if (!n) return `<p class="pmeta">후기 표본 없음</p>`;
+  if (n < 3) return `<p class="pmeta">후기 표본 ${n}명: 3명 미만이라 평균을 내지 않는다</p>`;
+  const g = S.filter(s => s.gpa).map(s => s.gpa / s.scale * 4.5), parts = [];
+  let mine = "";
+  if (g.length) {
+    const med = median(g);
+    parts.push(`학점 중앙값 ${med.toFixed(2)} (${Math.min(...g).toFixed(2)}~${Math.max(...g).toFixed(2)}, 4.5 환산)`);
+    if (sp.gpa) { const my = +sp.gpa / +(sp.scale || "4.5") * 4.5; mine = ` · 내 학점 ${my.toFixed(2)}은 중앙값 ${my >= med ? "이상" : "미만"}`; }
+  }
+  parts.push(`어학 보유 ${Math.round(S.filter(s => s.lang).length / n * 100)}%`, `자격증 중앙값 ${median(S.map(s => s.cert || 0))}개`, `대외활동 중앙값 ${median(S.map(s => s.act || 0))}개`);
+  return `<p class="rdstat"><b>후기 표본 ${n}명</b> ${parts.join(" · ")}${mine}<small>글을 쓴 사람만 모인 표본이라 실제 합격자 평균이 아니다.</small></p>`;
+}
+function renderReadyForm() {
+  if (!RD) return;
+  const sp = rdSpec(), have = new Set(sp.skills || []);
+  $("#rdSkills").innerHTML = RD.skills.map(s => `<label><input type="checkbox" value="${esc(s.id)}" ${have.has(s.id) ? "checked" : ""}> ${esc(s.label)}</label>`).join("");
+  document.querySelectorAll("#rdForm [data-rd]").forEach(el => { el.value = sp[el.dataset.rd] !== undefined ? sp[el.dataset.rd] : (el.dataset.rd === "scale" ? "4.3" : ""); });
+  if (!Object.keys(sp).length) $("#rdSpecBox").open = true;
+}
+function renderReady() {
+  if (!RD) { $("#rdList").innerHTML = rdErr ? `<p class="msg bad">${esc(rdErr)}</p>` : ""; return; }
+  const sp = rdSpec(), have = new Set(sp.skills || []), res = rdResults();
+  const label = id => (RD.skills.find(s => s.id === id) || {label: id}).label;
+  const open = new Set([...document.querySelectorAll("#rdList details[open]")].map(d => d.dataset.id));
+  const rows = RD.programs.map(p => {
+    const checks = p.conditions.map(c => ({c, ok: rdCheck(c, sp)}));
+    const verdict = checks.some(x => x.ok === false) ? "no" : checks.some(x => x.ok === null) ? "check" : "yes";
+    return {p, checks, verdict};
+  });
+  const cats = [...new Set(RD.programs.map(p => p.cat))];
+  $("#rdCats").innerHTML = ["", ...cats].map(c => `<button type="button" data-rc="${esc(c)}" aria-pressed="${c === rdCat}">${esc(c || "전체")}</button>`).join("");
+  const rank = {yes: 0, check: 1, no: 2}, V = {yes: ["지원 가능", "s-live"], check: ["확인 필요", "s-wait"], no: ["조건 미달", "s-past"]};
+  const mark = ok => ok === true ? `<span class="rdok">충족</span>` : ok === false ? `<span class="rdno">미달</span>` : `<span class="rdq">확인</span>`;
+  $("#rdList").innerHTML = (rdErr ? `<p class="msg bad">${esc(rdErr)}</p>` : "") + rows.filter(r => !rdCat || r.p.cat === rdCat).sort((a, b) => rank[a.verdict] - rank[b.verdict]).map(({p, checks, verdict}) => {
+    const got = (p.prep || []).filter(id => have.has(id)), miss = (p.prep || []).filter(id => !have.has(id));
+    const r = res[p.id] || "";
+    return `<details class="rdcard" data-id="${esc(p.id)}" ${open.has(p.id) ? "open" : ""}><summary><span class="st cal-st ${V[verdict][1]}">${V[verdict][0]}</span><b>${esc(p.name)}</b> <small>${esc(p.cat)} · ${esc(p.next)}${p.prep && p.prep.length ? ` · 준비 ${got.length}/${p.prep.length}` : ""}</small></summary>
+      <h4>공고에서 확인한 조건 <a href="${esc(httpUrl(p.source))}" target="_blank" rel="noopener">출처</a> · <a href="${esc(httpUrl(p.url))}" target="_blank" rel="noopener">공고</a></h4>
+      <ul class="rdconds">${checks.map(x => `<li>${mark(x.ok)} ${esc(x.c.label)}</li>`).join("")}</ul>
+      ${p.prep && p.prep.length ? `<h4>준비하면 좋은 것 <small>공고 조건이 아니라 참고용</small></h4><p class="rdprep">${got.map(id => `<span class="have">${esc(label(id))}</span>`).join("")}${miss.map(id => `<span>${esc(label(id))}</span>`).join("")}</p>` : ""}
+      <h4>합격 후기</h4>${rdStats(p, sp)}
+      <details class="pbox"><summary>후기 표본 추가 (읽고 숫자만 입력)</summary>
+        <div class="rdsample" data-sf="${esc(p.id)}">
+          <label>학년<input name="grade" type="number" min="1" max="6"></label><label>학점<input name="gpa" type="number" step="0.01" min="0" max="4.5"></label>
+          <label>척도<select name="scale"><option>4.5</option><option>4.3</option></select></label><label>어학<select name="lang"><option value="">없음</option><option value="1">있음</option></select></label>
+          <label>자격증 수<input name="cert" type="number" min="0"></label><label>대외활동 수<input name="act" type="number" min="0"></label>
+          <label class="pwide">후기 주소 (필수)<input name="url" type="url" placeholder="https://"></label>
+          <button class="btn" type="button" data-sadd="${esc(p.id)}">추가</button>
+        </div></details>
+      <p class="rdresult"><label>내 지원 결과 <select data-rres="${esc(p.id)}">${["", "준비 중", "지원함", "합격", "불합격"].map(v => `<option value="${v}" ${v === r ? "selected" : ""}>${v || "기록 없음"}</option>`).join("")}</select></label></p></details>`;
+  }).join("");
+  const counts = Object.values(res).filter(v => v === "합격" || v === "불합격");
+  $("#rdSummary").textContent = counts.length ? `내 지원 기록: 합격 ${counts.filter(v => v === "합격").length} / 결과 나온 ${counts.length}건` : "";
+}
+$("#rdForm").addEventListener("change", () => {
+  const sp = {};
+  document.querySelectorAll("#rdForm [data-rd]").forEach(el => { if (el.value !== "") sp[el.dataset.rd] = el.value; });
+  sp.skills = [...document.querySelectorAll("#rdSkills input:checked")].map(x => x.value);
+  store.set("rdSpec", sp); renderReady();
+});
+$("#viewReady").addEventListener("click", e => {
+  const c = e.target.closest("[data-rc]");
+  if (c) { rdCat = c.dataset.rc; renderReady(); return; }
+  const add = e.target.closest("[data-sadd]");
+  if (!add) return;
+  const id = add.dataset.sadd, box = add.closest("[data-sf]"), v = n => box.querySelector(`[name=${n}]`).value.trim();
+  if (!httpUrl(v("url"))) { alert("후기 주소를 넣어야 한다."); return; }
+  const s = {y: new Date().getFullYear(), grade: +v("grade") || null, gpa: +v("gpa") || null, scale: +v("scale"), lang: !!v("lang"), cert: +v("cert") || 0, act: +v("act") || 0, url: v("url")};
+  rdSave(d => { const p = d.programs.find(x => x.id === id); if (p) p.samples = [...(p.samples || []), s]; });
+});
+$("#viewReady").addEventListener("change", e => {
+  const id = e.target.dataset && e.target.dataset.rres;
+  if (id === undefined) return;
+  const res = rdResults();
+  if (e.target.value) res[id] = e.target.value; else delete res[id];
+  store.set("rdResults", res); renderReady();
+});
+
 // ════════ 자동 플래너 (docs/planner.js 로 계산, docs/planner.json 에 저장) ════════
 let PL = null, plOps = [], plTimer = null, plBusy = false, plErr = "";
 const PL_PATH = "docs/planner.json";
@@ -1726,6 +1919,7 @@ $("#viewPlanner").addEventListener("click", e => {
 $("#fUnread").checked = ui.unread; $("#fStar").checked = ui.star; $("#fHl").checked = !!ui.hl; $("#q").value = "";
 if (location.hash === "#briefing") showView("briefing");
 if (location.hash === "#planner") showView("planner");
+if (location.hash === "#ready") showView("ready");
 loadWords();
 loadData().then(() => { renderAll(); watchRun(); }).catch(() => {
   $("#list").innerHTML = `<li class="empty"><b>아직 확인 결과가 없다</b>GitHub 저장소의 Actions 탭에서 '공지·입시 확인'을 한 번 실행하면 여기에 결과가 나온다.</li>`;

@@ -23,6 +23,7 @@
 | `build_site.py`, `.github/workflows/crawl.yml` | 웹 버전: GitHub Actions 가 6시간마다 실행, 결과를 `data/`(커밋됨)와 `docs/data/data.json` 에 저장 |
 | `docs/index.html` | 웹 버전 화면 (GitHub Pages). 읽음·별표는 브라우저 저장, 설정 수정은 GitHub API 로 config.yaml 커밋. `static/index.html` 과 CSS 를 맞춰 둔다 |
 | `planner.py`, `docs/planner.js`, `docs/planner.json` | 자동 플래너('플래너' 탭). 강의 목차는 사용자가 붙여넣는다(로그인 수집 금지). 하루 배정·이월·소화율·마감 경고를 코드로 계산하고 AI 는 쓰지 않는다. 같은 계산이 planner.js(화면)와 planner.py(아침 브리핑)에 있어 함께 고친다. 진도는 planner.json 에 저장되며 공개 저장소라 공개된다 |
+| `docs/readiness.json` | '지원 준비도' 탭. 합격 확률을 만들지 않는다. conditions 는 공고에서 확인한 조건만(출처 필수, 모르면 manual). 후기는 자동 수집하지 않고(링커리어 약관 제39조) 사용자가 읽고 넣은 익명 숫자와 링크만 samples 에 둔다. 표본 3명 미만이면 통계를 내지 않는다. 내 스펙·지원 결과는 브라우저에만 저장한다 |
 | `local_titles.py` | config.yaml 의 `web_skip`(GitHub 서버에서 접속이 막히는 대상)을 내 PC에서 읽어 `manual_items` 에 제목을 넣는다. build_site.py 는 web_skip 대상을 건너뛰고 manual_items 를 공지 목록에 보여 준다 |
 | `docs/words.json` | 공지 보기·브리핑 탭 '오늘의 단어'(웹 버전만): AI·코딩, 건설, 일본어 단어(JLPT N5~N4), 일본어 문장. 날짜마다 묶음별로 돌아가며 보여 준다. 손으로 고친다 |
 
