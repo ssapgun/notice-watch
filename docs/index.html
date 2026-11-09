@@ -646,6 +646,8 @@ h3.dsub small{font-weight:400;color:var(--pencil);font-size:14px;margin-left:6px
 .study .scard h4{margin:0 0 4px;font-size:16.5px}
 .study .scard ul{margin:6px 0;padding-left:18px;font-size:15.5px}
 .study .scard .basis{margin:6px 0 0;color:var(--ink-2);font-size:15px}
+.study .rtitles{margin:0;padding-left:16px;font-size:14.5px;color:var(--ink-2)}
+.study .rtitles span{color:var(--pencil)}
 .study .scard .warn{margin:6px 0 0;color:var(--amber);font-size:15px;font-weight:600}
 .dfootline{margin-top:14px;padding:8px 2px;border-top:1px solid var(--grid)}
 .dfootline .dok,.dfootline .dnote{display:inline;margin-right:12px}
@@ -1228,7 +1230,7 @@ function renderItems() {
       <button class="star" type="button" aria-pressed="${starSet.has(it.id)}" aria-label="별표">${starSet.has(it.id) ? "★" : "☆"}</button>
     </li>`).join("");
 }
-function renderAll() { renderSummary(); renderItems(); if (typeof renderDash === "function") renderDash(); }
+function renderAll() { renderSummary(); renderItems(); if (typeof renderDash === "function") renderDash(); if (typeof renderStudy === "function" && STUDY) renderStudy(); }
 $("#pager").addEventListener("click", e => {
   const b = e.target.closest("button[data-p]"); if (!b || b.disabled) return;
   curPage = +b.dataset.p; renderItems();
@@ -2331,6 +2333,14 @@ function studyOcc(w, from, to) {
   }
   return out;
 }
+// 감시가 최근 수집한 공지 제목(본문을 못 읽어도 제목·날짜·원문 링크는 있다). 날짜를 못 찾은 곳도 새 소식은 여기서 본다
+function recentTitles(source) {
+  if (!source || !DATA) return "";
+  const rows = DATA.items.filter(x => x.source === source)
+    .sort((a, b) => String(b.date || b.found_at || "").localeCompare(String(a.date || a.found_at || ""))).slice(0, 3);
+  return rows.length ? `<p class="pmeta" style="margin:8px 0 2px">최근 수집된 공지 제목</p><ul class="rtitles">${rows.map(x =>
+    `<li><span>${esc(x.date || "")}</span> ${httpUrl(x.url) ? `<a href="${esc(x.url)}" target="_blank" rel="noopener">${esc(x.title_ko || x.title)}</a>` : esc(x.title_ko || x.title)}</li>`).join("")}</ul>` : "";
+}
 async function loadStudy() {
   if (!STUDY) {
     try {
@@ -2388,10 +2398,10 @@ function renderStudy() {
         return `<li>${esc(w.label)}: ${o ? fmt(o.s, o.e) + " · " + STUDY_KIND[o.kind] : "1년 안에 없음"}</li>`;
       }).join("")}</ul>
       ${it.stale ? `<p class="warn">자동 확인이 꺼져 있어 최신 여부를 모른다. 공식 페이지에서 직접 확인할 것.</p>` : ""}
-      <p class="basis">${esc(it.basis || "")}</p>
+      <p class="basis">${esc(it.basis || "")}</p>${recentTitles(it.source)}
       <p class="pmeta">자료 확인 ${esc(STUDY.checked || "")}${httpUrl(it.url) ? ` · <a href="${esc(httpUrl(it.url))}" target="_blank" rel="noopener">공식 페이지</a>` : ""}</p></div>`).join("");
   const pend = (STUDY.pending || []).filter(p => !studyCountry || p.country === studyCountry);
-  const pendHtml = pend.length ? `<details class="pbox"><summary>일정을 확인하지 못한 곳 (${pend.length}곳)</summary><ul class="dlist">${pend.map(p => `<li style="grid-template-columns:1fr"><div class="what"><span class="tag ${cls(p.country)}">${esc(p.country)}</span><b>${httpUrl(p.url) ? `<a href="${esc(httpUrl(p.url))}" target="_blank" rel="noopener">${esc(p.name)}</a>` : esc(p.name)}</b><small>${esc(p.note || "")}</small></div></li>`).join("")}</ul></details>` : "";
+  const pendHtml = pend.length ? `<details class="pbox"><summary>일정을 확인하지 못한 곳 (${pend.length}곳)</summary><ul class="dlist">${pend.map(p => `<li style="grid-template-columns:1fr"><div class="what"><span class="tag ${cls(p.country)}">${esc(p.country)}</span><b>${httpUrl(p.url) ? `<a href="${esc(httpUrl(p.url))}" target="_blank" rel="noopener">${esc(p.name)}</a>` : esc(p.name)}</b><small>${esc(p.note || "")}</small>${recentTitles(p.source)}</div></li>`).join("")}</ul></details>` : "";
 
   body.innerHTML = list.length
     ? `<h3 class="dsub">지금 접수 중 · 곧 시작<small>출원 구간만, 120일 안</small></h3>${nowHtml}
