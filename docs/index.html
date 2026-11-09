@@ -556,6 +556,58 @@ body{background:var(--sheet);background-image:none;font:18px/1.65 "Noto Sans KR"
 .brief li small{color:var(--pencil);font-size:13.5px;white-space:nowrap}
 .brief .bnews{display:grid;grid-template-columns:repeat(auto-fit,minmax(320px,1fr));gap:12px}
 .brief .bkey li{font-weight:500}
+
+/* ── 대시보드 (첫 화면) ── */
+.dash{padding:18px 20px 28px;min-width:0;overflow-wrap:anywhere}
+.dash h2{margin:0 0 10px;font-size:19px;font-weight:700;display:flex;align-items:baseline;justify-content:space-between;gap:10px}
+.dash h2 .go{font-size:14.5px;font-weight:500;color:var(--khu,var(--ink-2));background:none;border:0;padding:0;text-decoration:underline;text-underline-offset:3px}
+.kpis{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:10px;margin-bottom:16px}
+.kpi{border:1px solid var(--grid);background:var(--paper);padding:12px 14px;text-align:left;border-radius:2px;border-top:3px solid var(--ink-2)}
+.kpi small{display:block;color:var(--pencil);font-size:14px}
+.kpi b{display:block;font-size:30px;line-height:1.2;font-weight:700;font-feature-settings:"tnum"}
+.kpi em{display:block;font-style:normal;color:var(--ink-2);font-size:14px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.kpi.hot{border-top-color:var(--markup)} .kpi.hot b{color:var(--markup)}
+.kpi.ok{border-top-color:var(--st-live)} .kpi.ok b{color:var(--st-live)}
+.kpi.warn{border-top-color:var(--amber)} .kpi.warn b{color:var(--amber)}
+button.kpi{cursor:pointer;font:inherit;color:inherit}
+button.kpi:hover{background:var(--sheet)}
+.dgrid{display:grid;grid-template-columns:minmax(0,1.15fr) minmax(0,1fr);gap:16px}
+.dcol{display:grid;gap:16px;align-content:start;min-width:0}
+.dcard{border:1px solid var(--grid);background:var(--paper);padding:14px 16px;min-width:0}
+.dlist{list-style:none;margin:0;padding:0}
+.dlist li{display:grid;grid-template-columns:62px minmax(0,1fr);gap:10px;padding:8px 0;border-top:1px solid var(--grid);align-items:start}
+.dlist li:first-child{border-top:0}
+.dlist .when{font-weight:700;font-size:15.5px;text-align:center;padding:3px 0;border:1.5px solid var(--ink-2);color:var(--ink-2);background:var(--paper)}
+.dlist .when.hot{border-color:var(--markup);background:var(--markup);color:var(--paper)}
+.dlist .when.soon{border-color:var(--amber);color:var(--amber)}
+.dlist .when.plain{border-color:var(--grid);color:var(--pencil);font-weight:500}
+.dlist .what{min-width:0;line-height:1.45;grid-column:auto!important}
+.dlist li[style] .what{grid-column:1!important}
+.dlist .what a{text-decoration:none}
+.dlist .what a:hover{text-decoration:underline}
+.dlist small{display:block;color:var(--pencil);font-size:14px}
+.nlist li{grid-template-columns:14px minmax(0,1fr)}
+.nlist .dot{width:9px;height:9px;margin-top:8px;background:var(--markup);transform:rotate(45deg)}
+.nlist .hl .dot{background:var(--amber)}
+.gchips{display:flex;flex-wrap:wrap;gap:6px;margin:0 0 8px}
+.gchips button{border:1px solid var(--grid);background:var(--sheet);padding:3px 10px;font-size:14.5px;border-radius:999px}
+.gchips button b{color:var(--markup);margin-left:4px}
+.gchips button:hover{border-color:var(--ink-2)}
+.spec{display:flex;flex-wrap:wrap;gap:6px;margin:0 0 10px}
+.spec span{background:var(--sheet);border:1px solid var(--grid);padding:2px 10px;font-size:15px}
+.vbar{display:flex;height:10px;margin:6px 0 4px;background:var(--grid)}
+.vbar i{display:block;height:100%}
+.vlegend{display:flex;flex-wrap:wrap;gap:4px 14px;font-size:14.5px;color:var(--ink-2);margin:0 0 8px}
+.vlegend b{font-weight:700}
+.dnote{margin:0;color:var(--pencil);font-size:15px}
+.dnote.bad{color:var(--markup)}
+.dempty{margin:0;padding:6px 0;color:var(--pencil)}
+.dwarn{margin:0 0 8px;padding:7px 10px;background:var(--markup-bg);border-left:3px solid var(--markup);font-size:15.5px}
+.dwarn b{color:var(--markup)}
+.dok{color:var(--st-live);font-weight:600}
+@media (max-width:1000px){.kpis{grid-template-columns:repeat(3,minmax(0,1fr))}}
+@media (max-width:820px){.dgrid{grid-template-columns:minmax(0,1fr)}}
+@media (max-width:520px){.kpis{grid-template-columns:repeat(2,minmax(0,1fr))}.dash{padding:14px 14px 24px}.kpi b{font-size:26px}}
 </style>
 </head>
 <body>
@@ -580,7 +632,8 @@ body{background:var(--sheet);background-image:none;font:18px/1.65 "Noto Sans KR"
   </header>
 
   <nav class="views" role="tablist" aria-label="화면">
-    <button type="button" role="tab" id="tabNotices" aria-selected="true">공지 보기</button>
+    <button type="button" role="tab" id="tabDash" aria-selected="true">대시보드</button>
+    <button type="button" role="tab" id="tabNotices" aria-selected="false">공지 보기</button>
     <button type="button" role="tab" id="tabCal" aria-selected="false">일정</button>
     <button type="button" role="tab" id="tabBriefing" aria-selected="false">브리핑</button>
     <button type="button" role="tab" id="tabPlanner" aria-selected="false">플래너</button>
@@ -589,7 +642,22 @@ body{background:var(--sheet);background-image:none;font:18px/1.65 "Noto Sans KR"
     <button type="button" role="tab" id="tabSettings" aria-selected="false">연결 설정</button>
   </nav>
 
-  <div id="viewNotices">
+  <section id="viewDash" class="dash" aria-label="대시보드">
+    <div class="kpis" id="dKpis"></div>
+    <div class="dgrid">
+      <div class="dcol">
+        <div class="dcard"><h2>마감 임박 <button class="go" type="button" data-go="cal">일정 전체</button></h2><div id="dDue"></div></div>
+        <div class="dcard"><h2>오늘 공부 <button class="go" type="button" data-go="planner">플래너</button></h2><div id="dPlan"></div></div>
+      </div>
+      <div class="dcol">
+        <div class="dcard"><h2>신규 공지 <button class="go" type="button" data-go="notices">전체 보기</button></h2><div id="dNew"></div></div>
+        <div class="dcard"><h2>현재 스펙 · 지원 준비도 <button class="go" type="button" data-go="ready">자세히</button></h2><div id="dSpec"></div></div>
+        <div class="dcard"><h2>감시 상태</h2><div id="dHealth"></div></div>
+      </div>
+    </div>
+  </section>
+
+  <div id="viewNotices" hidden>
     <div class="body">
       <nav class="index" aria-label="분류">
         <h2>분류</h2>
@@ -1108,7 +1176,7 @@ function renderItems() {
       <button class="star" type="button" aria-pressed="${starSet.has(it.id)}" aria-label="별표">${starSet.has(it.id) ? "★" : "☆"}</button>
     </li>`).join("");
 }
-function renderAll() { renderSummary(); renderItems(); }
+function renderAll() { renderSummary(); renderItems(); if (typeof renderDash === "function") renderDash(); }
 $("#pager").addEventListener("click", e => {
   const b = e.target.closest("button[data-p]"); if (!b || b.disabled) return;
   curPage = +b.dataset.p; renderItems();
@@ -1447,10 +1515,11 @@ async function renderBriefing() {
 
 // ════════ 화면 전환 ════════
 function showView(v) {
-  ["notices", "cal", "briefing", "planner", "ready", "manage", "settings"].forEach(n => {
+  ["dash", "notices", "cal", "briefing", "planner", "ready", "manage", "settings"].forEach(n => {
     $("#tab" + n[0].toUpperCase() + n.slice(1)).setAttribute("aria-selected", v === n);
     $("#view" + n[0].toUpperCase() + n.slice(1)).hidden = v !== n;
   });
+  if (v === "dash") renderDash();
   if (v === "manage") renderManage();
   if (v === "cal") renderCal();
   if (v === "briefing") renderBriefing();
@@ -1458,6 +1527,7 @@ function showView(v) {
   if (v === "ready") loadReady();
   if (v === "settings") { $("#repoInput").value = gh.repo; $("#branchInput").value = gh.branch; $("#tokenInput").value = gh.token ? "••••••••" : ""; }
 }
+$("#tabDash").addEventListener("click", () => showView("dash"));
 $("#tabNotices").addEventListener("click", () => showView("notices"));
 $("#tabCal").addEventListener("click", () => showView("cal"));
 $("#tabBriefing").addEventListener("click", () => showView("briefing"));
@@ -1915,13 +1985,132 @@ $("#viewPlanner").addEventListener("click", e => {
   if (c && confirm(`'${c.name}' 강의와 진도를 지운다. 계속할까?`)) plChange(p => { p.courses = p.courses.filter(x => x.id !== id); });
 });
 
+
+// ════════ 대시보드 (첫 화면) ════════
+// 읽기 전용: 플래너·지원 준비도는 공개 JSON 만 읽고, 저장은 각 탭에서 한다.
+let DRD = null, DPL = null;
+async function dashLoadExtra() {
+  const get = async p => { try { const r = await fetch(p + "?t=" + Date.now(), {cache: "no-store"}); return r.ok ? await r.json() : null; } catch (e) { return null; } };
+  DRD = await get("readiness.json");
+  DPL = await get("planner.json");
+  if (DPL) { DPL.courses = DPL.courses || []; DPL.log = DPL.log || {}; }
+  renderDash();
+}
+function dashDday(n) { return n === 0 ? "오늘" : "D-" + n; }
+function renderDash() {
+  if (!DATA || !$("#dKpis")) return;
+  const today = iso(kstToday());
+  const cal = DATA.calendar || {events: [], undated: []};
+
+  // 마감 임박
+  const up = (cal.events || []).map(e => ({e, n: calDays(e.date)})).filter(x => x.n >= 0).sort((a, b) => a.n - b.n || (a.e.time || "").localeCompare(b.e.time || ""));
+  const isDue = x => /마감/.test(x.e.type);
+  const due7 = up.filter(x => isDue(x) && x.n <= 7);
+  let pick = up.filter(x => x.n <= 14);
+  if (pick.length < 5) pick = up.slice(0, 6);
+  pick = pick.slice(0, 8);
+  const live = (cal.undated || []).filter(u => /접수|진행/.test(u.status || ""));
+  $("#dDue").innerHTML = (pick.length ? `<ul class="dlist">${pick.map(({e, n}) => `<li>
+      <span class="when ${isDue({e}) && n <= 3 ? "hot" : n <= 7 ? "soon" : "plain"}">${dashDday(n)}</span>
+      <div class="what"><b>${e.url ? `<a href="${esc(e.url)}" target="_blank" rel="noopener">${esc(e.exam)}</a>` : esc(e.exam)}</b>${e.label ? " " + esc(e.label) : ""}
+        <small>${esc(e.type)} · ${e.date.slice(5).replace("-", ".")}${e.time ? " " + esc(e.time) : ""} · ${esc(e.category || "")}</small></div></li>`).join("")}</ul>`
+    : `<p class="dempty">다가오는 일정이 없다.</p>`)
+    + (live.length ? `<p class="dnote">상시·접수 중 ${live.length}건: ${live.slice(0, 4).map(u => u.url ? `<a href="${esc(u.url)}" target="_blank" rel="noopener">${esc(u.name)}</a>` : esc(u.name)).join(", ")}${live.length > 4 ? " 외" : ""}</p>` : "");
+
+  // 신규 공지
+  const unread = DATA.items.filter(it => shown(it) && isUnread(it));
+  const hlOf = it => hlHits(it, DATA.highlight).length;
+  const newest = [...unread].sort((a, b) => hlOf(b) - hlOf(a) || String(b.found_at || "").localeCompare(String(a.found_at || "")) || String(b.date || "").localeCompare(String(a.date || ""))).slice(0, 8);
+  const gc = {}; unread.forEach(it => { gc[it.grp] = (gc[it.grp] || 0) + 1; });
+  const gs = Object.entries(gc).sort((a, b) => b[1] - a[1]);
+  $("#dNew").innerHTML = unread.length
+    ? `<div class="gchips">${gs.slice(0, 8).map(([g, n]) => `<button type="button" data-dg="${esc(g)}">${esc(g)}<b>${n}</b></button>`).join("")}</div>
+       <ul class="dlist nlist">${newest.map(it => `<li class="${hlOf(it) ? "hl" : ""}"><span class="dot" aria-hidden="true"></span>
+         <div class="what"><a href="${esc(it.url)}" data-nid="${it.id}" target="_blank" rel="noopener">${esc(it.title_ko || it.title)}</a>${hlOf(it) ? kwHtml(hlHits(it, DATA.highlight)) : ""}
+         <small>${esc(it.grp)} / ${esc(it.source)}${it.date ? " · " + esc(it.date.slice(5).replace("-", ".")) : ""}</small></div></li>`).join("")}</ul>
+       ${unread.length > newest.length ? `<p class="dnote">외 ${unread.length - newest.length}건은 '공지 보기'에서 확인한다.</p>` : ""}`
+    : `<p class="dempty">안 읽은 공지가 없다.</p>`;
+
+  // 현재 스펙 · 지원 준비도
+  const sp = rdSpec(), R = RD || DRD;
+  const chips = [];
+  if (sp.status) chips.push(sp.status);
+  if (sp.grade) chips.push(sp.grade + "학년");
+  if (sp.semesters) chips.push(sp.semesters + "학기 등록");
+  if (sp.gpa) chips.push(`학점 ${sp.gpa} / ${sp.scale || "4.5"}`);
+  if (sp.volunteer) chips.push(`봉사 ${sp.volunteer}시간`);
+  if ((sp.skills || []).length) chips.push(`역량·자격 ${sp.skills.length}개`);
+  if (sp.birth) chips.push(`만 ${rdAge(sp.birth)}세`);
+  const need = ["status", "grade", "semesters", "gpa", "birth", "volunteer"].filter(k => sp[k] === undefined || sp[k] === "");
+  let ok = null, chk = null, no = null, total = 0, canList = [];
+  if (R) {
+    const res = R.programs.map(p => {
+      const cs = p.conditions.map(c => rdCheck(c, sp));
+      return {p, v: cs.some(x => x === false) ? "no" : cs.some(x => x === null) ? "check" : "yes"};
+    });
+    total = res.length;
+    ok = res.filter(r => r.v === "yes").length; chk = res.filter(r => r.v === "check").length; no = res.filter(r => r.v === "no").length;
+    canList = res.filter(r => r.v === "yes").slice(0, 5).map(r => r.p);
+  }
+  $("#dSpec").innerHTML = (chips.length ? `<div class="spec">${chips.map(c => `<span>${esc(c)}</span>`).join("")}</div>` : `<p class="dnote bad">입력한 스펙이 없다. '지원 준비도'에서 입력하면 아래 판정이 채워진다.</p>`)
+    + (R ? `<div class="vbar" role="img" aria-label="지원 가능 ${ok}, 확인 필요 ${chk}, 조건 미달 ${no}">
+        <i style="width:${ok / total * 100}%;background:var(--st-live)"></i><i style="width:${chk / total * 100}%;background:var(--amber)"></i><i style="width:${no / total * 100}%;background:var(--pencil)"></i></div>
+      <p class="vlegend"><span>지원 가능 <b>${ok}</b></span><span>확인 필요 <b>${chk}</b></span><span>조건 미달 <b>${no}</b></span><span>전체 ${total}</span></p>
+      ${canList.length ? `<ul class="dlist">${canList.map(p => `<li style="grid-template-columns:1fr"><div class="what"><b>${p.url ? `<a href="${esc(httpUrl(p.url))}" target="_blank" rel="noopener">${esc(p.name)}</a>` : esc(p.name)}</b><small>${esc(p.cat)} · ${esc(p.next)}</small></div></li>`).join("")}</ul>` : ""}
+      ${need.length && chips.length ? `<p class="dnote">미입력 ${need.length}개 때문에 '확인 필요'가 남아 있다.</p>` : ""}`
+    : `<p class="dnote">지원 준비도 자료를 불러오지 못했다.</p>`);
+
+  // 오늘 공부 (플래너)
+  let planHtml = `<p class="dempty">플래너를 불러오지 못했다.</p>`, planMin = null;
+  if (DPL && typeof Planner !== "undefined") {
+    if (!DPL.courses.length) planHtml = `<p class="dempty">등록된 강의가 없다.</p>`;
+    else {
+      const r = Planner.compute(DPL, today), first = r.days[0];
+      const doneCost = DPL.courses.reduce((a, c) => a + c.items.filter(it => it.done === today).reduce((x, it) => x + Planner.costOf(it, c), 0), 0);
+      planMin = first.total;
+      planHtml = r.warnings.slice(0, 2).map(w => `<p class="dwarn"><b>${w.overdue ? "마감 지남" : "속도 부족"}</b> ${esc(w.courses.join(", "))} · 마감 ${esc(w.deadline)} · ${fmtMin(w.short)} 부족</p>`).join("")
+        + `<p class="dnote">${dayLabel(today)} · 남은 계획 ${fmtMin(first.total)}${doneCost ? ` · 오늘 끝낸 분량 ${fmtMin(doneCost)}` : ""}</p>`
+        + (first.items.length ? `<ul class="dlist">${first.items.slice(0, 5).map(i => `<li style="grid-template-columns:1fr"><div class="what">${esc(i.title)}<small>${esc(i.course)} · ${fmtMin(i.cost)}${i.late ? " · 마감 지남" : ""}</small></div></li>`).join("")}</ul>${first.items.length > 5 ? `<p class="dnote">외 ${first.items.length - 5}개</p>` : ""}`
+          : `<p class="dok">오늘 배정된 분량을 모두 끝냈다.</p>`);
+    }
+  }
+  $("#dPlan").innerHTML = planHtml;
+
+  // 감시 상태
+  const enabled = DATA.sources.filter(s => s.enabled !== false), names = new Set(enabled.map(s => s.name));
+  const errs = DATA.status.filter(s => s.last_error && names.has(s.name));
+  $("#dHealth").innerHTML = (errs.length
+    ? `<ul class="dlist">${errs.slice(0, 5).map(s => `<li style="grid-template-columns:1fr"><div class="what"><b>${esc(s.name)}</b> <small style="display:inline">${esc(s.grp || "")}${(s.fail_count || 0) >= 3 ? ` · ${s.fail_count}회 연속 실패` : ""}</small><small>${esc(s.last_error)}</small></div></li>`).join("")}</ul>${errs.length > 5 ? `<p class="dnote">외 ${errs.length - 5}곳</p>` : ""}`
+    : `<p class="dok">감시 대상 ${enabled.length}곳 모두 정상</p>`)
+    + `<p class="dnote">최종 확인 ${short(DATA.last_run)} · 다음 ${nextSlot()}</p>`;
+
+  // 맨 위 지표
+  const k = (cls, label, val, sub, go) => `<button type="button" class="kpi ${cls}" data-go="${go}"><small>${label}</small><b>${val}</b><em>${sub}</em></button>`;
+  $("#dKpis").innerHTML =
+    k(unread.length ? "hot" : "ok", "안 읽은 공지", unread.length + "건", gs.length ? esc(gs[0][0]) + " " + gs[0][1] + "건 외" : "모두 읽음", "notices")
+    + k(due7.length ? "hot" : "ok", "7일 내 마감", due7.length + "건", due7.length ? esc(due7[0].e.exam) : "임박한 마감 없음", "cal")
+    + k(up.length ? "" : "ok", "다가오는 일정", up.length + "건", up.length ? dashDday(up[0].n) + " " + esc(up[0].e.exam) : "없음", "cal")
+    + k(ok === null ? "" : ok ? "ok" : "warn", "지원 가능", ok === null ? "–" : ok + "곳", ok === null ? "자료 없음" : `확인 필요 ${chk} · 전체 ${total}`, "ready")
+    + k(planMin === null ? "" : planMin > 0 ? "warn" : "ok", "오늘 공부", planMin === null ? "–" : fmtMin(planMin), planMin === null ? "강의 없음" : planMin > 0 ? "남은 계획" : "완료", "planner");
+}
+$("#viewDash").addEventListener("click", e => {
+  const g = e.target.closest("[data-dg]");
+  if (g) { ui.group = g.dataset.dg; ui.sub = ""; ui.subsOpen = true; store.set("ui", ui); showView("notices"); renderAll(); return; }
+  const go = e.target.closest("[data-go]");
+  if (go) { showView(go.dataset.go); window.scrollTo({top: 0}); return; }
+  const n = e.target.closest("a[data-nid]");
+  if (n) { readSet.add(+n.dataset.nid); saveSets(); renderAll(); }
+});
+
 // ════════ 시작 ════════
 $("#fUnread").checked = ui.unread; $("#fStar").checked = ui.star; $("#fHl").checked = !!ui.hl; $("#q").value = "";
+if (location.hash === "#notices") showView("notices");
 if (location.hash === "#briefing") showView("briefing");
 if (location.hash === "#planner") showView("planner");
 if (location.hash === "#ready") showView("ready");
 loadWords();
-loadData().then(() => { renderAll(); watchRun(); }).catch(() => {
+loadData().then(() => { renderAll(); watchRun(); dashLoadExtra(); }).catch(() => {
+  $("#dKpis").innerHTML = ""; $("#dNew").innerHTML = `<p class="dempty">아직 확인 결과가 없다.</p>`;
   $("#list").innerHTML = `<li class="empty"><b>아직 확인 결과가 없다</b>GitHub 저장소의 Actions 탭에서 '공지·입시 확인'을 한 번 실행하면 여기에 결과가 나온다.</li>`;
   $("#progText").textContent = "첫 실행 전";
 });
