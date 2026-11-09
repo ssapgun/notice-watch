@@ -7,7 +7,7 @@
 <title>공지 모아보기</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;700&family=Noto+Sans+JP:wght@400;500&display=swap" rel="stylesheet">
-<script src="https://cdnjs.cloudflare.com/ajax/libs/js-yaml/4.1.0/js-yaml.min.js"></script>
+<script src="vendor/js-yaml.min.js"></script>
 <style>
 
 :root{
@@ -745,8 +745,8 @@ h3.dsub small{font-weight:400;color:var(--pencil);font-size:14px;margin-left:6px
       <div>
         <h3>다가오는 일정</h3>
         <p class="lead">직접 정리한 시험·공모전·방학 프로그램 일정과, 학사 공지에서 자동으로 뽑은 신청 기간이다. 날짜는 공식 공지로 한 번 더 확인할 것.</p>
-        <p class="lead">여기서 추가·수정·삭제하면 구글 캘린더 '공지·입시 일정'에도 반영되고, 구글 캘린더에서 고친 것도 1시간 안에 여기로 들어온다.</p>
-        <div class="cal-tools"><button class="btn primary" id="evAdd" type="button">새 일정 추가</button><span id="calSync"></span></div>
+        <p class="lead">여기서 추가·수정·삭제한 내용은 '구글 캘린더 동기화' 버튼을 눌렀을 때만 구글 캘린더 '공지·입시 일정'에 반영된다. 구글 쪽에서 고친 것도 그때 함께 들어온다. 자동으로는 동기화하지 않는다.</p>
+        <div class="cal-tools"><button class="btn primary" id="evAdd" type="button">새 일정 추가</button><button class="btn" id="gcalSync" type="button">구글 캘린더 동기화</button><span id="calSync"></span><span id="gcalMsg" role="status"></span></div>
       </div>
       <div class="calfilter" id="calFilter"></div>
     </div>
@@ -1374,7 +1374,45 @@ document.addEventListener("click", e => {
   if (e.target.id === "icsCopy") { try { navigator.clipboard.writeText(DATA.calendar.ics_url); e.target.textContent = "복사했다"; } catch (err) {} }
 });
 
-// ── 일정 추가·수정·삭제 (schedule.json 을 GitHub 에 저장 → 동기화 작업이 구글 캘린더에 반영)
+// ── 구글 캘린더 동기화 버튼: gcal.yml 을 직접 실행하고 끝날 때까지 지켜본다
+let gcalPoll = null;
+async function gcalWatch(awaitId) {
+  clearTimeout(gcalPoll);
+  const msg = $("#gcalMsg"), btn = $("#gcalSync");
+  try {
+    const r = await ghApi("/actions/workflows/gcal.yml/runs?per_page=1");
+    const run = r.workflow_runs && r.workflow_runs[0];
+    if (!run) { gcalPoll = setTimeout(() => gcalWatch(awaitId), 4000); return; }
+    if (run.status !== "completed") {
+      btn.disabled = true; btn.textContent = "동기화 중";
+      msg.textContent = run.status === "queued" ? "GitHub 서버에서 대기 중" : "구글 캘린더와 맞추는 중 (1~2분)";
+      gcalPoll = setTimeout(() => gcalWatch(awaitId), 8000); return;
+    }
+    btn.disabled = false; btn.textContent = "구글 캘린더 동기화";
+    if (run.conclusion === "success") {
+      if (sessionStorage.getItem("awaitGcal") === String(run.id)) {
+        sessionStorage.removeItem("awaitGcal");
+        msg.textContent = "동기화 끝. 1분 뒤 일정을 새로 불러온다";
+        setTimeout(async () => { await loadData(); renderAll(); msg.textContent = "동기화했다"; }, 60000);
+      }
+    } else msg.innerHTML = `<span style="color:var(--markup)">동기화 실패.</span> <a href="${esc(run.html_url)}" target="_blank" rel="noopener">기록 보기</a>`;
+  } catch (e) { msg.textContent = e.message; btn.disabled = false; btn.textContent = "구글 캘린더 동기화"; }
+}
+$("#gcalSync").addEventListener("click", async () => {
+  if (!ghReady()) { showView("settings"); $("#setMsg").textContent = "동기화를 쓰려면 먼저 연결 설정을 한다."; return; }
+  const btn = $("#gcalSync"), msg = $("#gcalMsg");
+  btn.disabled = true; msg.textContent = "실행 요청을 보내는 중";
+  try {
+    await ghApi("/actions/workflows/gcal.yml/dispatches", {method: "POST", body: JSON.stringify({ref: gh.branch})});
+    setTimeout(async () => {
+      const r = await ghApi("/actions/workflows/gcal.yml/runs?per_page=1").catch(() => null);
+      if (r && r.workflow_runs[0]) sessionStorage.setItem("awaitGcal", String(r.workflow_runs[0].id));
+      gcalWatch();
+    }, 4000);
+  } catch (e) { msg.textContent = e.message; btn.disabled = false; }
+});
+
+// ── 일정 추가·수정·삭제 (schedule.json 을 GitHub 에 저장 → 동기화 버튼을 누르면 구글 캘린더에 반영)
 let calNote = "", evEditing = null;
 const evBtn = e => `<button type="button" class="evedit" data-ev="${esc(e.id)}" aria-label="${esc(e.exam)} 일정 수정">수정</button>`;
 async function loadSchedule() {
@@ -1436,7 +1474,7 @@ async function evCommit(del) {
     const list = DATA.calendar.events = (DATA.calendar.events || []).filter(x => x.id !== id);
     if (!del) list.push({...(old || {}), ...v, id, auto: false, origin: old && old.auto ? "auto-edited" : (old && old.origin) || "site"});
     list.sort((a, b) => (a.date + (a.time || "99")).localeCompare(b.date + (b.time || "99")));
-    calNote = `${del ? "삭제" : "저장"}했다. 구글 캘린더에는 1~2분 뒤 반영된다`;
+    calNote = `${del ? "삭제" : "저장"}했다. 구글 캘린더에는 '구글 캘린더 동기화'를 눌러야 반영된다`;
     if (typeof dashAfterSave === "function") dashAfterSave(id, del);
     $("#evDlg").close();
     renderCal();
