@@ -605,6 +605,11 @@ button.kpi:hover{background:var(--sheet)}
 .dwarn{margin:0 0 8px;padding:7px 10px;background:var(--markup-bg);border-left:3px solid var(--markup);font-size:15.5px}
 .dwarn b{color:var(--markup)}
 .dok{color:var(--st-live);font-weight:600}
+.dtools{display:flex;flex-wrap:wrap;gap:8px;margin:8px 0 4px}
+.dcard .pbox{margin:12px 0 0}
+.dcard .rdskills label{display:flex;gap:6px;align-items:center}
+.dcard .rdskills input{width:auto}
+.dcard .pform{grid-template-columns:repeat(auto-fit,minmax(140px,1fr))}
 @media (max-width:1000px){.kpis{grid-template-columns:repeat(3,minmax(0,1fr))}}
 @media (max-width:820px){.dgrid{grid-template-columns:minmax(0,1fr)}}
 @media (max-width:520px){.kpis{grid-template-columns:repeat(2,minmax(0,1fr))}.dash{padding:14px 14px 24px}.kpi b{font-size:26px}}
@@ -651,7 +656,13 @@ button.kpi:hover{background:var(--sheet)}
       </div>
       <div class="dcol">
         <div class="dcard"><h2>신규 공지 <button class="go" type="button" data-go="notices">전체 보기</button></h2><div id="dNew"></div></div>
-        <div class="dcard"><h2>현재 스펙 · 지원 준비도 <button class="go" type="button" data-go="ready">자세히</button></h2><div id="dSpec"></div></div>
+        <div class="dcard"><h2>현재 스펙 · 지원 준비도 <button class="go" type="button" data-go="ready">자세히</button></h2><div id="dSpec"></div>
+          <details class="pbox" id="dSpecBox"><summary>스펙 입력·수정</summary>
+            <p class="dnote">이 브라우저에만 저장한다. 깃에는 올라가지 않는다.</p>
+            <div class="pform" id="dForm"></div>
+            <p class="dtools"><button class="btn" type="button" id="dSpecOut">파일로 내보내기</button> <button class="btn" type="button" id="dSpecInBtn">파일에서 불러오기</button><input type="file" id="dSpecIn" accept="application/json,.json" hidden></p>
+            <p class="dnote" id="dSpecMsg" role="status"></p>
+          </details></div>
         <div class="dcard"><h2>감시 상태</h2><div id="dHealth"></div></div>
       </div>
     </div>
@@ -1994,7 +2005,7 @@ async function dashLoadExtra() {
   DRD = await get("readiness.json");
   DPL = await get("planner.json");
   if (DPL) { DPL.courses = DPL.courses || []; DPL.log = DPL.log || {}; }
-  renderDash();
+  dashSpecForm(); renderDash();
 }
 function dashDday(n) { return n === 0 ? "오늘" : "D-" + n; }
 function renderDash() {
@@ -2093,6 +2104,52 @@ function renderDash() {
     + k(ok === null ? "" : ok ? "ok" : "warn", "지원 가능", ok === null ? "–" : ok + "곳", ok === null ? "자료 없음" : `확인 필요 ${chk} · 전체 ${total}`, "ready")
     + k(planMin === null ? "" : planMin > 0 ? "warn" : "ok", "오늘 공부", planMin === null ? "–" : fmtMin(planMin), planMin === null ? "강의 없음" : planMin > 0 ? "남은 계획" : "완료", "planner");
 }
+
+// ── 스펙 입력·백업: 기존 '지원 준비도' 탭과 같은 저장 키(rdSpec, rdResults)를 쓴다. 이 브라우저(localStorage)에만 저장한다.
+const DS_KEYS = ["status", "grade", "semesters", "gpa", "scale", "birth", "income", "volunteer", "constMajor", "jobless", "exchange", "sns"];
+const dsYN = k => `<select data-ds="${k}"><option value="">미입력</option><option value="yes">예</option><option value="no">아니오</option></select>`;
+function dashSpecForm() {
+  const box = $("#dForm"); if (!box) return;
+  const sp = rdSpec(), R = RD || DRD, have = new Set(sp.skills || []);
+  const num = (k, label, a = "") => `<label>${label}<input type="number" data-ds="${k}" ${a}></label>`;
+  box.innerHTML =
+    `<label>상태<select data-ds="status"><option value="">미입력</option>${["재학", "휴학", "졸업예정", "졸업"].map(v => `<option>${v}</option>`).join("")}</select></label>`
+    + num("grade", "학년", 'min="1" max="6"') + num("semesters", "등록 학기 수", 'min="0"') + num("gpa", "학점", 'step="0.01" min="0" max="4.5"')
+    + `<label>학점 척도<select data-ds="scale"><option>4.3</option><option>4.5</option></select></label>`
+    + `<label>생년월일<input type="date" data-ds="birth"></label>` + num("income", "학자금 지원구간", 'min="0" max="10"') + num("volunteer", "최근 1년 봉사시간", 'min="0"')
+    + `<label>건설 관련 학과${dsYN("constMajor")}</label><label>미취업${dsYN("jobless")}</label><label>교환학생 파견 예정${dsYN("exchange")}</label><label>SNS 1년 이상 운영${dsYN("sns")}</label>`
+    + (R && R.skills ? `<div class="pwide"><span>보유 역량·자격</span><div class="rdskills" id="dSkills">${R.skills.map(s => `<label><input type="checkbox" value="${esc(s.id)}" ${have.has(s.id) ? "checked" : ""}> ${esc(s.label)}</label>`).join("")}</div></div>` : "");
+  box.querySelectorAll("[data-ds]").forEach(el => { el.value = sp[el.dataset.ds] !== undefined ? sp[el.dataset.ds] : (el.dataset.ds === "scale" ? "4.3" : ""); });
+  if (!Object.keys(sp).length) $("#dSpecBox").open = true;
+}
+const dsMsg = t => { const m = $("#dSpecMsg"); if (m) m.textContent = t; };
+$("#dForm").addEventListener("change", () => {
+  const sp = {};
+  document.querySelectorAll("#dForm [data-ds]").forEach(el => { if (el.value !== "") sp[el.dataset.ds] = el.value; });
+  sp.skills = [...document.querySelectorAll("#dSkills input:checked")].map(x => x.value);
+  store.set("rdSpec", sp); renderDash(); dsMsg("저장했다. 이 브라우저에만 있다.");
+});
+$("#dSpecOut").addEventListener("click", () => {
+  const blob = new Blob([JSON.stringify({rdSpec: rdSpec(), rdResults: rdResults()}, null, 1)], {type: "application/json"});
+  const a = document.createElement("a"); a.href = URL.createObjectURL(blob); a.download = "notice-watch-spec-" + iso(kstToday()) + ".json";
+  document.body.appendChild(a); a.click(); a.remove(); setTimeout(() => URL.revokeObjectURL(a.href), 1000);
+  dsMsg("파일로 내보냈다. 이 파일은 깃에 올리지 말 것.");
+});
+$("#dSpecInBtn").addEventListener("click", () => $("#dSpecIn").click());
+$("#dSpecIn").addEventListener("change", async e => {
+  const f = e.target.files[0]; e.target.value = ""; if (!f) return;
+  try {
+    const j = JSON.parse(await f.text()), s = j && j.rdSpec;
+    if (!s || typeof s !== "object" || Array.isArray(s)) throw new Error("스펙 항목이 없는 파일이다");
+    const sp = {};
+    DS_KEYS.forEach(k => { if (s[k] !== undefined && s[k] !== "" && typeof s[k] !== "object") sp[k] = String(s[k]); });
+    sp.skills = Array.isArray(s.skills) ? s.skills.filter(x => typeof x === "string") : [];
+    const res = {};
+    if (j.rdResults && typeof j.rdResults === "object") Object.entries(j.rdResults).forEach(([k, v]) => { if (typeof v === "string") res[k] = v; });
+    store.set("rdSpec", sp); store.set("rdResults", res);
+    dashSpecForm(); renderDash(); dsMsg("불러왔다. 이 브라우저에 저장했다.");
+  } catch (err) { dsMsg("불러오지 못했다: " + err.message); }
+});
 $("#viewDash").addEventListener("click", e => {
   const g = e.target.closest("[data-dg]");
   if (g) { ui.group = g.dataset.dg; ui.sub = ""; ui.subsOpen = true; store.set("ui", ui); showView("notices"); renderAll(); return; }
