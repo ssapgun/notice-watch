@@ -491,6 +491,30 @@ def parse_list(html: str, page_url: str, src: dict) -> list[dict]:
     return items
 
 
+class EmptyListError(RuntimeError):
+    """게시판 첫 페이지에서 글 행을 하나도 찾지 못했다. 선택자가 안 맞거나 JavaScript 로 내용을 그리는 페이지다."""
+
+
+def looks_like_js_shell(html: str) -> bool:
+    """눈에 보이는 글자가 거의 없고 스크립트만 있는 페이지(JavaScript 로 내용을 그리거나 쿠키 확인 뒤 이동하는 껍데기)."""
+    soup = BeautifulSoup(html, "html.parser")
+    scripts = len(soup.find_all("script"))
+    for tag in soup(["script", "style", "noscript"]):
+        tag.decompose()
+    return scripts > 0 and len(" ".join(soup.get_text(" ").split())) < 50
+
+
+def check_first_page_rows(html: str, src: dict) -> None:
+    """첫 페이지에서 row_selector 가 행을 하나도 못 찾았으면 실패로 알린다.
+    행은 있는데 글이 없는 경우(빈 게시판, 분류·키워드 필터로 전부 제외)는 정상으로 본다."""
+    sel = src.get("row_selector", "table tbody tr")
+    if BeautifulSoup(html, "html.parser").select(sel):
+        return
+    hint = ("JavaScript 로 내용을 그리는 페이지로 보인다. 이 대상에 render: browser 설정이 필요하다."
+            if looks_like_js_shell(html) else "사이트 구조가 바뀌었을 수 있다. 감시 대상 관리에서 미리보기로 확인할 것.")
+    raise EmptyListError(f"목록에서 글 행을 하나도 찾지 못했다 (선택자 {sel}). {hint}")
+
+
 def kw_in(k: str, t: str) -> bool:
     """t(소문자)에 키워드 k 가 있는가. SH·LH·CM·AI 처럼 3글자 이하 영문 키워드는 영단어 일부(Short, Claim)에 걸리지 않게
     앞뒤에 다른 영문자가 붙어 있으면 맞지 않는 것으로 본다 (한글이 붙은 'LH가든'은 맞음)."""
@@ -628,9 +652,12 @@ def crawl_board(src: dict, session: requests.Session, delay: float,
         url = page_url(src, i)
         if not robots_allows(url, session):
             raise PermissionError(f"robots.txt 가 수집을 막고 있다: {url}")
-        page_items = parse_list(fetch(url, src, session), url, src)
+        html = fetch(url, src, session)
+        page_items = parse_list(html, url, src)
         time.sleep(delay)
         if not page_items:
+            if i == 1:
+                check_first_page_rows(html, src)   # 행 자체가 0개면 조용히 넘기지 않고 실패로 기록한다 (run_crawl 의 try/except 가 받는다)
             break
         keys = {it["url"] if it["url"] != url else it["title"] for it in page_items}
         if keys == prev_keys:  # 페이지 번호를 무시하고 같은 목록을 주는 사이트
@@ -754,8 +781,11 @@ def test_source(raw: dict) -> dict:
             warn.append("날짜를 찾지 못했다. 목록은 쓸 수 있지만 날짜 칸이 비게 된다.")
         if items and all(it["url"] == url for it in items):
             warn.append("글 링크가 자바스크립트라 상세 주소를 만들지 못했다. 링크 규칙(link_regex/link_template)이 필요하다.")
+        shell = looks_like_js_shell(html)
+        if shell and not items:
+            warn.append("JavaScript 로 내용을 그리는 페이지로 보인다. 이 대상에 render: browser 설정이 필요하다.")
         return {"ok": bool(items), "kind": "board", "count": len(items), "items": items[:15], "warnings": warn,
-                "js_rendered": "<div id=\"app\"></div>" in html.replace(" ", "")}
+                "js_rendered": shell or "<div id=\"app\"></div>" in html.replace(" ", "")}
     lines = page_lines(html, src)
     return {"ok": bool(lines), "kind": "watch", "count": len(lines), "lines": lines[:25],
             "warnings": [] if lines else ["본문을 찾지 못했다. 본문 선택자를 비우거나 바꿔 볼 것."]}
