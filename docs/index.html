@@ -615,6 +615,38 @@ select.st{font:inherit;font-size:14.5px;padding:1px 4px;border:1px solid var(--g
 .dlist .ctl{display:flex;align-items:center;gap:8px;margin-top:4px}
 .dlist .ctl .linkbtn{margin-left:0}
 .dlist li.applied .what b a,.dlist li.applied .what b{color:var(--pencil)}
+h3.dsub{margin:14px 0 6px;font-size:16px;font-weight:700}
+h3.dsub small{font-weight:400;color:var(--pencil);font-size:14px;margin-left:6px}
+/* 유학 일정 */
+.study .sgrid{display:grid;grid-template-columns:200px minmax(0,1fr);gap:0 12px;align-items:stretch}
+.study .shead{position:relative;height:34px;border-bottom:2px solid var(--rule)}
+.study .shead span{position:absolute;top:2px;font-size:13.5px;color:var(--pencil);white-space:nowrap;transform:translateX(3px)}
+.study .shead span small{display:block;font-size:11.5px;line-height:1}
+.study .sname{padding:8px 0;border-bottom:1px solid var(--grid);font-size:15.5px;line-height:1.35;min-width:0}
+.study .sname small{display:block;color:var(--pencil);font-size:13.5px}
+.study .strack{position:relative;border-bottom:1px solid var(--grid);min-width:0}
+.study .sg{position:absolute;top:0;bottom:0;width:1px;background:var(--grid)}
+.study .stoday{position:absolute;top:0;bottom:0;width:2px;background:var(--markup);z-index:2}
+.study .sb{position:absolute;height:22px;line-height:18px;font-size:13px;padding:0 5px;overflow:hidden;white-space:nowrap;text-overflow:ellipsis;border:2px solid transparent;box-sizing:border-box;z-index:1;min-width:6px}
+.study .sb.fixed{background:var(--khu,var(--ink));color:var(--paper)}
+.study .sb.regular{background:var(--navy,var(--ink-2));color:var(--paper)}
+.study .sb.proj{background:var(--paper);border:2px dashed var(--amber);color:var(--ink)}
+.study .sb.approx{background:var(--st-soon-bg);border-color:var(--st-soon);color:var(--ink)}
+.study .slegend{display:flex;gap:14px;flex-wrap:wrap;margin:8px 0 14px;font-size:14.5px;color:var(--ink-2)}
+.study .slegend i{display:inline-block;width:26px;height:12px;vertical-align:-1px;margin-right:5px;box-sizing:border-box}
+.study .slegend .fixed{background:var(--khu,var(--ink))}
+.study .slegend .regular{background:var(--navy,var(--ink-2))}
+.study .slegend .proj{border:2px dashed var(--amber);background:var(--paper)}
+.study .slegend .approx{background:var(--st-soon-bg);border:1px solid var(--st-soon)}
+.study .snow li{grid-template-columns:96px minmax(0,1fr)}
+.study .tag{display:inline-block;font-size:13px;border:1px solid var(--grid);padding:0 6px;margin-right:6px;color:var(--ink-2)}
+.study .tag.de{border-color:var(--st-soon);color:var(--st-soon)}
+.study .tag.jp{border-color:var(--st-always);color:var(--st-always)}
+.study .scard{border:1px solid var(--grid);background:var(--paper);padding:12px 14px;margin:0 0 10px}
+.study .scard h4{margin:0 0 4px;font-size:16.5px}
+.study .scard ul{margin:6px 0;padding-left:18px;font-size:15.5px}
+.study .scard .basis{margin:6px 0 0;color:var(--ink-2);font-size:15px}
+.study .scard .warn{margin:6px 0 0;color:var(--amber);font-size:15px;font-weight:600}
 .dfootline{margin-top:14px;padding:8px 2px;border-top:1px solid var(--grid)}
 .dfootline .dok,.dfootline .dnote{display:inline;margin-right:12px}
 @media (max-width:820px){.dgrid{grid-template-columns:minmax(0,1fr)}#cDue{order:1}#cNew{order:2}#cPlan{order:3}#cSpec{order:4}}
@@ -649,13 +681,14 @@ select.st{font:inherit;font-size:14.5px;padding:1px 4px;border:1px solid var(--g
     <button type="button" role="tab" id="tabBriefing" aria-selected="false">브리핑</button>
     <button type="button" role="tab" id="tabPlanner" aria-selected="false">플래너</button>
     <button type="button" role="tab" id="tabReady" aria-selected="false">지원 준비도</button>
+    <button type="button" role="tab" id="tabStudy" aria-selected="false">유학 일정</button>
     <button type="button" role="tab" id="tabManage" aria-selected="false">감시 대상 관리</button>
     <button type="button" role="tab" id="tabSettings" aria-selected="false">연결 설정</button>
   </nav>
 
   <section id="viewDash" class="dash" aria-label="대시보드">
     <div class="dgrid">
-      <div class="dcard" id="cSpec"><h2><span>현재 스펙 · 지원 준비도</span><button class="go" type="button" data-go="ready">자세히</button></h2><div id="dSpec"></div>
+      <div class="dcard" id="cSpec"><h2><span>현재 스펙 · 지원 준비도</span><button class="go" type="button" data-go="ready">자세히</button></h2><div id="dSpec"></div><div id="dGap"></div>
         <details class="pbox" id="dSpecBox"><summary>스펙 입력·수정</summary>
           <p class="dnote">이 브라우저에만 저장한다. 깃에는 올라가지 않는다. 내보내기 파일에는 스펙·일정 체크·키워드가 들어간다.</p>
           <div class="pform" id="dForm"></div>
@@ -789,6 +822,12 @@ select.st{font:inherit;font-size:14.5px;padding:1px 4px;border:1px solid var(--g
     <div class="calfilter rdcats" id="rdCats"></div>
     <p class="pmeta" id="rdSummary"></p>
     <div id="rdList"></div>
+  </section>
+
+  <section id="viewStudy" class="manage study" hidden>
+    <p class="pmeta">독일·일본 대학원 입시와 장학의 출원 시기. 공식 페이지에 적힌 날짜만 넣었고, 근거와 확인일은 아래 카드에 있다. 지원하기 전에는 반드시 공식 페이지에서 다시 확인할 것.</p>
+    <div class="calfilter" id="studyFilter"></div>
+    <div id="studyBody"></div>
   </section>
 
   <section id="viewManage" class="manage" hidden>
@@ -1529,7 +1568,7 @@ async function renderBriefing() {
 
 // ════════ 화면 전환 ════════
 function showView(v) {
-  ["dash", "notices", "cal", "briefing", "planner", "ready", "manage", "settings"].forEach(n => {
+  ["dash", "notices", "cal", "briefing", "planner", "ready", "study", "manage", "settings"].forEach(n => {
     $("#tab" + n[0].toUpperCase() + n.slice(1)).setAttribute("aria-selected", v === n);
     $("#view" + n[0].toUpperCase() + n.slice(1)).hidden = v !== n;
   });
@@ -1539,6 +1578,7 @@ function showView(v) {
   if (v === "briefing") renderBriefing();
   if (v === "planner") loadPlanner();
   if (v === "ready") loadReady();
+  if (v === "study") loadStudy();
   if (v === "settings") { $("#repoInput").value = gh.repo; $("#branchInput").value = gh.branch; $("#tokenInput").value = gh.token ? "••••••••" : ""; }
 }
 $("#tabDash").addEventListener("click", () => showView("dash"));
@@ -1547,6 +1587,7 @@ $("#tabCal").addEventListener("click", () => showView("cal"));
 $("#tabBriefing").addEventListener("click", () => showView("briefing"));
 $("#tabPlanner").addEventListener("click", () => showView("planner"));
 $("#tabReady").addEventListener("click", () => showView("ready"));
+$("#tabStudy").addEventListener("click", () => showView("study"));
 $("#tabManage").addEventListener("click", () => showView("manage"));
 $("#tabSettings").addEventListener("click", () => showView("settings"));
 
@@ -2090,6 +2131,7 @@ function renderDash() {
       ${canList.length ? `<ul class="dlist">${canList.map(p => `<li style="grid-template-columns:1fr"><div class="what"><b>${p.url ? `<a href="${esc(httpUrl(p.url))}" target="_blank" rel="noopener">${esc(p.name)}</a>` : esc(p.name)}</b><small>${esc(p.cat)} · ${esc(p.next)}</small></div></li>`).join("")}</ul>` : ""}
       ${need.length && chips.length ? `<p class="dnote">미입력 ${need.length}개 때문에 '확인 필요'가 남아 있다.</p>` : ""}`
     : `<p class="dnote">지원 준비도 자료를 불러오지 못했다.</p>`);
+  renderGap(sp, R, chips.length > 0);
 
   // 오늘 공부 (플래너). 계산이 실패해도 대시보드 나머지는 그려지게 한다
   let planHtml = `<p class="dempty">플래너를 불러오지 못했다.</p>`;
@@ -2223,6 +2265,8 @@ $("#viewDash").addEventListener("click", e => {
   if (g) { ui.group = g.dataset.dg; ui.sub = ""; ui.subsOpen = true; store.set("ui", ui); showView("notices"); renderAll(); return; }
   const go = e.target.closest("[data-go]");
   if (go) { showView(go.dataset.go); window.scrollTo({top: 0}); return; }
+  const pl = e.target.closest("[data-plan]");
+  if (pl) { dashPlanSkill(pl.dataset.plan); return; }
   const u = e.target.closest("[data-unap]");
   if (u) { const set = appliedMap(); delete set[u.dataset.unap]; saveApplied(set); renderDash(); return; }
   const kd = e.target.closest("[data-kwdel]");
@@ -2233,12 +2277,142 @@ $("#viewDash").addEventListener("click", e => {
   if (n) { const it = DATA.items.find(x => String(x.id) === n.dataset.nid); if (it) { readSet.add(it.id); saveSets(); renderAll(); } }
 });
 
+// ── 부족 역량 → 학습 계획 (대시보드 스펙 카드)
+// 프로그램별 prep(준비하면 좋은 역량) 중 내가 없는 것을, 많은 프로그램이 꼽은 순서로 보여 준다. 공고의 지원 조건이 아니라 참고용이다.
+const GAP_EXPERIENCE = {team: "공모전·대외활동", content: "공모전·대외활동"};   // 강의가 아니라 경험으로 채우는 항목은 학습 계획 대신 해당 공지로 연결한다
+function renderGap(sp, R, hasSpec) {
+  const box = $("#dGap"); if (!box) return;
+  if (!R || !R.programs || !hasSpec) { box.innerHTML = ""; return; }   // 스펙이 비어 있으면 전부 '부족'으로 나오므로 보이지 않는다
+  const have = new Set(sp.skills || []), label = id => (R.skills.find(s => s.id === id) || {label: id}).label;
+  const open = R.programs.filter(p => !p.conditions.some(c => rdCheck(c, sp) === false));   // 조건 미달인 곳은 뺀다
+  const need = {};
+  open.forEach(p => (p.prep || []).forEach(id => { if (!have.has(id)) (need[id] ||= []).push(p.name); }));
+  const rows = Object.entries(need).sort((a, b) => b[1].length - a[1].length || label(a[0]).localeCompare(label(b[0]), "ko")).slice(0, 5);
+  box.innerHTML = rows.length
+    ? `<h3 class="dsub">부족 역량<small>조건 미달을 뺀 ${open.length}곳 기준</small></h3><ul class="dlist">${rows.map(([id, names]) => `<li style="grid-template-columns:1fr"><div class="what"><b>${esc(label(id))}</b> <small style="display:inline">${names.length}곳에서 준비하면 좋다고 적혀 있다</small>
+        <small>${names.slice(0, 3).map(esc).join(", ")}${names.length > 3 ? " 외" : ""}</small>${GAP_EXPERIENCE[id]
+          ? `<button type="button" class="ck" data-dg="${esc(GAP_EXPERIENCE[id])}">경험으로 쌓는 항목: ${esc(GAP_EXPERIENCE[id])} 공지 보기</button>`
+          : `<button type="button" class="ck" data-plan="${esc(id)}">＋ 학습 계획에 담기</button>`}</div></li>`).join("")}</ul>`
+    : `<h3 class="dsub">부족 역량</h3><p class="dok">준비하면 좋은 역량을 모두 갖췄다.</p>`;
+}
+// 플래너의 '강의 추가' 폼을 열고 이름을 채운다. 강의 목차는 직접 붙여 넣는다(로그인 수집 금지 원칙)
+function dashPlanSkill(id) {
+  const R = RD || DRD, label = (((R && R.skills) || []).find(s => s.id === id) || {label: id}).label;
+  showView("planner");
+  $("#planAdd").open = true;
+  $("#planName").value = "역량 준비: " + label;
+  $("#planAddMsg").textContent = "강의 목차를 붙여 넣고 마감일을 정한 뒤 '강의 추가'를 누른다. 저장하려면 연결 설정이 필요하다.";
+  $("#planAdd").scrollIntoView({block: "start"});
+  $("#planToc").focus();
+}
+
+// ════════ 유학 일정 (독일·일본) ════════
+// 자료는 docs/study_abroad.json (손으로 고친다). 날짜는 공식 페이지에 적힌 것만 넣는다.
+let STUDY = null, studyErr = "", studyCountry = "";
+const STUDY_KIND = {fixed: "확정", regular: "정기", proj: "예상", approx: "대략"};
+const sIso = s => { const [y, m, d] = s.split("-").map(Number); return new Date(y, m - 1, d); };
+const sYears = (s, n) => `${+s.slice(0, 4) + n}${s.slice(4)}`;
+const sDiff = (a, b) => Math.round((sIso(b) - sIso(a)) / 86400000);
+// 한 구간이 [from, to] 와 겹치는 날짜 구간들. iso 는 지난 실제 날짜를 해마다 이어 '예상'으로, md 는 매년 같은 달·일로 펼친다
+function studyOcc(w, from, to) {
+  const out = [];
+  if (w.iso) {
+    for (let k = 0; k <= 3; k++) {
+      const s = sYears(w.iso[0], k), e = sYears(w.iso[1], k);
+      if (e < from) continue;
+      if (s > to) break;
+      out.push({s, e, kind: w.approx ? "approx" : k === 0 ? "fixed" : "proj"});
+    }
+  } else if (w.md) {
+    for (let y = +from.slice(0, 4) - 1; y <= +to.slice(0, 4); y++) {
+      const s = `${y}-${w.md[0]}`, e = `${w.md[1] < w.md[0] ? y + 1 : y}-${w.md[1]}`;
+      if (e >= from && s <= to) out.push({s, e, kind: w.approx ? "approx" : "regular"});
+    }
+  }
+  return out;
+}
+async function loadStudy() {
+  if (!STUDY) {
+    try {
+      const r = await fetch("study_abroad.json?t=" + Date.now(), {cache: "no-store"});
+      if (!r.ok) throw new Error(r.status);
+      STUDY = await r.json(); studyErr = "";
+    } catch (e) { studyErr = "유학 일정 자료를 불러오지 못했다: " + e.message; }
+  }
+  renderStudy();
+}
+function renderStudy() {
+  const body = $("#studyBody");
+  if (!STUDY) { body.innerHTML = studyErr ? `<p class="msg bad">${esc(studyErr)}</p>` : ""; $("#studyFilter").innerHTML = ""; return; }
+  $("#studyFilter").innerHTML = ["", "독일", "일본"].map(c => `<button type="button" data-sc="${c}" aria-pressed="${c === studyCountry}">${c || "전체"}</button>`).join("");
+  const list = (STUDY.items || []).filter(it => (it.country === "독일" || it.country === "일본") && (!studyCountry || it.country === studyCountry));
+  const t = kstToday(), today = iso(t);
+  const from = iso(new Date(t.getFullYear(), t.getMonth(), 1)), to = iso(new Date(t.getFullYear(), t.getMonth() + 12, 0));
+  const total = sDiff(from, to) + 1, pos = d => sDiff(from, d) / total * 100;
+  const fmt = (s, e) => s === e ? s : `${s} ~ ${e}`, cls = c => c === "독일" ? "de" : "jp";
+
+  // 지금 접수 중 · 곧 시작 (출원 구간만, 120일 안)
+  const far = iso(new Date(t.getFullYear(), t.getMonth(), t.getDate() + 120)), now = [];
+  list.forEach(it => (it.windows || []).filter(w => w.apply).forEach(w => studyOcc(w, today, far).forEach(o => now.push({it, w, o, active: o.s <= today && today <= o.e}))));
+  now.sort((a, b) => (b.active - a.active) || a.o.s.localeCompare(b.o.s));
+  const nowHtml = now.length ? `<ul class="dlist snow">${now.map(({it, w, o, active}) => {
+    const left = sDiff(today, o.e), until = sDiff(today, o.s);
+    return `<li><span class="when ${active ? (left <= 14 ? "hot" : "soon") : "plain"}">${active ? (left === 0 ? "오늘 마감" : "마감 D-" + left) : "D-" + until + " 시작"}</span>
+      <div class="what"><span class="tag ${cls(it.country)}">${esc(it.country)}</span><b>${esc(it.name)}</b> ${esc(w.label)}<small>${fmt(o.s, o.e)} · ${STUDY_KIND[o.kind]}${it.stale ? " · 최신 여부 미확인" : ""}</small></div></li>`;
+  }).join("")}</ul>` : `<p class="dempty">지금 접수 중이거나 120일 안에 시작하는 출원이 없다.</p>`;
+
+  // 향후 12개월 막대
+  const months = Array.from({length: 12}, (_, i) => new Date(t.getFullYear(), t.getMonth() + i, 1));
+  const head = months.map((d, i) => `<span style="left:${pos(iso(d))}%">${d.getMonth() + 1}월${d.getMonth() === 0 || i === 0 ? `<small>${d.getFullYear()}</small>` : ""}</span>`).join("");
+  const lines = months.map(d => `<i class="sg" style="left:${pos(iso(d))}%"></i>`).join("") + `<i class="stoday" style="left:${pos(today)}%" title="오늘"></i>`;
+  const rows = list.map(it => {
+    const occ = [];
+    (it.windows || []).forEach(w => studyOcc(w, from, to).forEach(o => occ.push({...o, label: w.label})));
+    occ.sort((a, b) => a.s.localeCompare(b.s) || a.e.localeCompare(b.e));
+    const laneEnd = [];
+    const bars = occ.map(o => {
+      const s = o.s < from ? from : o.s, e = o.e > to ? to : o.e;
+      let lane = laneEnd.findIndex(x => x < s); if (lane < 0) lane = laneEnd.length;
+      laneEnd[lane] = e;
+      const w = Math.max(0.7, (sDiff(s, e) + 1) / total * 100);
+      return `<span class="sb ${o.kind}" style="left:${pos(s)}%;width:${w}%;top:${4 + lane * 26}px" title="${esc(o.label)} · ${fmt(o.s, o.e)} · ${STUDY_KIND[o.kind]}">${w > 9 ? esc(o.label) : ""}</span>`;
+    }).join("");
+    return `<div class="sname"><span class="tag ${cls(it.country)}">${esc(it.country)}</span><b>${esc(it.name)}</b><small>${esc(it.kind)}</small></div><div class="strack" style="min-height:${8 + Math.max(1, laneEnd.length) * 26}px">${lines}${bars}</div>`;
+  }).join("");
+
+  // 자세히: 근거·확인일·공식 링크
+  const next = new Date(t.getFullYear() + 1, t.getMonth(), t.getDate());
+  const cards = list.map(it => `<div class="scard"><h4><span class="tag ${cls(it.country)}">${esc(it.country)}</span>${esc(it.name)} <small style="font-weight:400;color:var(--pencil)">${esc(it.kind)}</small></h4>
+      <ul>${(it.windows || []).map(w => {
+        const os = studyOcc(w, today, iso(next)), o = os.find(x => x.e >= today);
+        return `<li>${esc(w.label)}: ${o ? fmt(o.s, o.e) + " · " + STUDY_KIND[o.kind] : "1년 안에 없음"}</li>`;
+      }).join("")}</ul>
+      ${it.stale ? `<p class="warn">자동 확인이 꺼져 있어 최신 여부를 모른다. 공식 페이지에서 직접 확인할 것.</p>` : ""}
+      <p class="basis">${esc(it.basis || "")}</p>
+      <p class="pmeta">자료 확인 ${esc(STUDY.checked || "")}${httpUrl(it.url) ? ` · <a href="${esc(httpUrl(it.url))}" target="_blank" rel="noopener">공식 페이지</a>` : ""}</p></div>`).join("");
+  const pend = (STUDY.pending || []).filter(p => !studyCountry || p.country === studyCountry);
+  const pendHtml = pend.length ? `<details class="pbox"><summary>일정을 확인하지 못한 곳 (${pend.length}곳)</summary><ul class="dlist">${pend.map(p => `<li style="grid-template-columns:1fr"><div class="what"><span class="tag ${cls(p.country)}">${esc(p.country)}</span><b>${httpUrl(p.url) ? `<a href="${esc(httpUrl(p.url))}" target="_blank" rel="noopener">${esc(p.name)}</a>` : esc(p.name)}</b><small>${esc(p.note || "")}</small></div></li>`).join("")}</ul></details>` : "";
+
+  body.innerHTML = list.length
+    ? `<h3 class="dsub">지금 접수 중 · 곧 시작<small>출원 구간만, 120일 안</small></h3>${nowHtml}
+       <h3 class="dsub">향후 12개월</h3>
+       <div class="slegend"><span><i class="fixed"></i>확정(이번 주기에 공식 게시)</span><span><i class="regular"></i>정기(공식이 매년 같은 기간으로 기재)</span><span><i class="proj"></i>예상(올해 날짜를 내년으로 이음)</span><span><i class="approx"></i>대략(공식이 시기만 적음)</span></div>
+       <div class="sgrid"><div></div><div class="shead">${head}</div>${rows}</div>
+       <h3 class="dsub">자세히</h3>${cards}${pendHtml}`
+    : `<p class="dempty">보여 줄 일정이 없다.</p>`;
+}
+$("#studyFilter").addEventListener("click", e => {
+  const b = e.target.closest("button[data-sc]"); if (!b) return;
+  studyCountry = b.dataset.sc; renderStudy();
+});
+
 // ════════ 시작 ════════
 $("#fUnread").checked = ui.unread; $("#fStar").checked = ui.star; $("#fHl").checked = !!ui.hl; $("#q").value = "";
 if (location.hash === "#notices") showView("notices");
 if (location.hash === "#briefing") showView("briefing");
 if (location.hash === "#planner") showView("planner");
 if (location.hash === "#ready") showView("ready");
+if (location.hash === "#study") showView("study");
 loadWords();
 loadData().then(() => { renderAll(); watchRun(); dashLoadExtra(); }).catch(() => {
   $("#dNew").innerHTML = `<p class="dempty">아직 확인 결과가 없다.</p>`;
