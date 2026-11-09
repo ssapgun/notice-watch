@@ -2133,7 +2133,8 @@ function renderDash() {
       ${canList.length ? `<ul class="dlist">${canList.map(p => `<li style="grid-template-columns:1fr"><div class="what"><b>${p.url ? `<a href="${esc(httpUrl(p.url))}" target="_blank" rel="noopener">${esc(p.name)}</a>` : esc(p.name)}</b><small>${esc(p.cat)} · ${esc(p.next)}</small></div></li>`).join("")}</ul>` : ""}
       ${need.length && chips.length ? `<p class="dnote">미입력 ${need.length}개 때문에 '확인 필요'가 남아 있다.</p>` : ""}`
     : `<p class="dnote">지원 준비도 자료를 불러오지 못했다.</p>`);
-  renderGap(sp, R, chips.length > 0);
+  try { renderGap(sp, R, chips.length > 0); }   // 자료 형식이 깨져도 대시보드 나머지는 그려지게 한다
+  catch (err) { const g = $("#dGap"); if (g) g.innerHTML = `<p class="dnote bad">부족 역량을 계산하지 못했다: ${esc(err.message)}</p>`; }
 
   // 오늘 공부 (플래너). 계산이 실패해도 대시보드 나머지는 그려지게 한다
   let planHtml = `<p class="dempty">플래너를 불러오지 못했다.</p>`;
