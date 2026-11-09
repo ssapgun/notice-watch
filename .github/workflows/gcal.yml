@@ -1,13 +1,8 @@
 name: 구글 캘린더 동기화
 
 on:
-  schedule:
-    # 1시간마다 (정각은 붐벼 17분에 돈다)
-    - cron: "17 * * * *"
+  # 자동으로 돌지 않는다. 웹 '일정' 탭의 '구글 캘린더 동기화' 버튼(또는 Actions 의 Run workflow)을 눌렀을 때만 돈다
   workflow_dispatch: {}
-  push:
-    branches: [main]
-    paths: ["schedule.json"]   # 웹 '일정' 탭에서 고치면 바로 한 번 돈다
 
 permissions:
   contents: write
