@@ -11,7 +11,6 @@ from __future__ import annotations
 
 import json
 import threading
-import time
 import webbrowser
 from datetime import datetime, timedelta
 from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
