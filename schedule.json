@@ -396,6 +396,40 @@
    ],
    "origin": "site",
    "updated": "2026-11-07T15:29:22Z"
+  },
+  {
+   "id": "w2a0b3b58111",
+   "exam": "차세대 건설리더 아카데미 24기 공고 확인",
+   "category": "교육 프로그램",
+   "label": "",
+   "type": "행사",
+   "date": "2027-05-08",
+   "start": "",
+   "time": "",
+   "url": "https://ncla.co.kr/bbs/board.php?bo_table=notice",
+   "note": "2027년 모집 공고가 났는지 직접 확인할 것. 23기는 2026-05-08 발표, 05-22 마감이었다. 공고가 나면 config.yaml 의 일정 카드(24기)를 '접수 중'으로 고치고 마감일을 일정에 넣는다. 확인이 끝나면 다음 해 '공고 확인' 일정을 추가한다.",
+   "origin": "site",
+   "remind": [
+    "행사"
+   ],
+   "updated": "2026-11-09T03:14:16Z"
+  },
+  {
+   "id": "wf072c2e96de",
+   "exam": "차세대 건설리더 아카데미 25기 공고 확인",
+   "category": "교육 프로그램",
+   "label": "",
+   "type": "행사",
+   "date": "2028-05-08",
+   "start": "",
+   "time": "",
+   "url": "https://ncla.co.kr/bbs/board.php?bo_table=notice",
+   "note": "2028년 모집 공고가 났는지 직접 확인할 것. 23기는 2026-05-08 발표, 05-22 마감이었다. 공고가 나면 config.yaml 의 일정 카드(24기)를 '접수 중'으로 고치고 마감일을 일정에 넣는다. 확인이 끝나면 다음 해 '공고 확인' 일정을 추가한다.",
+   "origin": "site",
+   "remind": [
+    "행사"
+   ],
+   "updated": "2026-11-09T03:14:16Z"
   }
  ],
  "hidden_auto": []
