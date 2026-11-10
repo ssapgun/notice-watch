@@ -255,6 +255,31 @@ TRIGGER;VALUE=DATE-TIME:20261126T000000Z
 END:VALARM
 END:VEVENT
 BEGIN:VEVENT
+UID:w1e7823a41fc@notice-watch
+DTSTAMP:20260101T000000Z
+DTSTART;VALUE=DATE:20261201
+DTEND;VALUE=DATE:20261202
+SUMMARY:[행사] SK하이닉스 청년 Hy-Five 16기 공고 확인
+DESCRIPTION:DBL스퀘어에서 다음 기수 모집 공고가 났는지 
+ 직접 확인할 것. 날짜는 추정이다: 12기 입소가 2025년 2
+ 월\, 7기 접수가 6월\, 15기 접수가 2026년 5~6월(비공식)이
+ 라 겨울 기수 접수가 12~1월일 것으로 봤다. 공고가 없으
+ 면 이 일정을 한 달 뒤로 옮긴다. 건설 부문 모집 여부
+ 와 휴학생 지원 가능 여부도 함께 확인.\nhttps://sharing.skh
+ ynix.com
+URL:https://sharing.skhynix.com
+BEGIN:VALARM
+ACTION:DISPLAY
+DESCRIPTION:D-7 [행사] SK하이닉스 청년 Hy-Five 16기 공고 확인
+TRIGGER;VALUE=DATE-TIME:20261124T000000Z
+END:VALARM
+BEGIN:VALARM
+ACTION:DISPLAY
+DESCRIPTION:D-1 [행사] SK하이닉스 청년 Hy-Five 16기 공고 확인
+TRIGGER;VALUE=DATE-TIME:20261130T000000Z
+END:VALARM
+END:VEVENT
+BEGIN:VEVENT
 UID:3788eb92a329@notice-watch
 DTSTAMP:20260101T000000Z
 DTSTART;VALUE=DATE:20261203
