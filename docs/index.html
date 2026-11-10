@@ -518,6 +518,14 @@ body{background:var(--sheet);background-image:none;font:18px/1.65 "Noto Sans KR"
 .plist li.pdone span{text-decoration:line-through;color:var(--pencil)}
 .plist li.empty{padding:14px 2px;border:0;color:var(--ink-2)}
 .plist li.empty b{display:block}
+.ctbl{width:100%;border-collapse:collapse;font-size:15px;margin:2px 0 12px;table-layout:fixed}
+.ctbl th:nth-child(1){width:38%}.ctbl th:nth-child(2){width:18%}.ctbl th:nth-child(3){width:9%}.ctbl th:nth-child(5){width:9%}
+.ctbl th,.ctbl td{text-align:left;padding:5px 8px;border-top:1px solid var(--grid)}
+.ctbl th{color:var(--pencil);font-weight:500}
+.ctbl tr.old td{color:var(--pencil)}
+.cterm{font-size:15.5px;margin:12px 0 2px}
+.csum{font-size:15.5px;margin:6px 0 8px;line-height:1.6}
+.ctr{margin:6px 0 12px}.ctr>summary{cursor:pointer;font-size:15.5px}
 .pbox{margin:14px 0;border-top:1px solid var(--grid);padding-top:8px}
 .pbox>summary,.pcourse>summary{cursor:pointer}
 .pbox>summary{font-weight:600}
@@ -682,15 +690,14 @@ h3.dsub small{font-weight:400;color:var(--pencil);font-size:14px;margin-left:6px
     <button type="button" role="tab" id="tabCal" aria-selected="false">일정</button>
     <button type="button" role="tab" id="tabBriefing" aria-selected="false">브리핑</button>
     <button type="button" role="tab" id="tabPlanner" aria-selected="false">플래너</button>
-    <button type="button" role="tab" id="tabReady" aria-selected="false">지원 준비도</button>
+    <button type="button" role="tab" id="tabReady" aria-selected="false">내 스펙</button>
     <button type="button" role="tab" id="tabStudy" aria-selected="false">유학 일정</button>
-    <button type="button" role="tab" id="tabManage" aria-selected="false">감시 대상 관리</button>
     <button type="button" role="tab" id="tabSettings" aria-selected="false">연결 설정</button>
   </nav>
 
   <section id="viewDash" class="dash" aria-label="대시보드">
     <div class="dgrid">
-      <div class="dcard" id="cSpec"><h2><span>현재 스펙 · 지원 준비도</span><button class="go" type="button" data-go="ready">자세히</button></h2><div id="dSpec"></div><div id="dGap"></div>
+      <div class="dcard" id="cSpec"><h2><span>현재 스펙</span><button class="go" type="button" data-go="ready">자세히</button></h2><div id="dSpec"></div><div id="dGap"></div>
         <details class="pbox" id="dSpecBox"><summary>스펙 입력·수정</summary>
           <p class="dnote">이 브라우저에만 저장한다. 깃에는 올라가지 않는다. 내보내기 파일에는 스펙·일정 체크·키워드가 들어간다.</p>
           <div class="pform" id="dForm"></div>
@@ -803,8 +810,8 @@ h3.dsub small{font-weight:400;color:var(--pencil);font-size:14px;margin-left:6px
   </section>
 
   <section id="viewReady" class="manage ready" hidden>
-    <p class="pmeta">합격 확률이 아니다. 공고에 적힌 조건으로 지원 가능 여부를 가리고, 준비 항목과 후기 표본을 함께 보여 준다. 공고가 바뀌었을 수 있으니 지원 전에 원문을 확인할 것.</p>
-    <details class="pbox" id="rdSpecBox"><summary>내 스펙 (이 기기에만 저장, 올리지 않음)</summary>
+    <p class="pmeta">내 스펙과 수강 과목·성적은 이 기기의 브라우저에만 저장하고 GitHub 에 올리지 않는다. 다른 기기로 옮길 때는 대시보드의 '파일로 내보내기'를 쓴다.</p>
+    <details class="pbox" id="rdSpecBox" open><summary>기본 스펙</summary>
       <div class="pform" id="rdForm">
         <label>상태<select data-rd="status"><option value="">미입력</option><option>재학</option><option>휴학</option><option>졸업예정</option><option>졸업</option></select></label>
         <label>학년<input type="number" min="1" max="6" data-rd="grade"></label>
@@ -818,32 +825,34 @@ h3.dsub small{font-weight:400;color:var(--pencil);font-size:14px;margin-left:6px
         <label>미취업<select data-rd="jobless"><option value="">미입력</option><option value="yes">예</option><option value="no">아니오</option></select></label>
         <label>교환학생 파견 예정<select data-rd="exchange"><option value="">미입력</option><option value="yes">예</option><option value="no">아니오</option></select></label>
         <label>SNS 1년 이상 운영<select data-rd="sns"><option value="">미입력</option><option value="yes">예</option><option value="no">아니오</option></select></label>
+        <label>토익 점수<input type="number" min="0" max="990" step="5" data-rd="toeic"></label>
+        <label class="pwide">수상·활동 메모 (한 줄에 하나)<textarea data-rd="awards" rows="3" maxlength="2000"></textarea></label>
         <div class="pwide"><span>보유 역량·자격</span><div class="rdskills" id="rdSkills"></div></div>
       </div>
     </details>
-    <div class="calfilter rdcats" id="rdCats"></div>
-    <p class="pmeta" id="rdSummary"></p>
-    <div id="rdList"></div>
+    <details class="pbox" id="rdCourseBox" open><summary>수강 과목·성적</summary>
+      <div id="rdCourses"></div>
+      <div class="pform" id="cForm">
+        <label>학기<input id="cTerm" placeholder="예: 2025-1" maxlength="20"></label>
+        <label>과목명<input id="cName" maxlength="80"></label>
+        <label>이수구분<input id="cKind" placeholder="예: 전공필수" maxlength="20"></label>
+        <label>학점<input id="cCredit" type="number" min="0" max="30" value="3"></label>
+        <label>등급<select id="cGrade"><option>A+</option><option>A0</option><option>A-</option><option>B+</option><option>B0</option><option>B-</option><option>C+</option><option>C0</option><option>C-</option><option>D+</option><option>D0</option><option>D-</option><option>F</option><option>P</option><option value="편입">편입 인정 (등급 없음)</option></select></label>
+        <div class="pwide"><button class="btn" id="cAdd" type="button">과목 추가</button> <span class="pmeta" id="cMsg"></span></div>
+      </div>
+    </details>
+    <details class="pbox" id="rdProgBox"><summary>프로그램별 지원 조건 (참고)</summary>
+      <p class="pmeta">합격 확률이 아니다. 공고에 적힌 조건으로 지원 가능 여부를 가리고, 준비 항목과 후기 표본을 함께 보여 준다. 공고가 바뀌었을 수 있으니 지원 전에 원문을 확인할 것.</p>
+      <div class="calfilter rdcats" id="rdCats"></div>
+      <p class="pmeta" id="rdSummary"></p>
+      <div id="rdList"></div>
+    </details>
   </section>
 
   <section id="viewStudy" class="manage study" hidden>
     <p class="pmeta">독일·일본 대학원 입시와 장학의 출원 시기. 공식 페이지에 적힌 날짜만 넣었고, 근거와 확인일은 아래 카드에 있다. 지원하기 전에는 반드시 공식 페이지에서 다시 확인할 것.</p>
     <div class="calfilter" id="studyFilter"></div>
     <div id="studyBody"></div>
-  </section>
-
-  <section id="viewManage" class="manage" hidden>
-    <div id="manageLock" class="locked" hidden><b>연결 설정이 필요하다.</b> 보기는 되지만, 추가·수정·삭제는 '연결 설정' 탭에서 GitHub 토큰을 넣어야 저장된다.</div>
-    <div class="mbar">
-      <p>저장하면 GitHub 저장소의 config.yaml 이 바뀌고, 바로 확인이 한 번 돈다. 결과는 2~5분 뒤 '공지 보기'와 상태표에 나온다.</p>
-      <button class="btn primary" id="addBtn" type="button">새 대상 추가</button>
-    </div>
-    <div id="mlist"></div>
-    <div class="excl">
-      <h3 style="font-size:15px;margin:0 0 6px">제외한 곳 메모</h3>
-      <textarea id="exclText" aria-label="제외한 곳 메모"></textarea>
-      <div style="margin-top:6px"><button class="btn" id="exclSave" type="button">메모 저장</button> <span id="exclMsg" style="font-size:13px;color:var(--ink-2)"></span></div>
-    </div>
   </section>
 
   <section id="viewSettings" class="manage" hidden>
@@ -858,6 +867,21 @@ h3.dsub small{font-weight:400;color:var(--pencil);font-size:14px;margin-left:6px
       <button class="btn primary" id="setSave" type="button">저장하고 연결 확인</button>
       <button class="btn" id="setClear" type="button">이 기기에서 토큰 지우기</button>
       <span id="setMsg" class="ghstate"></span>
+    </div>
+  </section>
+
+  <section id="viewManage" class="manage" hidden style="margin-top:28px">
+    <h3 style="font-size:16px;margin:0 0 8px">감시 대상 관리</h3>
+    <div id="manageLock" class="locked" hidden><b>연결 설정이 필요하다.</b> 보기는 되지만, 추가·수정·삭제는 위 'GitHub 연결'에 토큰을 넣어야 저장된다.</div>
+    <div class="mbar">
+      <p>저장하면 GitHub 저장소의 config.yaml 이 바뀌고, 바로 확인이 한 번 돈다. 결과는 2~5분 뒤 '공지 보기'와 상태표에 나온다.</p>
+      <button class="btn primary" id="addBtn" type="button">새 대상 추가</button>
+    </div>
+    <div id="mlist"></div>
+    <div class="excl">
+      <h3 style="font-size:15px;margin:0 0 6px">제외한 곳 메모</h3>
+      <textarea id="exclText" aria-label="제외한 곳 메모"></textarea>
+      <div style="margin-top:6px"><button class="btn" id="exclSave" type="button">메모 저장</button> <span id="exclMsg" style="font-size:13px;color:var(--ink-2)"></span></div>
     </div>
   </section>
 </div>
@@ -1608,18 +1632,19 @@ async function renderBriefing() {
 
 // ════════ 화면 전환 ════════
 function showView(v) {
-  ["dash", "notices", "cal", "briefing", "planner", "ready", "study", "manage", "settings"].forEach(n => {
+  if (v === "manage") v = "settings";   // 감시 대상 관리는 연결 설정 화면 아래에 있다
+  $("#viewManage").hidden = v !== "settings";
+  ["dash", "notices", "cal", "briefing", "planner", "ready", "study", "settings"].forEach(n => {
     $("#tab" + n[0].toUpperCase() + n.slice(1)).setAttribute("aria-selected", v === n);
     $("#view" + n[0].toUpperCase() + n.slice(1)).hidden = v !== n;
   });
   if (v === "dash") renderDash();
-  if (v === "manage") renderManage();
   if (v === "cal") renderCal();
   if (v === "briefing") renderBriefing();
   if (v === "planner") loadPlanner();
   if (v === "ready") loadReady();
   if (v === "study") loadStudy();
-  if (v === "settings") { $("#repoInput").value = gh.repo; $("#branchInput").value = gh.branch; $("#tokenInput").value = gh.token ? "••••••••" : ""; }
+  if (v === "settings") { $("#repoInput").value = gh.repo; $("#branchInput").value = gh.branch; $("#tokenInput").value = gh.token ? "••••••••" : ""; renderManage(); }
 }
 $("#tabDash").addEventListener("click", () => showView("dash"));
 $("#tabNotices").addEventListener("click", () => showView("notices"));
@@ -1628,7 +1653,6 @@ $("#tabBriefing").addEventListener("click", () => showView("briefing"));
 $("#tabPlanner").addEventListener("click", () => showView("planner"));
 $("#tabReady").addEventListener("click", () => showView("ready"));
 $("#tabStudy").addEventListener("click", () => showView("study"));
-$("#tabManage").addEventListener("click", () => showView("manage"));
 $("#tabSettings").addEventListener("click", () => showView("settings"));
 
 // ════════ 연결 설정 ════════
@@ -1821,7 +1845,57 @@ async function rdFetch() {
   if (!r.ok) throw new Error(r.status);
   return {data: await r.json(), sha: null};
 }
+// ── 수강 과목·성적: 이 브라우저에만 저장한다(공개 저장소에 올리지 않는다). 평점은 편입 후 과목만, 재수강 전 성적은 뺀다
+const GP = {"A+": 4.3, "A0": 4.0, "A-": 3.7, "B+": 3.3, "B0": 3.0, "B-": 2.7, "C+": 2.3, "C0": 2.0, "C-": 1.7, "D+": 1.3, "D0": 1.0, "D-": 0.7, "F": 0};
+function cleanCourses(a) {   // 파일·저장값의 형식을 맞춘다
+  return (Array.isArray(a) ? a : []).filter(c => c && typeof c === "object" && typeof c.name === "string" && c.name.trim()).slice(0, 400).map(c => ({
+    term: String(c.term || "").slice(0, 20), name: c.name.trim().slice(0, 80), kind: String(c.kind || "").slice(0, 20),
+    credit: Math.max(0, Math.min(30, +c.credit || 0)), grade: GP[c.grade] !== undefined || c.grade === "P" ? c.grade : "", transfer: !!c.transfer}));
+}
+const rdCourses = () => cleanCourses(store.get("rdCourses", []));
+function courseStats(list) {
+  const own = list.filter(c => !c.transfer), last = {}, cnt = {};
+  own.forEach(c => { cnt[c.name] = (cnt[c.name] || 0) + 1; if (last[c.name] === undefined || c.term > last[c.name]) last[c.name] = c.term; });
+  const old = c => !c.transfer && cnt[c.name] > 1 && c.term !== last[c.name];   // 같은 과목을 다시 들었으면 마지막 학기 성적만 쓴다
+  let pts = 0, gcr = 0, n = 0, earned = 0;
+  own.forEach(c => {
+    if (old(c)) return;
+    if (GP[c.grade] !== undefined) { pts += GP[c.grade] * c.credit; gcr += c.credit; n++; }
+    if (c.grade && c.grade !== "F") earned += c.credit;
+  });
+  const tr = list.filter(c => c.transfer);
+  return {gpa: gcr ? pts / gcr : null, n, gcr, earned, old, dropped: own.filter(old).length, trN: tr.length, trCr: tr.reduce((a, c) => a + c.credit, 0)};
+}
+function renderCourses() {
+  const box = $("#rdCourses"); if (!box) return;
+  const list = rdCourses(), st = courseStats(list), sp = rdSpec();
+  if (!list.length) { box.innerHTML = `<p class="pmeta">입력한 과목이 없다. 아래에서 추가하거나 대시보드의 '파일에서 불러오기'로 넣는다.</p>`; return; }
+  const row = c => `<tr class="${st.old(c) ? "old" : ""}"><td>${esc(c.name)}</td><td>${esc(c.kind)}</td><td>${c.credit}</td><td>${c.transfer ? "수강 (편입 인정)" : esc(c.grade || "–") + (st.old(c) ? " · 재수강 전 (평점 제외)" : "")}</td><td><button class="linkbtn" type="button" data-cdel="${list.indexOf(c)}">삭제</button></td></tr>`;
+  const table = rows => `<table class="ctbl"><thead><tr><th>과목</th><th>이수구분</th><th>학점</th><th>등급</th><th></th></tr></thead><tbody>${rows.map(row).join("")}</tbody></table>`;
+  const terms = [...new Set(list.filter(c => !c.transfer).map(c => c.term))].sort();
+  const tr = list.filter(c => c.transfer);
+  const diff = st.gpa !== null && sp.gpa && Math.abs(+sp.gpa - st.gpa) >= 0.005;
+  box.innerHTML = `<p class="csum">${st.gpa !== null ? `편입 후 평점 <b>${st.gpa.toFixed(2)}</b> / 4.3 · 평점 반영 ${st.n}과목 ${st.gcr}학점${st.dropped ? ` · 재수강 전 성적 ${st.dropped}건 제외` : ""}` : "평점을 낼 성적이 없다"}
+      ${tr.length ? `<br>편입 전 인정 ${st.trN}과목 ${st.trCr}학점 (수강만 기록, 평점에 넣지 않음)` : ""}<br>취득 합계 ${st.earned + st.trCr}학점</p>
+    ${diff ? `<p class="pmeta">기본 스펙의 학점(${esc(sp.gpa)})과 계산한 평점이 다르다. 맞는 쪽으로 고칠 것.</p>` : ""}`
+    + terms.map(t => `<h4 class="cterm">${esc(t || "학기 미입력")}</h4>${table(list.filter(c => !c.transfer && c.term === t))}`).join("")
+    + (tr.length ? `<details class="ctr"><summary>편입 전 인정 과목 ${st.trN}개</summary>${table(tr)}</details>` : "");
+}
+$("#cAdd").addEventListener("click", () => {
+  const name = $("#cName").value.trim(), g = $("#cGrade").value;
+  if (!name) { $("#cMsg").textContent = "과목명을 적을 것."; return; }
+  const list = rdCourses();
+  list.push({term: $("#cTerm").value.trim(), name, kind: $("#cKind").value.trim(), credit: +$("#cCredit").value || 0, grade: g === "편입" ? "" : g, transfer: g === "편입"});
+  store.set("rdCourses", cleanCourses(list)); $("#cName").value = ""; $("#cMsg").textContent = "추가했다. 이 브라우저에만 있다."; renderCourses();
+});
+$("#rdCourses").addEventListener("click", e => {
+  const b = e.target.closest("[data-cdel]"); if (!b) return;
+  const list = rdCourses(), c = list[+b.dataset.cdel];
+  if (!c || !confirm(`'${c.name}' 과목을 지운다.`)) return;
+  list.splice(+b.dataset.cdel, 1); store.set("rdCourses", list); renderCourses();
+});
 async function loadReady() {
+  renderCourses();
   try { RD = (await rdFetch()).data; rdErr = ""; } catch (e) { rdErr = "불러오지 못했다: " + e.message; }
   renderReadyForm(); renderReady();
 }
@@ -1922,11 +1996,10 @@ function renderReady() {
   $("#rdSummary").textContent = counts.length ? `내 지원 기록: 합격 ${counts.filter(v => v === "합격").length} / 결과 나온 ${counts.length}건` : "";
 }
 $("#rdForm").addEventListener("change", () => {
-  const sp = {}, old = rdSpec();
-  DS_EXTRA.forEach(k => { if (old[k] !== undefined) sp[k] = old[k]; });
+  const sp = {};
   document.querySelectorAll("#rdForm [data-rd]").forEach(el => { if (el.value !== "") sp[el.dataset.rd] = el.value; });
   sp.skills = [...document.querySelectorAll("#rdSkills input:checked")].map(x => x.value);
-  store.set("rdSpec", sp); renderReady();
+  store.set("rdSpec", sp); renderReady(); renderCourses();
 });
 $("#viewReady").addEventListener("click", e => {
   const c = e.target.closest("[data-rc]");
@@ -2174,7 +2247,7 @@ function renderDash() {
       <p class="vlegend"><span>지원 가능 <b>${ok}</b></span><span>확인 필요 <b>${chk}</b></span><span>조건 미달 <b>${no}</b></span><span>전체 ${total}</span></p>
       ${canList.length ? `<ul class="dlist">${canList.map(p => `<li style="grid-template-columns:1fr"><div class="what"><b>${p.url ? `<a href="${esc(httpUrl(p.url))}" target="_blank" rel="noopener">${esc(p.name)}</a>` : esc(p.name)}</b><small>${esc(p.cat)} · ${esc(p.next)}</small></div></li>`).join("")}</ul>` : ""}
       ${need.length && chips.length ? `<p class="dnote">미입력 ${need.length}개 때문에 '확인 필요'가 남아 있다.</p>` : ""}`
-    : `<p class="dnote">지원 준비도 자료를 불러오지 못했다.</p>`);
+    : `<p class="dnote">지원 조건 자료를 불러오지 못했다.</p>`);
   try { renderGap(sp, R, chips.length > 0); }   // 자료 형식이 깨져도 대시보드 나머지는 그려지게 한다
   catch (err) { const g = $("#dGap"); if (g) g.innerHTML = `<p class="dnote bad">부족 역량을 계산하지 못했다: ${esc(err.message)}</p>`; }
 
@@ -2208,7 +2281,6 @@ function renderDash() {
 
 // ── 스펙 입력·백업: 기존 '지원 준비도' 탭과 같은 저장 키(rdSpec, rdResults)를 쓴다. 이 브라우저(localStorage)에만 저장한다.
 const DS_KEYS = ["status", "grade", "semesters", "gpa", "scale", "birth", "income", "volunteer", "constMajor", "jobless", "exchange", "sns", "toeic", "awards"];
-const DS_EXTRA = ["toeic", "awards"];   // 대시보드 양식에만 있는 칸. 지원 준비도 탭에서 저장해도 지워지지 않게 한다
 const dsYN = k => `<select data-ds="${k}"><option value="">미입력</option><option value="yes">예</option><option value="no">아니오</option></select>`;
 function dashSpecForm() {
   const box = $("#dForm"); if (!box) return;
@@ -2232,7 +2304,7 @@ $("#dForm").addEventListener("change", () => {
   store.set("rdSpec", sp); renderDash(); dsMsg("저장했다. 이 브라우저에만 있다.");
 });
 $("#dSpecOut").addEventListener("click", () => {
-  const blob = new Blob([JSON.stringify({rdSpec: rdSpec(), rdResults: rdResults(), applied: appliedMap(), dashKw: kwList()}, null, 1)], {type: "application/json"});
+  const blob = new Blob([JSON.stringify({rdSpec: rdSpec(), rdResults: rdResults(), rdCourses: rdCourses(), applied: appliedMap(), dashKw: kwList()}, null, 1)], {type: "application/json"});
   const a = document.createElement("a"); a.href = URL.createObjectURL(blob); a.download = "notice-watch-spec-" + iso(kstToday()) + ".json";
   document.body.appendChild(a); a.click(); a.remove(); setTimeout(() => URL.revokeObjectURL(a.href), 1000);
   dsMsg("파일로 내보냈다. 이 파일은 깃에 올리지 말 것.");
@@ -2249,6 +2321,7 @@ $("#dSpecIn").addEventListener("change", async e => {
     const res = {};
     if (j.rdResults && typeof j.rdResults === "object") Object.entries(j.rdResults).forEach(([k, v]) => { if (typeof v === "string") res[k] = v; });
     store.set("rdSpec", sp); store.set("rdResults", res);
+    if (j.rdCourses !== undefined) store.set("rdCourses", cleanCourses(j.rdCourses));
     if (j.applied && typeof j.applied === "object") {
       const m = {}, from = Array.isArray(j.applied) ? Object.fromEntries(j.applied.map(x => [x, "관심"])) : j.applied;
       Object.entries(from).forEach(([k, v]) => { if (ST.includes(v)) m[k] = v; });
