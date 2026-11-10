@@ -1899,7 +1899,7 @@ sources:
   group: 공모전·대외활동
   type: board
   enabled: true
-  note: SK하이닉스 뉴스룸의 '청년 Hy-Five' 태그 글 목록. 제목만 수집. 뉴스룸에는 모집 공고가 매번 올라오지 않는다(2026-11-10 기준 최신 글은 2025-02-19 12기 입소식). 실제 모집 공고는 DBL스퀘어(sharing.skhynix.com, 회원가입 필요)라 자동 확인할 수 없으니 일정 탭의 '공고 확인' 알림을 함께 쓴다. robots.txt 는 전체 허용.
+  note: SK하이닉스 뉴스룸의 '청년 Hy-Five' 태그 글 목록. 제목만 수집. 뉴스룸에는 모집 공고가 매번 올라오지 않는다(2026-11-10 기준 최신 글은 2025-02-19 12기 입소식). 실제 모집 공고는 DBL스퀘어(sharing.skhynix.com, 회원가입 필요)라 자동 확인할 수 없으니 일정 탭의 '공고 확인' 알림을 함께 쓴다. robots.txt 는 전체 허용. GitHub 서버에서는 403 으로 막혀(2026-11-10 확인) web_skip 에 넣었다. 내 PC에서 local_titles.py 를 돌리면 제목이 들어온다.
   list_url: https://news.skhynix.co.kr/tag/%EC%B2%AD%EB%85%84-hy-five/
   pages: 1
   row_selector: article.item
@@ -2078,6 +2078,7 @@ web_skip:
 - 대한토목학회 공지
 - 대한토목학회 대외기관 행사·교육
 - DAAD 한국사무소 소식 (독일 유학 장학)
+- SK하이닉스 뉴스룸 – 청년 Hy-Five
 manual_items:
 - source: 건설기술교육원 국가기간전략훈련 (BIM·스마트건설)
   title: '[26년 12월/건축BIM(서울)]교육생 선발 안내'
