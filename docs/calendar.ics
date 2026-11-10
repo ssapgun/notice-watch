@@ -193,6 +193,34 @@ TRIGGER;VALUE=DATE-TIME:20261123T000000Z
 END:VALARM
 END:VEVENT
 BEGIN:VEVENT
+UID:w16af6faf4a0@notice-watch
+DTSTAMP:20260101T000000Z
+DTSTART;VALUE=DATE:20261126
+DTEND;VALUE=DATE:20261127
+SUMMARY:[행사] 제4회 엔지니어링 비전 프로그램 (한국엔
+ 지니어링협회) 10:00
+DESCRIPTION:주제 'AI와 함께 설계하는 미래 - 스마트 엔지
+ 니어'. 10시~17시\, 한국기술센터 국제회의실(16F\, 서울 
+ 강남구 테헤란로 305). 대상: 재학생(대학·대학원생)\, 
+ 취업준비생\, 재직자 등. 온라인 사전 접수(포스터 QR)\, 
+ 문의 02-3019-3342. 엔지니어링 경진대회 BIM 부문 대상팀 
+ 발표 포함. 근거: 협회 포스터(2026-11-10 확인). 강사진·
+ 내용은 바뀔 수 있다고 적혀 있다.\nhttps://www.kenca.or.kr
+URL:https://www.kenca.or.kr
+BEGIN:VALARM
+ACTION:DISPLAY
+DESCRIPTION:D-7 [행사] 제4회 엔지니어링 비전 프로그램 (한
+ 국엔지니어링협회) 10:00
+TRIGGER;VALUE=DATE-TIME:20261119T000000Z
+END:VALARM
+BEGIN:VALARM
+ACTION:DISPLAY
+DESCRIPTION:D-1 [행사] 제4회 엔지니어링 비전 프로그램 (한
+ 국엔지니어링협회) 10:00
+TRIGGER;VALUE=DATE-TIME:20261125T000000Z
+END:VALARM
+END:VEVENT
+BEGIN:VEVENT
 UID:6eda3251c3be@notice-watch
 DTSTAMP:20260101T000000Z
 DTSTART;VALUE=DATE:20261127
