@@ -42,6 +42,7 @@ XLSX_PATH = BASE_DIR / "notices.xlsx"
 USER_AGENT = "PersonalNoticeCrawler/2.0 (personal use; low frequency)"
 # 2026-10-23 / 2026.10.23 / 2026. 10. 23. / 2026/10/23 / 2026年10月23日 모두 인식
 DATE_RE = re.compile(r"(20\d{2})\s*[.\-/年]\s*(\d{1,2})\s*[.\-/月]\s*(\d{1,2})")
+SHORT_DATE_RE = re.compile(r"(\d{2})[.\-/](\d{1,2})[.\-/](\d{1,2})")
 
 
 def now_str() -> str:
@@ -479,6 +480,10 @@ def parse_list(html: str, page_url: str, src: dict) -> list[dict]:
                 continue
         date_el = row.select_one(src["date_selector"]) if src.get("date_selector") else None
         date = norm_date(date_el.get_text(" ") if date_el else row.get_text(" "))
+        if not date and date_el:   # 날짜 칸이 '26.09.18' 처럼 두 자리 연도만 적는 게시판 (칸 전체가 날짜일 때만)
+            m2 = SHORT_DATE_RE.fullmatch(clean(date_el.get_text(" ")))
+            if m2:
+                date = norm_date(f"20{m2.group(1)}.{m2.group(2)}.{m2.group(3)}")
         href = a.get("href", "")
         t_el = a.select_one(src["title_text_selector"]) if src.get("title_text_selector") else a
         t_el = t_el or a

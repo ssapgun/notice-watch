@@ -1850,6 +1850,46 @@ sources:
   pages: 1
   row_selector: table.board-table tbody > tr
   title_selector: a
+- name: 대한건설협회 공지사항
+  group: 외부장학
+  type: board
+  enabled: true
+  note: 대한건설협회 공지·뉴스 > 공지사항 중 장학금·대학생·서포터즈·채용설명회만 (대부분은 회원사용 행정 공지라 거른다). 제목만 수집. robots.txt 는 /lay1/ 을 막지 않고, 이용약관에 자동 수집 금지 조항이 없다(2026-11-10 확인). 날짜 칸이 두 자리 연도(26.10.30)다.
+  list_url: https://www.cak.or.kr/lay1/bbs/S1T9C11/A/1/list.do?cpage={page}&rows=10
+  pages: 2
+  row_selector: table.table_cont > tbody > tr
+  title_selector: a.title
+  date_selector: td:nth-of-type(5)
+  link_regex: article_seq=(\d+)
+  link_template: https://www.cak.or.kr/lay1/bbs/S1T9C11/A/1/view.do?article_seq={0}
+  include:
+  - 장학
+  - 대학생
+  - 서포터즈
+  - 청년
+  - 채용설명회
+  - 공모전
+  - 인턴
+  - 현장체험
+  - 교육생
+- name: 네이버 부스트캠프
+  group: AI·코딩 교육
+  type: watch
+  enabled: true
+  note: 공지 게시판이 없어 첫 화면의 변경을 감지한다. 2026-11-10 기준 '2026년에는 웹·모바일, AI Tech 과정을 운영하지 않는다. 새로운 방향이 정리되면 안내한다'는 공지가 떠 있다. 이 문구가 바뀌면 알 수 있다. robots.txt 는 css·js·이미지 폴더만 막는다.
+  url: https://boostcamp.connect.or.kr/
+- name: 대한건설협회 채용설명회
+  group: 공모전·대외활동
+  type: board
+  enabled: true
+  note: 대한건설협회 채용·인재·교육 > 채용설명회 게시판(스마트건설 청년인재 채용설명회 등). 글이 적어 거르지 않는다. 제목만 수집. robots.txt·이용약관 확인은 '대한건설협회 공지사항'과 같다(2026-11-10).
+  list_url: https://www.cak.or.kr/lay1/bbs/S1T59C60/A/19/list.do?cpage={page}&rows=10
+  pages: 1
+  row_selector: table.table_cont > tbody > tr
+  title_selector: a.title
+  date_selector: td:nth-of-type(6)
+  link_regex: article_seq=(\d+)
+  link_template: https://www.cak.or.kr/lay1/bbs/S1T59C60/A/19/view.do?article_seq={0}
 topics:
 - name: 채용·취업
   groups:
