@@ -406,6 +406,11 @@ exams:
   status: 참고(지난 일정)
   url: https://www.asiae.co.kr/en/article/2025091816351871856
   note: 2025년 9월, 6년 만에 재개. 현대건설·GS건설 등 23개사 참여. 매년 열리는지는 확인 못 함. 졸업 학년 하반기 참고.
+- name: SK하이닉스 청년 Hy-Five (협력사 인턴)
+  category: 교육 프로그램
+  status: 미발표
+  url: https://sharing.skhynix.com
+  note: SK하이닉스가 협력사와 청년 구직자를 잇는 채용 지원 프로그램. 직무 교육 4주(대면 1주+온라인 3주) 뒤 협력사 인턴십 3개월, 우수 수료자는 정규직 전환 기회(뉴스룸 2025-02-19, 12기 기준). 7기는 만 34세 이하 청년 구직자 대상이었다(뉴스룸 2022-06-12). 신청은 DBL스퀘어에서 회원가입 후 확인. 15기 접수는 2026-05-31~06-12 로 알려져 있으나 링커리어 게시글 기준이라 공식 확인은 못 했다. 건설 부문도 뽑는다는 것은 직접 들은 정보이고 공식 글에서는 확인하지 못했다. 휴학생 지원 가능 여부(구직자 요건)도 공고에서 확인할 것. 다음 기수 공고는 DBL스퀘어에서 직접 확인.
 academic_calendar:
   sources:
   - 학교 공지 - 학사
@@ -1890,6 +1895,17 @@ sources:
   date_selector: td:nth-of-type(6)
   link_regex: article_seq=(\d+)
   link_template: https://www.cak.or.kr/lay1/bbs/S1T59C60/A/19/view.do?article_seq={0}
+- name: SK하이닉스 뉴스룸 – 청년 Hy-Five
+  group: 공모전·대외활동
+  type: board
+  enabled: true
+  note: SK하이닉스 뉴스룸의 '청년 Hy-Five' 태그 글 목록. 제목만 수집. 뉴스룸에는 모집 공고가 매번 올라오지 않는다(2026-11-10 기준 최신 글은 2025-02-19 12기 입소식). 실제 모집 공고는 DBL스퀘어(sharing.skhynix.com, 회원가입 필요)라 자동 확인할 수 없으니 일정 탭의 '공고 확인' 알림을 함께 쓴다. robots.txt 는 전체 허용.
+  list_url: https://news.skhynix.co.kr/tag/%EC%B2%AD%EB%85%84-hy-five/
+  pages: 1
+  row_selector: article.item
+  title_selector: a.item-link
+  title_text_selector: .title .text-inner
+  date_selector: .date
 topics:
 - name: 채용·취업
   groups:
@@ -2042,6 +2058,9 @@ links:
 - name: 링커리어 교육 (AI·BIM 부트캠프)
   url: https://linkareer.com/list/education
   note: 이용약관이 자동 접속을 금지해 자동 확인하지 않는다. 직접 열어서 볼 것
+- name: SK하이닉스 DBL스퀘어 (청년 Hy-Five 모집)
+  url: https://sharing.skhynix.com
+  note: 회원가입 후에만 모집 공고를 볼 수 있어 자동 확인하지 않는다. 청년 Hy-Five 신청 사이트
 excluded:
 - 'POSTECH: 건축·토목·구조 학과가 없음 (학과 목록 확인. 가장 가까운 곳이 친환경소재대학원·환경공학부)'
 - 연세대 건축공학과 -> 연세대 건설환경공학과로 교체 (지반 연구실은 건설환경공학과에 있음)
