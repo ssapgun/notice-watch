@@ -36,7 +36,7 @@ def calendar_payload(cfg: dict, events: list[dict]) -> dict:
 def write_calendar(store: crawler.Store, cfg: dict) -> None:
     """확인(크롤링) 없이 일정 부분만 다시 만든다. gcal_sync.py 가 쓴다."""
     events = calendar_events.all_events(store, cfg)
-    ICS.write_text(calendar_events.build_ics(events), encoding="utf-8", newline="")
+    ICS.write_text(calendar_events.build_ics(events, cfg=cfg), encoding="utf-8", newline="")
     if OUT.exists():
         d = json.loads(OUT.read_text(encoding="utf-8"))
         new = calendar_payload(cfg, events)
@@ -108,7 +108,7 @@ def main() -> int:
 
     # 일정: schedule.json(웹·구글 캘린더에서 고침) + 학사 공지에서 뽑은 기간 → 사이트·calendar.ics·텔레그램
     events = calendar_events.all_events(store, cfg)
-    ICS.write_text(calendar_events.build_ics(events), encoding="utf-8", newline="")
+    ICS.write_text(calendar_events.build_ics(events, cfg=cfg), encoding="utf-8", newline="")
     try:
         due = calendar_events.due_reminders(store, cfg, events)
         if due and notify.enabled():

@@ -1358,7 +1358,7 @@ function renderCal() {
   applyCalView();
   $("#calSync").textContent = (C.synced_at ? `일정 갱신 ${short(C.synced_at)}` : "") + (calNote ? " · " + calNote : "");
   $("#calCatList").innerHTML = cats.map(c => `<option value="${esc(c)}">`).join("");
-  $("#calSub").innerHTML = C.ics_url ? `<b>읽기 전용 구독 주소 (.ics)</b><br>구글 캘린더 양방향 동기화를 켰다면 이 구독은 넣지 않는다(같은 일정이 두 번 보인다). 다른 달력 앱에서 보기만 할 때 쓴다.
+  $("#calSub").innerHTML = C.ics_url ? `<b>읽기 전용 구독 주소 (.ics)</b><br>구글 캘린더 양방향 동기화를 켰다면 이 구독은 넣지 않는다(같은 일정이 두 번 보인다). 다른 달력 앱에서 보기만 할 때 쓴다. 일정마다 미리 알림(종류별 며칠 전, 오전 9시)이 들어 있지만, 울릴지는 달력 앱이 정한다(구독 달력의 알림을 끄는 앱도 있다).
     <code>${esc(C.ics_url)}</code><button class="btn" id="icsCopy" type="button">주소 복사</button>` : "";
 }
 const undatedClosed = new Set(store.get("undatedClosed", []));
@@ -1922,7 +1922,8 @@ function renderReady() {
   $("#rdSummary").textContent = counts.length ? `내 지원 기록: 합격 ${counts.filter(v => v === "합격").length} / 결과 나온 ${counts.length}건` : "";
 }
 $("#rdForm").addEventListener("change", () => {
-  const sp = {};
+  const sp = {}, old = rdSpec();
+  DS_EXTRA.forEach(k => { if (old[k] !== undefined) sp[k] = old[k]; });
   document.querySelectorAll("#rdForm [data-rd]").forEach(el => { if (el.value !== "") sp[el.dataset.rd] = el.value; });
   sp.skills = [...document.querySelectorAll("#rdSkills input:checked")].map(x => x.value);
   store.set("rdSpec", sp); renderReady();
@@ -2151,6 +2152,8 @@ function renderDash() {
   if (sp.semesters) chips.push(sp.semesters + "학기 등록");
   if (sp.gpa) chips.push(`학점 ${sp.gpa} / ${sp.scale || "4.5"}`);
   if (sp.volunteer) chips.push(`봉사 ${sp.volunteer}시간`);
+  if (sp.toeic) chips.push(`토익 ${sp.toeic}`);
+  const awards = String(sp.awards || "").split("\n").map(x => x.trim()).filter(Boolean);
   if ((sp.skills || []).length) chips.push(`역량·자격 ${sp.skills.length}개`);
   if (sp.birth) chips.push(`만 ${rdAge(sp.birth)}세`);
   const need = ["status", "grade", "semesters", "gpa", "birth", "volunteer"].filter(k => sp[k] === undefined || sp[k] === "");
@@ -2164,7 +2167,8 @@ function renderDash() {
     ok = res.filter(r => r.v === "yes").length; chk = res.filter(r => r.v === "check").length; no = res.filter(r => r.v === "no").length;
     canList = res.filter(r => r.v === "yes").slice(0, 5).map(r => r.p);
   }
-  $("#dSpec").innerHTML = (chips.length ? `<div class="spec">${chips.map(c => `<span>${esc(c)}</span>`).join("")}</div>` : `<p class="dnote bad">입력한 스펙이 없다. 아래 '스펙 입력·수정'을 펼쳐 입력하면 판정이 채워진다.</p>`)
+  $("#dSpec").innerHTML = (chips.length ? `<div class="spec">${chips.map(c => `<span>${esc(c)}</span>`).join("")}</div>`
+      + (awards.length ? `<p class="dnote">수상·활동: ${awards.map(esc).join(" · ")}</p>` : "") : `<p class="dnote bad">입력한 스펙이 없다. 아래 '스펙 입력·수정'을 펼쳐 입력하면 판정이 채워진다.</p>`)
     + (R ? `<div class="vbar" role="img" aria-label="지원 가능 ${ok}, 확인 필요 ${chk}, 조건 미달 ${no}">
         <i style="width:${ok / total * 100}%;background:var(--st-live)"></i><i style="width:${chk / total * 100}%;background:var(--amber)"></i><i style="width:${no / total * 100}%;background:var(--pencil)"></i></div>
       <p class="vlegend"><span>지원 가능 <b>${ok}</b></span><span>확인 필요 <b>${chk}</b></span><span>조건 미달 <b>${no}</b></span><span>전체 ${total}</span></p>
@@ -2203,7 +2207,8 @@ function renderDash() {
 }
 
 // ── 스펙 입력·백업: 기존 '지원 준비도' 탭과 같은 저장 키(rdSpec, rdResults)를 쓴다. 이 브라우저(localStorage)에만 저장한다.
-const DS_KEYS = ["status", "grade", "semesters", "gpa", "scale", "birth", "income", "volunteer", "constMajor", "jobless", "exchange", "sns"];
+const DS_KEYS = ["status", "grade", "semesters", "gpa", "scale", "birth", "income", "volunteer", "constMajor", "jobless", "exchange", "sns", "toeic", "awards"];
+const DS_EXTRA = ["toeic", "awards"];   // 대시보드 양식에만 있는 칸. 지원 준비도 탭에서 저장해도 지워지지 않게 한다
 const dsYN = k => `<select data-ds="${k}"><option value="">미입력</option><option value="yes">예</option><option value="no">아니오</option></select>`;
 function dashSpecForm() {
   const box = $("#dForm"); if (!box) return;
@@ -2213,8 +2218,9 @@ function dashSpecForm() {
     `<label>상태<select data-ds="status"><option value="">미입력</option>${["재학", "휴학", "졸업예정", "졸업"].map(v => `<option>${v}</option>`).join("")}</select></label>`
     + num("grade", "학년", 'min="1" max="6"') + num("semesters", "등록 학기 수", 'min="0"') + num("gpa", "학점", 'step="0.01" min="0" max="4.5"')
     + `<label>학점 척도<select data-ds="scale"><option>4.3</option><option>4.5</option></select></label>`
-    + `<label>생년월일<input type="date" data-ds="birth"></label>` + num("income", "학자금 지원구간", 'min="0" max="10"') + num("volunteer", "최근 1년 봉사시간", 'min="0"')
+    + `<label>생년월일<input type="date" data-ds="birth"></label>` + num("income", "학자금 지원구간", 'min="0" max="10"') + num("volunteer", "최근 1년 봉사시간", 'min="0"') + num("toeic", "토익 점수", 'min="0" max="990" step="5"')
     + `<label>건설 관련 학과${dsYN("constMajor")}</label><label>미취업${dsYN("jobless")}</label><label>교환학생 파견 예정${dsYN("exchange")}</label><label>SNS 1년 이상 운영${dsYN("sns")}</label>`
+    + `<label class="pwide">수상·활동 메모 (한 줄에 하나)<textarea data-ds="awards" rows="3" maxlength="2000"></textarea></label>`
     + (R && R.skills ? `<div class="pwide"><span>보유 역량·자격</span><div class="rdskills" id="dSkills">${R.skills.map(s => `<label><input type="checkbox" value="${esc(s.id)}" ${have.has(s.id) ? "checked" : ""}> ${esc(s.label)}</label>`).join("")}</div></div>` : "");
   box.querySelectorAll("[data-ds]").forEach(el => { el.value = sp[el.dataset.ds] !== undefined ? sp[el.dataset.ds] : (el.dataset.ds === "scale" ? "4.3" : ""); });
 }

@@ -12,7 +12,7 @@
 | `crawler.py` | 크롤링 엔진. 저장소(`Store`, SQLite), 게시판 파싱(`parse_list`; 첫 페이지에서 `row_selector` 가 행을 하나도 못 찾으면 `EmptyListError` 로 실패 처리해 상태·3회 연속 실패 알림에 남긴다. 행은 있는데 글이 필터로 0건이면 정상), 페이지 변경 감지(`crawl_watch`), 설정 편집(`upsert_source` 등), 미리보기(`test_source`), 구조 추정(`guess_board`) |
 | `summarize.py` | 공지 정리·번역. 상세 페이지 본문(`detail_selector`)을 뽑아 Claude API(`ANTHROPIC_API_KEY`)로 한국어 정리, 키가 없으면 발췌. 첨부파일은 읽지 않는다 |
 | `notify.py` | 텔레그램 알림. TELEGRAM_BOT_TOKEN·TELEGRAM_CHAT_ID 가 있을 때만 핵심 키워드 새 글과 3회 연속 실패 대상을 보낸다 |
-| `calendar_events.py` | 일정: schedule.json + 학사 공지 기간 추출 → data.json calendar, docs/calendar.ics, 텔레그램 미리 알림(meta 로 중복 방지). 날짜 없는 카드는 config exams |
+| `calendar_events.py` | 일정: schedule.json + 학사 공지 기간 추출 → data.json calendar, docs/calendar.ics(텔레그램과 같은 규칙의 알림 VALARM 포함, 09:00), 텔레그램 미리 알림(meta 로 중복 방지). 날짜 없는 카드는 config exams |
 | `briefing.py`, `briefing.yaml`, `.github/workflows/briefing.yml` | 아침 브리핑(매일 06:40): Open-Meteo 날씨·미세먼지(키 없음), briefing.yaml 의 RSS 밤사이 뉴스(제목·출처·링크만, robots.txt 확인·피드 사이 대기), 오늘·다가오는 일정(calendar_events), ANTHROPIC_API_KEY 있으면 헤드라인 기반 '밤사이 핵심'. → docs/data/briefing.json(사이트 '브리핑' 탭, #briefing), docs/data/briefing/날짜.json(14일), 텔레그램 요약. 설정은 config.yaml 과 분리 |
 | `gcal_sync.py`, `.github/workflows/gcal.yml` | 구글 캘린더 전용 캘린더와 schedule.json 양방향 동기화(자동 실행 없음. 웹 일정 탭의 동기화 버튼 또는 Run workflow 로만). 서비스 계정(GOOGLE_SERVICE_ACCOUNT·GOOGLE_CALENDAR_ID). 상태는 data/gcal_state.json |
 | `schedule.json` | 날짜가 정해진 일정 저장소. 웹 '일정' 탭이 GitHub API 로, 동기화 작업이 구글 쪽 변경으로 고친다. deleted:true 는 삭제 기록, hidden_auto 는 숨긴 자동 일정 |

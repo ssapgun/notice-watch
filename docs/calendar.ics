@@ -5,6 +5,8 @@ CALSCALE:GREGORIAN
 METHOD:PUBLISH
 X-WR-CALNAME:공지·입시 감시 일정
 X-WR-TIMEZONE:Asia/Seoul
+REFRESH-INTERVAL;VALUE=DURATION:PT6H
+X-PUBLISHED-TTL:PT6H
 BEGIN:VEVENT
 UID:66e348d06e07@notice-watch
 DTSTAMP:20260101T000000Z
@@ -18,6 +20,18 @@ DESCRIPTION:응시료 33\,000원. 회차 중 하나만 고르면 된다.
  o?menuNo=5800010&boardId=551746
 URL:https://oia.khu.ac.kr/oiak_kor/user/bbs/BMSR00040/view.do?menuNo=5800
  010&boardId=551746
+BEGIN:VALARM
+ACTION:DISPLAY
+DESCRIPTION:D-3 [접수 마감] 기관토플 (경희대 TOEFL ITP) 2회 (
+ 서울) 11:00
+TRIGGER;VALUE=DATE-TIME:20261023T000000Z
+END:VALARM
+BEGIN:VALARM
+ACTION:DISPLAY
+DESCRIPTION:오늘 [접수 마감] 기관토플 (경희대 TOEFL ITP) 2
+ 회 (서울) 11:00
+TRIGGER;VALUE=DATE-TIME:20261026T000000Z
+END:VALARM
 END:VEVENT
 BEGIN:VEVENT
 UID:52ab6587a177@notice-watch
@@ -45,6 +59,18 @@ DESCRIPTION:응시료 33\,000원. 회차 중 하나만 고르면 된다.
  o?menuNo=5800010&boardId=551746
 URL:https://oia.khu.ac.kr/oiak_kor/user/bbs/BMSR00040/view.do?menuNo=5800
  010&boardId=551746
+BEGIN:VALARM
+ACTION:DISPLAY
+DESCRIPTION:D-3 [접수 마감] 기관토플 (경희대 TOEFL ITP) 4회 (
+ 서울) 11:00
+TRIGGER;VALUE=DATE-TIME:20261106T000000Z
+END:VALARM
+BEGIN:VALARM
+ACTION:DISPLAY
+DESCRIPTION:오늘 [접수 마감] 기관토플 (경희대 TOEFL ITP) 4
+ 회 (서울) 11:00
+TRIGGER;VALUE=DATE-TIME:20261109T000000Z
+END:VALARM
 END:VEVENT
 BEGIN:VEVENT
 UID:4b4797120d50@notice-watch
@@ -56,6 +82,18 @@ DESCRIPTION:29세 이하 미취업 청년(졸업·졸업예정자). 재
  학 중이면 대상 아닐 수 있음.\nhttps://linkareer.com/activity/3
  59338
 URL:https://linkareer.com/activity/359338
+BEGIN:VALARM
+ACTION:DISPLAY
+DESCRIPTION:D-3 [접수 마감] SSAFY 17기 (삼성 청년 SW·AI 아카
+ 데미)
+TRIGGER;VALUE=DATE-TIME:20261106T000000Z
+END:VALARM
+BEGIN:VALARM
+ACTION:DISPLAY
+DESCRIPTION:오늘 [접수 마감] SSAFY 17기 (삼성 청년 SW·AI 아
+ 카데미)
+TRIGGER;VALUE=DATE-TIME:20261109T000000Z
+END:VALARM
 END:VEVENT
 BEGIN:VEVENT
 UID:0acce86d39a6@notice-watch
@@ -79,6 +117,18 @@ SUMMARY:[행사] 제8회 건축재료시공 Creative Work 경진대회 (
  한국건축시공학회) 온라인 제출·평가
 DESCRIPTION:https://kic.or.kr/conference/conference01_1.asp?AC=3
 URL:https://kic.or.kr/conference/conference01_1.asp?AC=3
+BEGIN:VALARM
+ACTION:DISPLAY
+DESCRIPTION:D-7 [행사] 제8회 건축재료시공 Creative Work 경진
+ 대회 (한국건축시공학회) 온라인 제출·평가
+TRIGGER;VALUE=DATE-TIME:20261106T000000Z
+END:VALARM
+BEGIN:VALARM
+ACTION:DISPLAY
+DESCRIPTION:D-1 [행사] 제8회 건축재료시공 Creative Work 경진
+ 대회 (한국건축시공학회) 온라인 제출·평가
+TRIGGER;VALUE=DATE-TIME:20261112T000000Z
+END:VALARM
 END:VEVENT
 BEGIN:VEVENT
 UID:0451939b2dec@notice-watch
@@ -90,6 +140,18 @@ SUMMARY:[접수 마감] 제21회 건설사업관리(CM) 표어 온라인
 DESCRIPTION:대상 제한 없음\, 20자 이내 1인 3개. 발표 11/30.\
  nhttps://www.cmak.or.kr/board/news_association/11552
 URL:https://www.cmak.or.kr/board/news_association/11552
+BEGIN:VALARM
+ACTION:DISPLAY
+DESCRIPTION:D-3 [접수 마감] 제21회 건설사업관리(CM) 표어 
+ 온라인 공모전
+TRIGGER;VALUE=DATE-TIME:20261110T000000Z
+END:VALARM
+BEGIN:VALARM
+ACTION:DISPLAY
+DESCRIPTION:오늘 [접수 마감] 제21회 건설사업관리(CM) 표어
+  온라인 공모전
+TRIGGER;VALUE=DATE-TIME:20261113T000000Z
+END:VALARM
 END:VEVENT
 BEGIN:VEVENT
 UID:76c7be5caa64@notice-watch
@@ -117,6 +179,18 @@ DESCRIPTION:응시료 33\,000원. 회차 중 하나만 고르면 된다.
  o?menuNo=5800010&boardId=551746
 URL:https://oia.khu.ac.kr/oiak_kor/user/bbs/BMSR00040/view.do?menuNo=5800
  010&boardId=551746
+BEGIN:VALARM
+ACTION:DISPLAY
+DESCRIPTION:D-3 [접수 마감] 기관토플 (경희대 TOEFL ITP) 6회 (
+ 서울) 11:00
+TRIGGER;VALUE=DATE-TIME:20261120T000000Z
+END:VALARM
+BEGIN:VALARM
+ACTION:DISPLAY
+DESCRIPTION:오늘 [접수 마감] 기관토플 (경희대 TOEFL ITP) 6
+ 회 (서울) 11:00
+TRIGGER;VALUE=DATE-TIME:20261123T000000Z
+END:VALARM
 END:VEVENT
 BEGIN:VEVENT
 UID:6eda3251c3be@notice-watch
@@ -141,6 +215,16 @@ DESCRIPTION:스마트건설 챌린지 입상 기술 전시\, 건설연
  창업 공모전 시상. 견학 추천.\nhttps://www.heraldk.com/article/
  2026061413000075036
 URL:https://www.heraldk.com/article/2026061413000075036
+BEGIN:VALARM
+ACTION:DISPLAY
+DESCRIPTION:D-7 [행사] 2026 스마트건설 EXPO (킨텍스)
+TRIGGER;VALUE=DATE-TIME:20261120T000000Z
+END:VALARM
+BEGIN:VALARM
+ACTION:DISPLAY
+DESCRIPTION:D-1 [행사] 2026 스마트건설 EXPO (킨텍스)
+TRIGGER;VALUE=DATE-TIME:20261126T000000Z
+END:VALARM
 END:VEVENT
 BEGIN:VEVENT
 UID:3788eb92a329@notice-watch
@@ -152,6 +236,18 @@ SUMMARY:[접수 마감] 건설산업교육원 스마트 건설산업 전
 DESCRIPTION:국비무료(건축·토목) 10주 300시간. 교육 2026.12.
  23~2027.2.26.\nhttps://educon.or.kr/edu/edu_1/schedule_6.php
 URL:https://educon.or.kr/edu/edu_1/schedule_6.php
+BEGIN:VALARM
+ACTION:DISPLAY
+DESCRIPTION:D-3 [접수 마감] 건설산업교육원 스마트 건설산
+ 업 전문인력 양성과정 42기
+TRIGGER;VALUE=DATE-TIME:20261130T000000Z
+END:VALARM
+BEGIN:VALARM
+ACTION:DISPLAY
+DESCRIPTION:오늘 [접수 마감] 건설산업교육원 스마트 건설
+ 산업 전문인력 양성과정 42기
+TRIGGER;VALUE=DATE-TIME:20261203T000000Z
+END:VALARM
 END:VEVENT
 BEGIN:VEVENT
 UID:3a5db0016e90@notice-watch
@@ -175,6 +271,16 @@ SUMMARY:[시험] JLPT N4 (2026 제2회)
 DESCRIPTION:접수 완료. 온라인 성적 발표는 2027년 1월 말 
  예정(정확한 날짜 미발표).\nhttps://www.jlpt.or.kr
 URL:https://www.jlpt.or.kr
+BEGIN:VALARM
+ACTION:DISPLAY
+DESCRIPTION:D-7 [시험] JLPT N4 (2026 제2회)
+TRIGGER;VALUE=DATE-TIME:20261129T000000Z
+END:VALARM
+BEGIN:VALARM
+ACTION:DISPLAY
+DESCRIPTION:D-1 [시험] JLPT N4 (2026 제2회)
+TRIGGER;VALUE=DATE-TIME:20261205T000000Z
+END:VALARM
 END:VEVENT
 BEGIN:VEVENT
 UID:faf6a98f2b44@notice-watch
@@ -199,6 +305,18 @@ SUMMARY:[행사] 콘크리트기술경연대회 2026 (한국콘크리트
 DESCRIPTION:견학·다음 해 참가 준비용.\nhttps://www.kci.or.kr/p
  ages_event/events02.vm
 URL:https://www.kci.or.kr/pages_event/events02.vm
+BEGIN:VALARM
+ACTION:DISPLAY
+DESCRIPTION:D-7 [행사] 콘크리트기술경연대회 2026 (한국콘
+ 크리트학회) 본선
+TRIGGER;VALUE=DATE-TIME:20261204T000000Z
+END:VALARM
+BEGIN:VALARM
+ACTION:DISPLAY
+DESCRIPTION:D-1 [행사] 콘크리트기술경연대회 2026 (한국콘
+ 크리트학회) 본선
+TRIGGER;VALUE=DATE-TIME:20261210T000000Z
+END:VALARM
 END:VEVENT
 BEGIN:VEVENT
 UID:86192c525115@notice-watch
@@ -213,6 +331,18 @@ DESCRIPTION:응시료 33\,000원. 회차 중 하나만 고르면 된다.
  o?menuNo=5800010&boardId=551746
 URL:https://oia.khu.ac.kr/oiak_kor/user/bbs/BMSR00040/view.do?menuNo=5800
  010&boardId=551746
+BEGIN:VALARM
+ACTION:DISPLAY
+DESCRIPTION:D-3 [접수 마감] 기관토플 (경희대 TOEFL ITP) 7회 (
+ 서울) 11:00
+TRIGGER;VALUE=DATE-TIME:20261211T000000Z
+END:VALARM
+BEGIN:VALARM
+ACTION:DISPLAY
+DESCRIPTION:오늘 [접수 마감] 기관토플 (경희대 TOEFL ITP) 7
+ 회 (서울) 11:00
+TRIGGER;VALUE=DATE-TIME:20261214T000000Z
+END:VALARM
 END:VEVENT
 BEGIN:VEVENT
 UID:df8f2188e0b2@notice-watch
@@ -227,6 +357,18 @@ DESCRIPTION:응시료 33\,000원. 회차 중 하나만 고르면 된다.
  o?menuNo=5800010&boardId=551746
 URL:https://oia.khu.ac.kr/oiak_kor/user/bbs/BMSR00040/view.do?menuNo=5800
  010&boardId=551746
+BEGIN:VALARM
+ACTION:DISPLAY
+DESCRIPTION:D-3 [접수 마감] 기관토플 (경희대 TOEFL ITP) 9회 (
+ 서울) 11:00
+TRIGGER;VALUE=DATE-TIME:20261211T000000Z
+END:VALARM
+BEGIN:VALARM
+ACTION:DISPLAY
+DESCRIPTION:오늘 [접수 마감] 기관토플 (경희대 TOEFL ITP) 9
+ 회 (서울) 11:00
+TRIGGER;VALUE=DATE-TIME:20261214T000000Z
+END:VALARM
 END:VEVENT
 BEGIN:VEVENT
 UID:f971d29358e1@notice-watch
@@ -240,6 +382,18 @@ DESCRIPTION:공지 본문에서 자동으로 뽑은 기간이다. 원문
  do?menuNo=200317&boardId=323511
 URL:https://www.khu.ac.kr/kor/user/bbs/BMSR00040/view.do?menuNo=200317&bo
  ardId=323511
+BEGIN:VALARM
+ACTION:DISPLAY
+DESCRIPTION:D-3 [공지 기간] 2026학년도 동계 계절학기 서울
+ 캠퍼스 대학영어 레벨테스트 안내
+TRIGGER;VALUE=DATE-TIME:20261218T000000Z
+END:VALARM
+BEGIN:VALARM
+ACTION:DISPLAY
+DESCRIPTION:오늘 [공지 기간] 2026학년도 동계 계절학기 서
+ 울캠퍼스 대학영어 레벨테스트 안내
+TRIGGER;VALUE=DATE-TIME:20261221T000000Z
+END:VALARM
 END:VEVENT
 BEGIN:VEVENT
 UID:893d20307ec8@notice-watch
@@ -253,6 +407,18 @@ DESCRIPTION:공지 본문에서 자동으로 뽑은 기간이다. 원문
  do?menuNo=200317&boardId=323541
 URL:https://www.khu.ac.kr/kor/user/bbs/BMSR00040/view.do?menuNo=200317&bo
  ardId=323541
+BEGIN:VALARM
+ACTION:DISPLAY
+DESCRIPTION:D-3 [공지 기간] 2026년 동계 계절학기 대학영어 
+ 진단평가 안내(2차_연장)
+TRIGGER;VALUE=DATE-TIME:20261218T000000Z
+END:VALARM
+BEGIN:VALARM
+ACTION:DISPLAY
+DESCRIPTION:오늘 [공지 기간] 2026년 동계 계절학기 대학영
+ 어 진단평가 안내(2차_연장)
+TRIGGER;VALUE=DATE-TIME:20261221T000000Z
+END:VALARM
 END:VEVENT
 BEGIN:VEVENT
 UID:59cc160c93d8@notice-watch
@@ -315,6 +481,16 @@ SUMMARY:[접수 마감] 정림학생건축상 2027 참가신청
 DESCRIPTION:참가신청 2026.10.26~2027.1.4. 과제 제출은 1/7~1/11.\
  nhttps://www.junglimaward.com/
 URL:https://www.junglimaward.com/
+BEGIN:VALARM
+ACTION:DISPLAY
+DESCRIPTION:D-3 [접수 마감] 정림학생건축상 2027 참가신청
+TRIGGER;VALUE=DATE-TIME:20270101T000000Z
+END:VALARM
+BEGIN:VALARM
+ACTION:DISPLAY
+DESCRIPTION:오늘 [접수 마감] 정림학생건축상 2027 참가신청
+TRIGGER;VALUE=DATE-TIME:20270104T000000Z
+END:VALARM
 END:VEVENT
 BEGIN:VEVENT
 UID:abc7f83c7bc7@notice-watch
@@ -325,6 +501,17 @@ SUMMARY:[접수 마감] 정림학생건축상 2027 과제 제출
 DESCRIPTION:이메일 제출\, 1/11 23:59:59 까지. 1차 발표 2/15\, 
  최종 공개심사 3/6.\nhttps://www.junglimaward.com/
 URL:https://www.junglimaward.com/
+BEGIN:VALARM
+ACTION:DISPLAY
+DESCRIPTION:D-3 [접수 마감] 정림학생건축상 2027 과제 제출
+TRIGGER;VALUE=DATE-TIME:20270108T000000Z
+END:VALARM
+BEGIN:VALARM
+ACTION:DISPLAY
+DESCRIPTION:오늘 [접수 마감] 정림학생건축상 2027 과제 제
+ 출
+TRIGGER;VALUE=DATE-TIME:20270111T000000Z
+END:VALARM
 END:VEVENT
 BEGIN:VEVENT
 UID:w2a0b3b58111@notice-watch
@@ -338,6 +525,18 @@ DESCRIPTION:2027년 모집 공고가 났는지 직접 확인할 것. 23
  을 일정에 넣는다. 확인이 끝나면 다음 해 '공고 확인' 
  일정을 추가한다.\nhttps://ncla.co.kr/bbs/board.php?bo_table=notice
 URL:https://ncla.co.kr/bbs/board.php?bo_table=notice
+BEGIN:VALARM
+ACTION:DISPLAY
+DESCRIPTION:D-7 [행사] 차세대 건설리더 아카데미 24기 공고
+  확인
+TRIGGER;VALUE=DATE-TIME:20270501T000000Z
+END:VALARM
+BEGIN:VALARM
+ACTION:DISPLAY
+DESCRIPTION:D-1 [행사] 차세대 건설리더 아카데미 24기 공고
+  확인
+TRIGGER;VALUE=DATE-TIME:20270507T000000Z
+END:VALARM
 END:VEVENT
 BEGIN:VEVENT
 UID:wf072c2e96de@notice-watch
@@ -351,5 +550,17 @@ DESCRIPTION:2028년 모집 공고가 났는지 직접 확인할 것. 23
  을 일정에 넣는다. 확인이 끝나면 다음 해 '공고 확인' 
  일정을 추가한다.\nhttps://ncla.co.kr/bbs/board.php?bo_table=notice
 URL:https://ncla.co.kr/bbs/board.php?bo_table=notice
+BEGIN:VALARM
+ACTION:DISPLAY
+DESCRIPTION:D-7 [행사] 차세대 건설리더 아카데미 25기 공고
+  확인
+TRIGGER;VALUE=DATE-TIME:20280501T000000Z
+END:VALARM
+BEGIN:VALARM
+ACTION:DISPLAY
+DESCRIPTION:D-1 [행사] 차세대 건설리더 아카데미 25기 공고
+  확인
+TRIGGER;VALUE=DATE-TIME:20280507T000000Z
+END:VALARM
 END:VEVENT
 END:VCALENDAR
