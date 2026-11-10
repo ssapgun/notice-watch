@@ -188,10 +188,14 @@ def _fold(line: str) -> str:
     return "\r\n ".join(parts)
 
 
-def build_ics(events: list[dict], name: str = "공지·입시 감시 일정") -> str:
+def build_ics(events: list[dict], name: str = "공지·입시 감시 일정", cfg: dict | None = None) -> str:
+    """구독용 달력. 텔레그램 미리 알림과 같은 규칙(종류별 며칠 전, 일정의 remind)으로 알림(VALARM)을 넣는다.
+    알림 시각은 그날 09:00(한국). 알림을 실제로 울릴지는 달력 앱이 정한다(구독 달력의 알림을 무시하는 앱도 있다)."""
+    days_map = {**DEFAULT_ALERT_DAYS, **((cfg or {}).get("calendar_alert_days") or {})}
     stamp = "20260101T000000Z"   # 내용이 같으면 파일도 같게 (매시간 동기화가 빈 커밋을 만들지 않게)
     lines = ["BEGIN:VCALENDAR", "VERSION:2.0", "PRODID:-//notice-watch//exam-calendar//KO",
-             "CALSCALE:GREGORIAN", "METHOD:PUBLISH", f"X-WR-CALNAME:{_esc(name)}", "X-WR-TIMEZONE:Asia/Seoul"]
+             "CALSCALE:GREGORIAN", "METHOD:PUBLISH", f"X-WR-CALNAME:{_esc(name)}", "X-WR-TIMEZONE:Asia/Seoul",
+             "REFRESH-INTERVAL;VALUE=DURATION:PT6H", "X-PUBLISHED-TTL:PT6H"]   # 공지 확인 주기(6시간)에 맞춰 다시 읽어 가라는 힌트
     for e in events:
         d = date.fromisoformat(e["date"])
         start = date.fromisoformat(e["start"]) if e.get("start") else d
@@ -202,6 +206,11 @@ def build_ics(events: list[dict], name: str = "공지·입시 감시 일정") ->
                   f"SUMMARY:{_esc(title)}", f"DESCRIPTION:{_esc(desc)}"]
         if e.get("url"):
             lines.append(f"URL:{e['url']}")
+        if e.get("remind") is None or e["type"] in (e["remind"] or []):
+            for n in days_map.get(e["type"], []):
+                when = d - timedelta(days=n)   # 09:00 KST = 00:00 UTC
+                lines += ["BEGIN:VALARM", "ACTION:DISPLAY", f"DESCRIPTION:{_esc(('오늘' if n == 0 else f'D-{n}') + ' ' + title)}",
+                          f"TRIGGER;VALUE=DATE-TIME:{when:%Y%m%d}T000000Z", "END:VALARM"]
         lines.append("END:VEVENT")
     lines.append("END:VCALENDAR")
     return "\r\n".join(_fold(l) for l in lines) + "\r\n"
