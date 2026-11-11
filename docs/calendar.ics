@@ -167,6 +167,33 @@ URL:https://oia.khu.ac.kr/oiak_kor/user/bbs/BMSR00040/view.do?menuNo=5800
  010&boardId=551746
 END:VEVENT
 BEGIN:VEVENT
+UID:waca03fd9cbf@notice-watch
+DTSTAMP:20260101T000000Z
+DTSTART;VALUE=DATE:20261120
+DTEND;VALUE=DATE:20261121
+SUMMARY:[행사] 2027-1학기 국가장학금 1차 신청 확인
+DESCRIPTION:한국장학재단 공지에서 2027-1학기 1차 신청 기
+ 간이 발표됐는지 확인할 것. 2026-11-11 기준 공식 날짜는 
+ 확인하지 못했다. 날짜는 작년 기준 추정이다: 2026-1학
+ 기 1차는 2025-11-20 09시 ~ 2025-12-26 18시였다(연세대 공지). 
+ 재학생은 원칙적으로 1차에 신청해야 하고\, 휴학생도 
+ 복학 예정이면 1차에 신청한다. 2027-1학기부터 소득구간
+ 이 가~마 5개로 바뀐다는 보도가 있으니 공고에서 확인.
+  기간이 나오면 '접수 마감' 일정으로 마감일을 넣는다.
+ \nhttps://www.kosaf.go.kr
+URL:https://www.kosaf.go.kr
+BEGIN:VALARM
+ACTION:DISPLAY
+DESCRIPTION:D-7 [행사] 2027-1학기 국가장학금 1차 신청 확인
+TRIGGER;VALUE=DATE-TIME:20261113T000000Z
+END:VALARM
+BEGIN:VALARM
+ACTION:DISPLAY
+DESCRIPTION:D-1 [행사] 2027-1학기 국가장학금 1차 신청 확인
+TRIGGER;VALUE=DATE-TIME:20261119T000000Z
+END:VALARM
+END:VEVENT
+BEGIN:VEVENT
 UID:b4fde42d3ff9@notice-watch
 DTSTAMP:20260101T000000Z
 DTSTART;VALUE=DATE:20261123
