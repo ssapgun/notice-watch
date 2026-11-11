@@ -993,6 +993,28 @@ function topicHits(it) {
 }
 const shown = it => !hiddenTopics.size || !topicHits(it).some(n => hiddenTopics.has(n));
 const saveSets = () => { store.set("read", [...readSet].slice(-5000)); store.set("star", [...starSet]); };
+// 별표: 같은 게시판의 재공지는 최신 글 하나로 합쳐지고 옛 글의 id 는 reposts 에 남는다. 옛 글에 단 별표도 합쳐진 글에서 보이게 한다
+const isStar = it => starSet.has(it.id) || (it.reposts || []).some(r => starSet.has(r.id));
+// 별표 단 글의 사본(제목·주소 등). 오래돼 목록에서 내려가도 '별표만 보기'에서 볼 수 있게 이 브라우저에 남긴다
+const starCache = () => { const v = store.get("starCache", {}); return v && typeof v === "object" && !Array.isArray(v) ? v : {}; };
+function syncStarCache() {
+  const c = starCache(), ids = new Set();
+  DATA.items.forEach(it => { ids.add(it.id); (it.reposts || []).forEach(r => ids.add(r.id)); });
+  let ch = false;
+  DATA.items.forEach(it => {
+    const own = starSet.has(it.id) ? it.id : ((it.reposts || []).find(r => starSet.has(r.id)) || {}).id;
+    if (own === undefined) return;
+    const snap = {id: own, grp: it.grp, source: it.source, date: it.date || "", title: it.title, url: it.url};
+    if (JSON.stringify(c[own]) !== JSON.stringify(snap)) { c[own] = snap; ch = true; }
+  });
+  [...Object.keys(c)].forEach(k => { if (!starSet.has(+k)) { delete c[k]; ch = true; } });   // 별표를 뗀 글의 사본은 지운다
+  if (ch) store.set("starCache", c);
+}
+const goneStars = () => {   // 별표는 남아 있는데 목록에서 내려간 글
+  const have = new Set(); DATA.items.forEach(it => { have.add(it.id); (it.reposts || []).forEach(r => have.add(r.id)); });
+  return Object.values(starCache()).filter(c => c && typeof c.title === "string" && starSet.has(c.id) && !have.has(c.id))
+    .map(c => ({id: c.id, grp: String(c.grp || ""), source: String(c.source || ""), date: String(c.date || ""), title: c.title, url: String(c.url || ""), summary: [], change: "", kind: "board", is_read: 1, _gone: true}));
+};
 let DATA = null;
 
 // ════════ GitHub 연결 ════════
@@ -1043,6 +1065,7 @@ async function loadData() {
   const r = await fetch("data/data.json?t=" + Date.now(), {cache: "no-store"});
   if (!r.ok) throw new Error("data.json 없음");
   DATA = await r.json();
+  try { syncStarCache(); } catch (e) {}   // 사본 갱신이 실패해도 화면은 계속
   if (typeof SERVER_EV !== "undefined") SERVER_EV = new Set(((DATA.calendar || {}).events || []).map(e => e.id));
 }
 const isUnread = it => !it.is_read && !readSet.has(it.id);
@@ -1234,9 +1257,9 @@ function revMark(on) {
 }
 function renderItems() {
   const q = ui.q.toLowerCase();
-  let items = DATA.items.filter(it => shown(it) && (!ui.group || it.grp === ui.group) && (!ui.sub || subOfItem(it) === ui.sub)
+  let items = (ui.star ? [...DATA.items, ...goneStars()] : DATA.items).filter(it => (it._gone || shown(it)) && (!ui.group || it.grp === ui.group) && (!ui.sub || subOfItem(it) === ui.sub)
     && (!q || (it.title + it.source + (it.change || "") + (it.title_ko || "") + (it.summary || []).join(" ")).toLowerCase().includes(q))
-    && (!ui.unread || isUnread(it)) && (!ui.star || starSet.has(it.id)) && (!ui.hl || hlHits(it, DATA.highlight).length));
+    && (!ui.unread || isUnread(it)) && (!ui.star || isStar(it)) && (!ui.hl || hlHits(it, DATA.highlight).length));
   items = [...items.filter(isUnread), ...items.filter(it => !isUnread(it))];
   items = paginate(items, JSON.stringify([ui.group, ui.sub, ui.q, ui.unread, ui.star, ui.hl, [...hiddenTopics]]));
   if (!items.length) {
@@ -1252,7 +1275,7 @@ function renderItems() {
         ${titleHtml(it)}${repostHtml(it)}
         ${sumBlock(it, false)}
       </div>
-      <button class="star" type="button" aria-pressed="${starSet.has(it.id)}" aria-label="별표">${starSet.has(it.id) ? "★" : "☆"}</button>
+      <button class="star" type="button" aria-pressed="${isStar(it)}" aria-label="별표">${isStar(it) ? "★" : "☆"}</button>
     </li>`).join("");
 }
 function renderAll() { renderSummary(); renderItems(); if (typeof renderDash === "function") renderDash(); if (typeof renderStudy === "function" && STUDY) renderStudy(); }
@@ -1332,7 +1355,10 @@ $("#list").addEventListener("click", e => {
   const row = e.target.closest(".row"); if (!row) return;
   const id = +row.dataset.id;
   const star = e.target.closest(".star");
-  if (star) { starSet.has(id) ? starSet.delete(id) : starSet.add(id); saveSets(); star.setAttribute("aria-pressed", starSet.has(id)); star.textContent = starSet.has(id) ? "★" : "☆"; return; }
+  if (star) {
+    const it = DATA.items.find(x => x.id === id) || goneStars().find(x => x.id === id) || {id};
+    if (isStar(it)) { starSet.delete(id); (it.reposts || []).forEach(r => starSet.delete(r.id)); } else starSet.add(id);
+    saveSets(); syncStarCache(); star.setAttribute("aria-pressed", isStar(it)); star.textContent = isStar(it) ? "★" : "☆"; if (ui.star) renderItems(); return; }
   if (e.target.closest(".ttl, summary, .sum .link a") && row.classList.contains("unread")) {
     readSet.add(id); saveSets(); row.classList.remove("unread"); row.querySelector(".rev").outerHTML = revMark(false); renderSummary();
   }
