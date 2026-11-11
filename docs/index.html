@@ -668,7 +668,7 @@ h3.dsub small{font-weight:400;color:var(--pencil);font-size:14px;margin-left:6px
   <header class="head">
     <div class="title">
       <h1>공지 모아보기</h1>
-      <p>학교 공지와 국내외 대학원 입시 페이지를 한곳에서 확인한다. 빨간 삼각형은 아직 열어보지 않은 항목이다.</p>
+      <p>학교 공지와 국내외 대학원 입시 페이지를 한곳에서 확인한다. 빨간 삼각형은 아직 보지 않은 항목이다. 공지 목록에서 제목이 1.5초 이상 화면에 보이면 읽음으로 바뀐다.</p>
     </div>
     <div class="block" aria-live="polite">
       <div class="cell"><small>새 항목</small><b id="newCount">–</b></div>
@@ -1277,6 +1277,30 @@ function renderItems() {
       </div>
       <button class="star" type="button" aria-pressed="${isStar(it)}" aria-label="별표">${isStar(it) ? "★" : "☆"}</button>
     </li>`).join("");
+  observeSeen();
+}
+// 제목이 화면에 1.5초 이상 보이면 읽음으로 바꾼다 (공지를 열지 않아도). 스크롤로 스쳐 지나간 제목은 세지 않는다
+let seenObs = null, seenTimers = new Map(), seenSum = null;
+function observeSeen() {
+  if (seenObs) seenObs.disconnect();
+  seenTimers.forEach(t => clearTimeout(t)); seenTimers.clear();
+  if (typeof IntersectionObserver === "undefined") return;
+  seenObs = new IntersectionObserver(entries => entries.forEach(en => {
+    const li = en.target;
+    if (en.isIntersecting && !document.hidden && !$("#viewNotices").hidden) {
+      if (seenTimers.has(li)) return;
+      seenTimers.set(li, setTimeout(() => {
+        seenTimers.delete(li);
+        if (document.hidden || $("#viewNotices").hidden) return;   // 그사이 다른 탭으로 갔으면 세지 않는다 (다시 보이면 다시 센다)
+        seenObs.unobserve(li);
+        const id = +li.dataset.id; if (readSet.has(id)) return;
+        readSet.add(id); saveSets();
+        li.classList.remove("unread"); const r = li.querySelector(".rev"); if (r) r.outerHTML = revMark(false);
+        clearTimeout(seenSum); seenSum = setTimeout(renderSummary, 400);   // 왼쪽 분류의 안 읽음 수를 한 번에 갱신
+      }, 1500));
+    } else { clearTimeout(seenTimers.get(li)); seenTimers.delete(li); }
+  }), {threshold: 0.6});
+  document.querySelectorAll("#list li.row.unread").forEach(li => seenObs.observe(li));
 }
 function renderAll() { renderSummary(); renderItems(); if (typeof renderDash === "function") renderDash(); if (typeof renderStudy === "function" && STUDY) renderStudy(); }
 $("#pager").addEventListener("click", e => {
