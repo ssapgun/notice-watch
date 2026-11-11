@@ -981,9 +981,10 @@ const store = {
   del(k) { try { localStorage.removeItem(k); } catch (e) {} },
 };
 const ui = Object.assign({group: "", sub: "", q: "", unread: false, star: false, hl: false}, store.get("ui", {}));
-const readSet = new Set(store.get("read", []));
-const starSet = new Set(store.get("star", []));
-const hiddenTopics = new Set(store.get("hiddenTopics", []));
+const setOf = k => { const v = store.get(k, []); return new Set(Array.isArray(v) ? v : []); };   // 저장값이 깨져도(배열이 아니어도) 화면 전체가 멈추지 않게
+const readSet = setOf("read");
+const starSet = setOf("star");
+const hiddenTopics = setOf("hiddenTopics");
 // 주제(채용·상담 등): crawler.topic_hits 와 같은 규칙
 function topicHits(it) {
   const t = (it.title + " " + (it.title_ko || "")).toLowerCase();
@@ -1302,7 +1303,7 @@ $("#checkBtn").addEventListener("click", async () => {
 });
 
 // ════════ 공지 보기 이벤트 ════════
-const foldClosed = new Set(store.get("foldClosed", []));
+const foldClosed = setOf("foldClosed");
 function pickGroup(e) {
   const b = e.target.closest("button"); if (!b) return;
   if (b.dataset.fold !== undefined) {
@@ -1385,7 +1386,7 @@ function renderCal() {
   $("#calSub").innerHTML = C.ics_url ? `<b>읽기 전용 구독 주소 (.ics)</b><br>구글 캘린더 양방향 동기화를 켰다면 이 구독은 넣지 않는다(같은 일정이 두 번 보인다). 다른 달력 앱에서 보기만 할 때 쓴다. 일정마다 미리 알림(종류별 며칠 전, 오전 9시)이 들어 있지만, 울릴지는 달력 앱이 정한다(구독 달력의 알림을 끄는 앱도 있다).
     <code>${esc(C.ics_url)}</code><button class="btn" id="icsCopy" type="button">주소 복사</button>` : "";
 }
-const undatedClosed = new Set(store.get("undatedClosed", []));
+const undatedClosed = setOf("undatedClosed");
 document.addEventListener("toggle", e => {
   const d = e.target; if (!d.classList || !d.classList.contains("ufold")) return;
   d.open ? undatedClosed.delete(d.dataset.uc) : undatedClosed.add(d.dataset.uc);
