@@ -2,7 +2,9 @@ name: 아침 브리핑
 
 on:
   schedule:
-    # 한국 시간 매일 6시 40분 (UTC 21:40). 6시 7분 공지 확인이 끝난 뒤에 돈다
+    # GitHub 예약 실행은 몇 시간씩 밀리거나 빠진다(2026-11 기록: 6:40 예약이 9:54~12:48 에 돎).
+    # 그래서 한국 시간 3:10·4:10·5:10·6:10·6:40 에 여러 번 걸어 두고, 5시 이후 처음 돈 실행만 만들어 보낸다 (briefing.py --scheduled)
+    - cron: "10 18,19,20,21 * * *"
     - cron: "40 21 * * *"
   workflow_dispatch: {}   # Actions 탭에서 손으로 한 번 돌려 볼 때
   push:
@@ -39,8 +41,8 @@ jobs:
       - run: pip install -r requirements.txt
 
       - name: 브리핑 만들기
-        # push 로 돈 경우(설정 수정)는 텔레그램을 다시 보내지 않는다
-        run: python briefing.py ${{ github.event_name == 'push' && '--no-telegram' || '' }}
+        # push(설정 수정)는 텔레그램을 보내지 않는다. 예약은 하루 한 번만 보낸다. 손으로 돌리면(Run workflow) 시험으로 항상 보낸다
+        run: python briefing.py ${{ github.event_name == 'push' && '--no-telegram' || github.event_name == 'schedule' && '--scheduled' || '' }}
 
       - name: 결과 저장
         run: |
