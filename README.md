@@ -27,6 +27,16 @@ python app.py
   - Windows: `setx ANTHROPIC_API_KEY "sk-ant-..."` 실행 후 터미널을 새로 열고 `python app.py`. 키 발급과 비용은 WEB_SETUP.md 7번.
 - 제목을 누르면 원문이 새 탭으로 열리고 읽음 처리된다. ☆로 별표, 왼쪽 아래에서 엑셀로 내보내기.
 
+## 막힌 사이트 제목 자동 올리기 (웹 버전, 개인 노트북)
+GitHub 서버에서 접속이 막히는 대상(`config.yaml` 의 `web_skip`: 건설기술교육원, 대한토목학회 2곳, DAAD, SK하이닉스 뉴스룸)은 내 노트북에서 읽어 제목만 올린다.
+- 한 번 실행: `local_sync.bat` 더블클릭. 최신본을 받고 → `local_titles.py` 로 제목을 읽고 → 바뀐 것이 있을 때만 `config.yaml` 을 커밋·푸시한다. 기록은 `local_sync.log`.
+- 자동 실행 등록 (매일 08:30·20:30, 꺼져 있어 놓친 실행은 켜질 때 한 번): 이 폴더에서 PowerShell 을 열고
+  `powershell -ExecutionPolicy Bypass -File .\local_sync_register.ps1`
+- 해제: `Unregister-ScheduledTask -TaskName notice-watch-local-titles -Confirm:$false`
+- 조건: 이 폴더가 GitHub 저장소를 `git clone` 한 것이고, main 브랜치이고, 이 PC에서 `git push` 가 되어야 한다(처음 한 번 로그인).
+- **집의 개인 노트북에서만 등록할 것.** 부트캠프 노트북이나 기관 와이파이에서는 그 기관의 IP로 접속하게 된다.
+- `config.yaml` 에 커밋하지 않은 수정이 있으면 건너뛴다(덮어쓰지 않게). 푸시하면 공지 확인이 한 번 돌아 몇 분 뒤 사이트에 나온다.
+
 ## 폴더 구성
 ```
 app.py            웹 대시보드 서버
