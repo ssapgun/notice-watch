@@ -303,6 +303,13 @@ dialog::backdrop{background:rgba(14,34,54,.45)}
 @media (prefers-reduced-motion:reduce){*{transition:none!important}}
 
 .webnote{font-size:14.5px;color:var(--pencil);margin-top:2px}
+.kwadd{margin:4px 0 18px;padding:12px 0;border-top:1px solid var(--grid);border-bottom:1px solid var(--grid)}
+.kwadd h3{font-size:15px;margin:0 0 4px}
+.kwrow{display:flex;flex-wrap:wrap;gap:8px 12px;align-items:flex-end;margin-top:8px}
+.kwrow label{display:grid;gap:4px;font-size:14.5px}
+.kwrow input{font:inherit;font-size:16px;padding:6px 9px;border:1px solid var(--ink-2);background:var(--paper);color:var(--ink);min-width:0}
+.kwmsg{font-size:14.5px;margin:6px 0 0;color:var(--ink-2)}
+.kwmsg.bad{color:var(--markup)}
 .ghstate{font-size:15px;color:var(--ink-2)}
 .ghstate.ok{color:var(--ink)}
 .locked{padding:14px 16px;border:1px dashed var(--pencil);margin-bottom:14px;font-size:16px;color:var(--ink-2)}
@@ -876,6 +883,16 @@ h3.dsub small{font-weight:400;color:var(--pencil);font-size:14px;margin-left:6px
     <div class="mbar">
       <p>저장하면 GitHub 저장소의 config.yaml 이 바뀌고, 바로 확인이 한 번 돈다. 결과는 2~5분 뒤 '공지 보기'와 상태표에 나온다.</p>
       <button class="btn primary" id="addBtn" type="button">새 대상 추가</button>
+    </div>
+    <div class="kwadd">
+      <h3>키워드로 추가</h3>
+      <p class="webnote">주소 없이 키워드만 넣으면 콘테스트코리아에서 그 키워드로 검색한 결과를 감시한다. 제목에 키워드가 든 글만 보이고(본문에만 있는 글은 뺀다), 접수중·마감임박·접수예정인 것만 모은다(끝난 공모전은 뺀다). 첫 페이지 제목만 읽는다. 제외어(조경·정원·건축디자인·사진·초등 등)는 기존 콘테스트코리아 대상과 같다. '구조', '공모전'처럼 넓은 단어보다 '구조설계', '스마트건설', '해외봉사', '해커톤'처럼 구체적인 단어가 좋다.</p>
+      <div class="kwrow">
+        <label>키워드<input id="kwSrcWord" maxlength="30" placeholder="예: 스마트건설" autocomplete="off"></label>
+        <label>분류<input id="kwSrcGroup" list="groupList" value="공모전·대외활동"></label>
+        <button class="btn" id="kwSrcAdd" type="button">키워드로 추가</button>
+      </div>
+      <p class="kwmsg" id="kwSrcMsg" role="status"></p>
     </div>
     <div id="mlist"></div>
     <div class="excl">
@@ -1811,6 +1828,47 @@ function openEditor(src) {
   setMsg(ghReady() ? "" : "연결 설정 전에는 저장되지 않는다.", !ghReady()); syncType(); $("#editDlg").showModal();
 }
 $("#addBtn").addEventListener("click", () => openEditor(null));
+
+// ── 키워드로 추가: 콘테스트코리아 검색 결과를 감시 대상으로 만든다 (모음 사이트라 첫 페이지만, 제목에 키워드가 있는 글만)
+const KW_BASE = "콘테스트코리아 공모전 (아이디어·건축·창업)";   // 선택자·제외어를 가져올 기존 대상
+const kwSrcName = w => `콘테스트코리아 검색 – ${w}`;
+function kwSource(word, group) {
+  const base = DATA.sources.find(s => s.name === KW_BASE) || {};
+  const src = {
+    name: kwSrcName(word), group, type: "board", enabled: true,
+    note: `키워드로 추가(${new Date().toISOString().slice(0, 10)}): 콘테스트코리아에서 '${word}' 로 검색한 결과 중 제목에 '${word}' 가 들고 접수중·마감임박·접수예정인 것만. 첫 페이지 제목만 읽는다. 선택자·제외어는 '${KW_BASE}' 와 같다.`,
+    list_url: `https://www.contestkorea.com/sub/list.php?Txt_key=all&Txt_word=${encodeURIComponent(word)}&page={page}`,
+    pages: 1,
+    row_selector: base.row_selector || "div.list_style_2 > ul > li",
+    title_selector: base.title_selector || "div.title a",
+    title_text_selector: base.title_text_selector || "span.txt",
+    category_selector: ".d-day .condition",   // 검색 결과에는 끝난 공모전도 나온다. 지금 지원할 수 있는 것만 모은다
+    categories: ["접수중", "마감임박", "접수예정"],
+    include: [word],
+    exclude: [...(base.exclude || ["어린이", "초등", "사진공모전", "정원", "조경", "건축디자인"])],
+  };
+  return Object.fromEntries(ORDER.filter(k => k in src).map(k => [k, src[k]]));
+}
+const kwMsg = (t, bad) => { const m = $("#kwSrcMsg"); m.textContent = t; m.classList.toggle("bad", !!bad); };
+$("#kwSrcAdd").addEventListener("click", async () => {
+  const word = $("#kwSrcWord").value.replace(/\s+/g, " ").trim(), group = $("#kwSrcGroup").value.trim();
+  if (word.length < 2) return kwMsg("키워드를 두 글자 이상 넣을 것.", true);
+  if (!/^[0-9A-Za-z가-힣·\- ]+$/.test(word)) return kwMsg("키워드에는 한글·영문·숫자·공백·가운뎃점(·)·하이픈만 쓸 수 있다.", true);
+  if (!group) return kwMsg("분류를 넣을 것 (예: 공모전·대외활동).", true);
+  const src = kwSource(word, group);
+  if (DATA.sources.some(s => s.name === src.name)) return kwMsg(`'${word}' 키워드는 이미 있다. 아래 목록에서 켜고 끄거나 지울 수 있다.`, true);
+  $("#kwSrcAdd").disabled = true;
+  try {
+    await commit(cfg => {
+      if (cfg.sources.some(s => s.name === src.name)) throw new Error(`'${word}' 키워드는 이미 있다`);
+      cfg.sources.push(src);
+    }, `키워드로 추가: ${word}`, `'${word}' 키워드를 추가했다. 확인이 한 번 돈다 (2~5분 뒤 '공지 보기'에 나온다)`);
+    kwMsg(`추가했다: ${src.name}. 2~5분 뒤 '공지 보기'의 '${group}' 분류에 나온다. 글이 너무 많거나 엉뚱하면 아래 목록에서 끄거나 지운다.`);
+    $("#kwSrcWord").value = "";
+  } catch (err) { if (err.message !== "연결 필요") kwMsg(err.message, true); else kwMsg("저장하려면 위 'GitHub 연결'에 토큰을 넣을 것.", true); }
+  finally { $("#kwSrcAdd").disabled = false; }
+});
+$("#kwSrcWord").addEventListener("keydown", e => { if (e.key === "Enter") { e.preventDefault(); $("#kwSrcAdd").click(); } });
 
 function collect() {   // crawler.clean_source 와 같은 검사
   const t = currentType(), src = {name: "", group: "", type: t, enabled: true};
