@@ -1,12 +1,19 @@
 name: 아침 브리핑
 
 on:
+  # 7시 정각 브리핑은 바깥 예약(cron-job.org 등)이 한국 시간 6:57 에 아래 workflow_dispatch 를 mode=scheduled 로 부른다 (WEB_SETUP 8번).
+  # GitHub 예약 실행은 몇 시간씩 밀리거나 빠지므로(2026-11 기록: 6:40 예약이 9:54~12:48 에 돎) 아래 schedule 은 예비다.
+  # 바깥 예약이 실패한 날에만 7:10·8:10(밀리면 더 늦게)에 보낸다. 이미 보낸 날은 건너뛴다 (briefing.py --scheduled)
   schedule:
-    # GitHub 예약 실행은 몇 시간씩 밀리거나 빠진다(2026-11 기록: 6:40 예약이 9:54~12:48 에 돎).
-    # 그래서 한국 시간 3:10·4:10·5:10·6:10·6:40 에 여러 번 걸어 두고, 5시 이후 처음 돈 실행만 만들어 보낸다 (briefing.py --scheduled)
-    - cron: "10 18,19,20,21 * * *"
-    - cron: "40 21 * * *"
-  workflow_dispatch: {}   # Actions 탭에서 손으로 한 번 돌려 볼 때
+    - cron: "10 22,23 * * *"
+  workflow_dispatch:
+    inputs:
+      mode:
+        description: "test: 시험으로 항상 보낸다 / scheduled: 오늘 아직 안 보냈을 때만 보낸다 (바깥 예약용)"
+        required: false
+        default: test
+        type: choice
+        options: [test, scheduled]
   push:
     branches: [main]
     paths: ["briefing.yaml", "briefing.py"]   # 설정·코드를 바꾸면 바로 한 번 만든다
@@ -41,8 +48,8 @@ jobs:
       - run: pip install -r requirements.txt
 
       - name: 브리핑 만들기
-        # push(설정 수정)는 텔레그램을 보내지 않는다. 예약은 하루 한 번만 보낸다. 손으로 돌리면(Run workflow) 시험으로 항상 보낸다
-        run: python briefing.py ${{ github.event_name == 'push' && '--no-telegram' || github.event_name == 'schedule' && '--scheduled' || '' }}
+        # push(설정 수정)는 텔레그램을 보내지 않는다. 예약·바깥 예약(mode=scheduled)은 하루 한 번만 보낸다. 손으로 돌리면(Run workflow) 시험으로 항상 보낸다
+        run: python briefing.py ${{ github.event_name == 'push' && '--no-telegram' || (github.event_name == 'schedule' || inputs.mode == 'scheduled') && '--scheduled' || '' }}
 
       - name: 결과 저장
         run: |

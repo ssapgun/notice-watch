@@ -76,7 +76,19 @@ Claude 가 핵심을 항목별로 정리하고 일본어·영어·독일어 글�
 5. 다음 확인부터 보낸다. 같은 글은 한 번만 온다(처음 들어온 확인에서만).
 6. 바로 시험: **Actions → 아침 브리핑 → Run workflow**. 1~2분 뒤 텔레그램에 '[아침 브리핑]' 이 오면 끝이다. 안 오면 그 실행 기록의 '브리핑 만들기' 단계에서 `텔레그램 오류` 줄을 본다(401: 토큰 틀림, 400 chat not found: 채팅 ID 틀림 또는 2번을 안 함).
 
-- 아침 브리핑은 매일 한 번 텔레그램으로 온다. GitHub 예약 실행은 몇 시간씩 밀리거나 빠지므로 한국 시간 3:10·4:10·5:10·6:10·6:40 에 여러 번 걸어 두고, 5시 이후 처음 돈 실행만 보낸다. 그래도 정확히 6:40 을 보장하지는 못한다(늦으면 오전 중에 온다).
+### 아침 브리핑을 매일 7시에 받기
+GitHub 예약 실행은 몇 시간씩 밀리거나 빠진다(2026-11 기록: 6:40 예약이 9:54~12:48 에 돎). 그래서 바깥 예약 서비스가 매일 6:57 에 브리핑 실행을 직접 누르게 한다. 직접 누른 실행은 보통 1분 안에 시작하고 1~2분 걸려 7시 무렵 도착한다.
+1. 실행 전용 토큰 만들기: GitHub → Settings → Developer settings → Fine-grained tokens → Generate. Repository access 는 이 저장소만, Permissions 는 **Actions: Read and write** 하나만. 만료일을 정한다(만료되면 다시 만들어 바꿔 넣는다).
+   - 이 토큰으로는 워크플로 실행·취소만 할 수 있고 코드·설정은 고칠 수 없다. 사이트 '연결 설정'의 토큰과 따로 만든다.
+2. https://cron-job.org 가입 → Create cronjob
+   - URL: `https://api.github.com/repos/<저장소>/actions/workflows/briefing.yml/dispatches`
+   - 실행 시각: 매일 06:57, 시간대 Asia/Seoul (계정·작업 설정에서 시간대를 확인한다)
+   - Advanced → Request method: `POST`
+   - Headers: `Authorization: Bearer <1번 토큰>`, `Accept: application/vnd.github+json`, `X-GitHub-Api-Version: 2022-11-28`
+   - Request body: `{"ref":"main","inputs":{"mode":"scheduled"}}`
+3. cron-job.org 의 'Test run' 을 누르면 GitHub Actions 에 '아침 브리핑' 실행이 생긴다(응답 204 가 정상). 6:50 전이면 실행은 생기지만 보내지 않고 건너뛴다.
+- 바깥 예약이 실패한 날을 위해 GitHub 예약도 7:10·8:10 에 걸려 있다(밀리면 더 늦게). 이미 보낸 날은 건너뛰므로 하루에 한 번만 온다.
+- Actions 에서 손으로 Run workflow 를 누르면(mode=test) 시간과 상관없이 시험으로 보낸다.
 
 - 알림 키워드는 config.yaml 의 `highlight.alert`, 화면에서 눈에 띄게 표시할 키워드는 `highlight.keywords`, 오탐을 막는 제외어는 `highlight.exclude`.
 - PC 대시보드(app.py)에서 받으려면 같은 이름의 환경변수를 넣고 실행한다.

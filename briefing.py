@@ -234,14 +234,14 @@ def telegram_text(b: dict, site_url: str) -> str:
 
 
 # ================================================================ 실행
-EARLIEST_HOUR = 5   # 예약 실행은 한국 시간 5시 이후에만 만든다
+EARLIEST = (6, 50)   # 예약 실행은 한국 시간 6:50 이후에만 만든다 (7시 브리핑. 바깥 예약은 6:57 에 부른다)
 
 
 def main() -> int:
     ap = argparse.ArgumentParser(description="아침 브리핑 만들기")
     ap.add_argument("--no-telegram", action="store_true", help="텔레그램을 보내지 않는다 (시험용)")
     ap.add_argument("--scheduled", action="store_true",
-                    help="예약 실행: 05시 전이면 건너뛰고, 오늘 이미 예약 실행으로 보냈으면 건너뛴다 (GitHub 예약이 몇 시간씩 밀려 여러 번 걸어 둔다)")
+                    help="예약 실행: 6:50 전이면 건너뛰고, 오늘 이미 예약 실행으로 보냈으면 건너뛴다 (GitHub 예약이 몇 시간씩 밀려 여러 번 걸어 둔다)")
     args = ap.parse_args()
     cfg = load_cfg()
     now = now_kst()
@@ -251,8 +251,8 @@ def main() -> int:
     except (OSError, ValueError):
         prev = {}
     done_today = prev.get("date") == today.isoformat() and prev.get("scheduled_done")
-    if args.scheduled and now.hour < EARLIEST_HOUR:
-        print(f"{now:%H:%M} 은 {EARLIEST_HOUR}시 전이라 건너뛴다 (밤사이 뉴스가 덜 모였다)")
+    if args.scheduled and (now.hour, now.minute) < EARLIEST:
+        print(f"{now:%H:%M} 은 {EARLIEST[0]}:{EARLIEST[1]:02d} 전이라 건너뛴다 (브리핑은 7시에 보낸다)")
         return 0
     if args.scheduled and done_today:
         print(f"오늘 예약 브리핑은 이미 보냈다 (마지막 생성 {prev.get('generated_at', '')}). 건너뛴다")
