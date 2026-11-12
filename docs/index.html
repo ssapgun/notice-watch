@@ -611,6 +611,8 @@ body{background:var(--sheet);background-image:none;font:18px/1.65 "Noto Sans KR"
 .dlist .ck{margin-top:6px;border:1.5px solid var(--ink-2);background:var(--paper);padding:2px 10px;font-size:14.5px;font-weight:600;border-radius:2px}
 .dlist .ck:hover{background:var(--sheet)}
 .dlist .linkbtn{margin-left:6px}
+.nlist li.seen .dot{visibility:hidden}
+.nlist li.seen .what>a{color:var(--ink-2)}
 .pk{display:flex;gap:8px;align-items:flex-start;cursor:pointer}
 .pk input{width:auto;margin-top:6px}
 .pick{max-height:320px;overflow:auto}
@@ -668,7 +670,7 @@ h3.dsub small{font-weight:400;color:var(--pencil);font-size:14px;margin-left:6px
   <header class="head">
     <div class="title">
       <h1>공지 모아보기</h1>
-      <p>학교 공지와 국내외 대학원 입시 페이지를 한곳에서 확인한다. 빨간 삼각형은 아직 보지 않은 항목이다. 공지 목록에서 제목이 1.5초 이상 화면에 보이면 읽음으로 바뀐다.</p>
+      <p>학교 공지와 국내외 대학원 입시 페이지를 한곳에서 확인한다. 빨간 삼각형은 아직 보지 않은 항목이다. 대시보드 '신규 공지'나 공지 목록에서 제목이 1.5초 이상 화면에 보이면 읽음으로 바뀐다.</p>
     </div>
     <div class="block" aria-live="polite">
       <div class="cell"><small>새 항목</small><b id="newCount">–</b></div>
@@ -1280,28 +1282,37 @@ function renderItems() {
   observeSeen();
 }
 // 제목이 화면에 1.5초 이상 보이면 읽음으로 바꾼다 (공지를 열지 않아도). 스크롤로 스쳐 지나간 제목은 세지 않는다
-let seenObs = null, seenTimers = new Map(), seenSum = null;
-function observeSeen() {
-  if (seenObs) seenObs.disconnect();
-  seenTimers.forEach(t => clearTimeout(t)); seenTimers.clear();
+// list: 공지 보기 목록, dash: 대시보드 '신규 공지' 카드. 카드는 보인 제목만 읽음으로 바꾸고 다시 그리지 않는다 (다시 그리면 다음 글이 올라와 연달아 읽음이 되므로)
+const seenObs = {}, seenTimers = new Map();
+let seenSum = null;
+const SEEN = {
+  list: {rows: "#list li.row.unread", view: "#viewNotices", id: li => +li.dataset.id,
+         mark: li => { li.classList.remove("unread"); const r = li.querySelector(".rev"); if (r) r.outerHTML = revMark(false); }},
+  dash: {rows: "#dNew .nlist li", view: "#viewDash", id: li => +((li.querySelector("[data-nid]") || {}).dataset || {}).nid,
+         mark: li => li.classList.add("seen")},
+};
+function watchSeen(scope) {
+  const c = SEEN[scope];
+  if (seenObs[scope]) seenObs[scope].disconnect();
+  seenTimers.forEach((t, li) => { if (li.dataset.seenScope === scope) { clearTimeout(t); seenTimers.delete(li); } });
   if (typeof IntersectionObserver === "undefined") return;
-  seenObs = new IntersectionObserver(entries => entries.forEach(en => {
+  const obs = seenObs[scope] = new IntersectionObserver(entries => entries.forEach(en => {
     const li = en.target;
-    if (en.isIntersecting && !document.hidden && !$("#viewNotices").hidden) {
+    if (en.isIntersecting && !document.hidden && !$(c.view).hidden) {
       if (seenTimers.has(li)) return;
       seenTimers.set(li, setTimeout(() => {
         seenTimers.delete(li);
-        if (document.hidden || $("#viewNotices").hidden) return;   // 그사이 다른 탭으로 갔으면 세지 않는다 (다시 보이면 다시 센다)
-        seenObs.unobserve(li);
-        const id = +li.dataset.id; if (readSet.has(id)) return;
-        readSet.add(id); saveSets();
-        li.classList.remove("unread"); const r = li.querySelector(".rev"); if (r) r.outerHTML = revMark(false);
-        clearTimeout(seenSum); seenSum = setTimeout(renderSummary, 400);   // 왼쪽 분류의 안 읽음 수를 한 번에 갱신
+        if (document.hidden || $(c.view).hidden) return;   // 그사이 다른 탭으로 갔으면 세지 않는다 (다시 보이면 다시 센다)
+        obs.unobserve(li);
+        const id = c.id(li); if (!id || readSet.has(id)) return;
+        readSet.add(id); saveSets(); c.mark(li);
+        clearTimeout(seenSum); seenSum = setTimeout(renderSummary, 400);   // 맨 위 '새 항목'과 왼쪽 분류의 안 읽음 수를 한 번에 갱신
       }, 1500));
     } else { clearTimeout(seenTimers.get(li)); seenTimers.delete(li); }
   }), {threshold: 0.6});
-  document.querySelectorAll("#list li.row.unread").forEach(li => seenObs.observe(li));
+  document.querySelectorAll(c.rows).forEach(li => { li.dataset.seenScope = scope; obs.observe(li); });
 }
+function observeSeen() { watchSeen("list"); }
 function renderAll() { renderSummary(); renderItems(); if (typeof renderDash === "function") renderDash(); if (typeof renderStudy === "function" && STUDY) renderStudy(); }
 $("#pager").addEventListener("click", e => {
   const b = e.target.closest("button[data-p]"); if (!b || b.disabled) return;
@@ -2267,6 +2278,7 @@ function renderDash() {
       : `<p class="dempty">${kwHl ? "키워드가 걸린 새 공지가 없다." : "안 읽은 공지가 없다."}</p>`)
     + (kwHl ? (matched.length > newest.length ? `<p class="dnote">키워드 공지 외 ${matched.length - newest.length}건이 더 있다.</p>` : "") + (unread.length > matched.length ? `<p class="dnote">키워드 밖 ${unread.length - matched.length}건은 '공지 보기'에서 확인한다.</p>` : "")
         : (unread.length > newest.length ? `<p class="dnote">외 ${unread.length - newest.length}건은 '공지 보기'에서 확인한다.</p>` : ""));
+  watchSeen("dash");
 
   // 현재 스펙 · 지원 준비도
   const sp = rdSpec(), R = RD || DRD;
