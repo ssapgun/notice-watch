@@ -8,6 +8,10 @@ set "LOG=%~dp0local_sync.log"
 set PYTHONUTF8=1
 echo ===== %date% %time% >> "%LOG%"
 
+rem 등록한 PC·와이파이가 아니면(부트캠프 노트북, 기관 와이파이 등) 아무것도 하지 않는다
+powershell -NoProfile -ExecutionPolicy Bypass -File "%~dp0local_sync_guard.ps1" >> "%LOG%" 2>&1
+if errorlevel 1 exit /b 0
+
 for /f "delims=" %%b in ('git rev-parse --abbrev-ref HEAD') do set "BR=%%b"
 if not "%BR%"=="main" (
   echo [건너뜀] 지금 브랜치가 main 이 아니다: %BR% >> "%LOG%"

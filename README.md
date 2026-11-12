@@ -29,12 +29,13 @@ python app.py
 
 ## 막힌 사이트 제목 자동 올리기 (웹 버전, 개인 노트북)
 GitHub 서버에서 접속이 막히는 대상(`config.yaml` 의 `web_skip`: 건설기술교육원, 대한토목학회 2곳, DAAD, SK하이닉스 뉴스룸)은 내 노트북에서 읽어 제목만 올린다.
-- 한 번 실행: `local_sync.bat` 더블클릭. 최신본을 받고 → `local_titles.py` 로 제목을 읽고 → 바뀐 것이 있을 때만 `config.yaml` 을 커밋·푸시한다. 기록은 `local_sync.log`.
-- 자동 실행 등록 (매일 08:30·20:30, 꺼져 있어 놓친 실행은 켜질 때 한 번): 이 폴더에서 PowerShell 을 열고
+- 등록 (매일 08:30·20:30, 꺼져 있어 놓친 실행은 켜질 때 한 번): **집의 개인 노트북**에서 집 와이파이에 연결하고, 이 폴더에서 PowerShell 을 열어
   `powershell -ExecutionPolicy Bypass -File .\local_sync_register.ps1`
+  컴퓨터 이름·사용자·와이파이 이름이 나온다. 맞으면 `집` 을 입력한다. 이 정보가 `local_sync.allow`(이 PC에만, 커밋 안 됨)에 저장된다.
+- 실행: `local_sync.bat`. 등록한 PC·와이파이가 아니면 아무것도 하지 않는다(부트캠프 노트북·기관 와이파이 차단). 맞으면 최신본을 받고 → `local_titles.py` 로 제목을 읽고 → 바뀐 것이 있을 때만 `config.yaml` 을 커밋·푸시한다. 기록은 `local_sync.log`.
 - 해제: `Unregister-ScheduledTask -TaskName notice-watch-local-titles -Confirm:$false`
 - 조건: 이 폴더가 GitHub 저장소를 `git clone` 한 것이고, main 브랜치이고, 이 PC에서 `git push` 가 되어야 한다(처음 한 번 로그인).
-- **집의 개인 노트북에서만 등록할 것.** 부트캠프 노트북이나 기관 와이파이에서는 그 기관의 IP로 접속하게 된다.
+- **부트캠프 노트북에서는 등록하지 말 것.** 등록하지 않은 PC에서는 `local_sync.bat` 을 눌러도 돌지 않는다. 집 와이파이가 아닌 곳(기관·카페)에서도 돌지 않는다. 와이파이 이름이 바뀌면 다시 등록한다.
 - `config.yaml` 에 커밋하지 않은 수정이 있으면 건너뛴다(덮어쓰지 않게). 푸시하면 공지 확인이 한 번 돌아 몇 분 뒤 사이트에 나온다.
 
 ## 폴더 구성
