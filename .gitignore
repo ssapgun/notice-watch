@@ -7,3 +7,7 @@ config.yaml.bak
 config.yaml.tmp
 __pycache__/
 .venv/
+
+# 내 PC 자동 실행 기록 (local_sync.bat)
+local_sync.log
+local_sync.allow
