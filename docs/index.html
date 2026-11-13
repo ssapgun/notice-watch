@@ -1305,7 +1305,12 @@ function renderItems() {
 // 제목이 화면에 1.5초 이상 보이면 읽음으로 바꾼다 (공지를 열지 않아도). 스크롤로 스쳐 지나간 제목은 세지 않는다
 // list: 공지 보기 목록, dash: 대시보드 '신규 공지' 카드. 보는 동안에는 화면을 바꾸지 않는다 (카드를 다시 그리면 다음 글이 올라와 연달아 읽음이 되므로)
 const seenObs = {}, seenTimers = new Map();
-const glimpsed = new Set();   // 공지 목록에서 이번 쪽에 화면에 보였던 글. 쪽을 넘기면 1.5초가 안 됐어도 읽음으로 친다
+const glimpsed = new Set();   // 공지 목록에서 이번 쪽에 화면에 보였던 글. 쪽을 넘기거나 분류·탭을 옮기거나 새로고침하면 1.5초가 안 됐어도 읽음으로 친다
+function flushGlimpsed() {
+  if (!glimpsed.size) return;
+  glimpsed.forEach(id => { if (id) readSet.add(id); }); glimpsed.clear(); saveSets();
+}
+addEventListener("pagehide", flushGlimpsed);   // 새로고침·창 닫기
 const domId = v => /^\d+$/.test(String(v)) ? +v : String(v || "");   // 수집한 글은 숫자 id, 내 PC에서 넣은 글(manual)은 'm…' 문자열 id
 const SEEN = {
   list: {rows: "#list li.row.unread", view: "#viewNotices", id: li => domId(li.dataset.id)},
@@ -1336,7 +1341,7 @@ function observeSeen() { watchSeen("list"); }
 function renderAll() { renderSummary(); renderItems(); if (typeof renderDash === "function") renderDash(); if (typeof renderStudy === "function" && STUDY) renderStudy(); }
 $("#pager").addEventListener("click", e => {
   const b = e.target.closest("button[data-p]"); if (!b || b.disabled) return;
-  glimpsed.forEach(id => { if (id) readSet.add(id); }); glimpsed.clear(); saveSets();   // 넘긴 쪽에서 본 제목은 읽음
+  flushGlimpsed();   // 넘긴 쪽에서 본 제목은 읽음
   curPage = +b.dataset.p; renderSummary(); renderItems();   // 순서는 그대로 두고(orderRead), 숫자·표시만 반영한다
   $("#list").scrollIntoView({block: "start", behavior: "smooth"});
 });
@@ -1390,6 +1395,7 @@ function pickGroup(e) {
     foldClosed.has(f) ? foldClosed.delete(f) : foldClosed.add(f);
     store.set("foldClosed", [...foldClosed]); renderSummary(); return;
   }
+  flushGlimpsed();   // 다른 분류·게시판으로 옮기면 지금 목록에서 본 제목은 읽음
   if (b.dataset.sub !== undefined) ui.sub = b.dataset.sub;
   else if (b.dataset.g && b.dataset.g === ui.group && !ui.sub) ui.subsOpen = ui.subsOpen === false;   // 같은 분류를 다시 누르면 게시판 목록 접기/펴기
   else { ui.group = b.dataset.g; ui.sub = ""; ui.subsOpen = true; }
@@ -1721,6 +1727,7 @@ function showView(v) {
     $("#tab" + n[0].toUpperCase() + n.slice(1)).setAttribute("aria-selected", v === n);
     $("#view" + n[0].toUpperCase() + n.slice(1)).hidden = v !== n;
   });
+  try { flushGlimpsed(); } catch (e) {}   // 공지 목록을 떠나면 본 제목은 읽음 (초기화 전 호출은 무시)
   if (DATA) renderSummary();   // 보는 동안 쌓인 읽음 기록을 탭을 옮길 때 숫자에 반영한다
   if (v === "dash") renderDash();
   if (v === "notices" && DATA) { orderRead = null; glimpsed.clear(); renderItems(); }
