@@ -1109,6 +1109,7 @@ function renderSummary() {
   $("#errCount").style.color = errs.length ? "var(--markup)" : "";
   $("#viewing").textContent = (ui.group || "전체") + (ui.sub ? " / " + ui.sub : "");
   const groups = ["", ...new Set(enabled.map(s => s.group))];
+  if (ui.group && !groups.includes(ui.group)) { ui.group = ""; ui.sub = ""; store.set("ui", ui); }   // 분류를 합치거나 지워 없어진 분류를 보고 있었으면 전체로
   const subNames = ui.group ? subList(DATA.sources, ui.group) : [];
   if (ui.sub && !subNames.includes(ui.sub)) ui.sub = "";   // 소분류 체계가 바뀌면 전체 보기로
   const subs = ui.group ? subsHtml(subNames,
