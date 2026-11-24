@@ -744,32 +744,32 @@ sources:
   - 입학생부터
   - 입학자부터
 - name: 도쿄대 사회기반학전공 대학원입시
-  group: 일본
-  sub: 도쿄대
+  group: 해외
+  sub: 일본
   type: watch
   enabled: true
   note: 도쿄대 사회기반학전공 — 지반공학(古関 潤一 교수 등) (도쿄대 건축학전공 구조 연구실은 철골·RC·내진·리스크 위주로 기초·지반 연구실이 없어 교체)
   url: https://www.civil.t.u-tokyo.ac.jp/graduate_school
   content_selector: main
 - name: 교토대 도시사회공학전공 대학원입시
-  group: 일본
-  sub: 교토대
+  group: 해외
+  sub: 일본
   type: watch
   enabled: true
   note: 교토대 도시사회공학전공 — ジオマネジメント工学, ジオフロントシステム工学, 耐震基礎(防災研究所) (교토대 건축학전공은 기초·지반 연구실이 없어 교체)
   url: https://www.um.t.kyoto-u.ac.jp/ja/admission/exam
   content_selector: '#content'
 - name: 도호쿠대 공학연구과 석사 입시
-  group: 일본
-  sub: 도호쿠대
+  group: 해외
+  sub: 일본
   type: watch
   enabled: true
   note: 도호쿠대 — 토목공학전공 地圏・地盤工学 연구실
   url: https://www.eng.tohoku.ac.jp/admission/grad/master.html
   content_selector: '#main'
 - name: 오사카대 공학연구과 입시정보
-  group: 일본
-  sub: 오사카대
+  group: 해외
+  sub: 일본
   type: board
   enabled: true
   note: 오사카대 — 지구종합공학전공 사회기반공학강좌 지반공학영역, 건축공학코스 건축지진지반학영역
@@ -789,32 +789,32 @@ sources:
   - 編入学
   - 科目等履修生
 - name: 나고야대 공학연구과 대학원 수험생
-  group: 일본
-  sub: 나고야대
+  group: 해외
+  sub: 일본
   type: watch
   enabled: true
   note: 나고야대 — 토목공학 지반계 연구실
   url: https://www.engg.nagoya-u.ac.jp/prospective/
   content_selector: '#graduate'
 - name: 규슈대 공학부 대학원 입시
-  group: 일본
-  sub: 규슈대
+  group: 해외
+  sub: 일본
   type: watch
   enabled: true
   note: 규슈대 — 토목공학 지반공학, 방재지반공학 연구실
   url: https://www.eng.kyushu-u.ac.jp/admissions/graduate-admissions/
   content_selector: main
 - name: 홋카이도대 공학원 입시정보
-  group: 일본
-  sub: 홋카이도대
+  group: 해외
+  sub: 일본
   type: watch
   enabled: true
   note: 홋카이도대 — 환경필드공학전공 지반물성학 연구실
   url: https://www.eng.hokudai.ac.jp/graduate/examinfo/
   content_selector: div.common_section
 - name: 도쿄과학대 건축학계 입학안내
-  group: 일본
-  sub: 도쿄과학대
+  group: 해외
+  sub: 일본
   type: board
   enabled: true
   note: '도쿄과학대(옛 도쿄공업대, 2024년 도쿄의과치과대와 통합) 건축학계 — 田村修次 연구실(건축 지반·기초구조 전문: 말뚝기초·직접기초·액상화), 中野 연구실(지반-구조물 상호작용) 토목환경공학계 — 澤田 연구실, 高橋 연구실(지반공학) 건축학계·토목환경공학계의 입학안내 목록 + 대학 입시사이트의 대학원 공지(이공학계만)'
@@ -831,8 +831,8 @@ sources:
   - 研究生
   - 研究室
 - name: 도쿄과학대 토목환경공학계 입학안내
-  group: 일본
-  sub: 도쿄과학대
+  group: 해외
+  sub: 일본
   type: board
   enabled: true
   list_url: https://educ.titech.ac.jp/cv/admissions/
@@ -848,8 +848,8 @@ sources:
   - 研究生
   - 研究室
 - name: 도쿄과학대 대학원 입시 공지
-  group: 일본
-  sub: 도쿄과학대
+  group: 해외
+  sub: 일본
   type: board
   enabled: true
   list_url: https://admissions.isct.ac.jp/ja/013/graduate
@@ -864,43 +864,28 @@ sources:
   exclude:
   - 技術経営
 - name: TUM Civil Engineering M.Sc.
-  group: 독일
-  sub: TUM
+  group: 해외
+  sub: 독일
   type: watch
   enabled: true
   note: TUM — Chair of Soil Mechanics and Foundation Engineering (Zentrum Geotechnik) Stuttgart — Institut für Geotechnik (IGS) RWTH — Chair of Geotechnical Engineering (GUT)
   url: https://www.tum.de/en/studies/degree-programs/detail/civil-engineering-master-of-science-msc
   content_selector: main
 - name: Stuttgart Civil Engineering M.Sc. 지원
-  group: 독일
-  sub: Stuttgart
+  group: 해외
+  sub: 독일
   type: watch
   enabled: true
   url: https://www.uni-stuttgart.de/en/study/master-programs/civil-engineering-m.sc./application/
   content_selector: main
 - name: RWTH Resilient Civil Engineering (DAAD)
-  group: 독일
-  sub: RWTH
+  group: 해외
+  sub: 독일
   type: watch
   enabled: false
   url: https://www2.daad.de/deutschland/studienangebote/international-programmes/en/detail/8967/
   content_selector: '#content'
   note: GitHub 서버 접속을 403으로 막아 자동 확인을 껐다. 바로가기로 직접 볼 것
-- name: NUS CEE 연구과정(PhD/M.Eng)
-  group: 싱가포르
-  sub: NUS
-  type: watch
-  enabled: true
-  note: 'NUS CEE — PPVC(조립식 모듈러) 연구: 모듈러 접합부, PPVC 양중 프레임 등 NTU CEE — Geotechnical Engineering, 건설생산성 연구 테마'
-  url: https://cde.nus.edu.sg/cee/graduate/research-based-programmes/
-  content_selector: main
-- name: NTU CEE M.Eng (Research)
-  group: 싱가포르
-  sub: NTU
-  type: watch
-  enabled: true
-  url: https://www.ntu.edu.sg/cee/admissions/graduate/detail/cee-master-of-engineering-(m.eng)-(by-research)
-  content_selector: article
 - name: 콘테스트코리아 공모전 (아이디어·건축·창업)
   group: 공모전·대외활동
   type: board
@@ -2245,6 +2230,7 @@ excluded:
 - 한국지반공학회 — 관심 분야가 지반보다 강구조라 보류
 - RWTH Resilient Civil Engineering (DAAD) — GitHub 서버 접속 403 차단. 감시 끄고 바로가기로 옮김
 - 링커리어 — 이용약관 제39조가 자동화 프로그램으로 서비스에 접근하는 행위를 금지. 자동 확인을 끄고 바로가기(links)로만 둔다. 합격 후기도 자동 수집하지 않는다
+- 싱가포르(NUS CEE 연구과정, NTU CEE M.Eng) — 2026-11-24 사용자 요청으로 해외 감시에서 뺐다
 web_skip:
 - 건설기술교육원 국가기간전략훈련 (BIM·스마트건설)
 - 대한토목학회 공지
@@ -2329,9 +2315,7 @@ group_folders:
   groups:
   - 경희대
   - 국내 대학원
-  - 일본
-  - 독일
-  - 싱가포르
+  - 해외
 - name: 진로·대외활동
   groups:
   - 공모전·대외활동
