@@ -886,6 +886,16 @@ sources:
   url: https://www2.daad.de/deutschland/studienangebote/international-programmes/en/detail/8967/
   content_selector: '#content'
   note: GitHub 서버 접속을 403으로 막아 자동 확인을 껐다. 바로가기로 직접 볼 것
+- name: DAAD 한국사무소 소식 (독일 유학 장학)
+  group: 해외
+  type: board
+  enabled: true
+  note: 독일 대학원 유학 장학(DAAD) 한국사무소 첫 화면 소식. 장학 설명회·모집 안내가 올라온다. 대학원 장학은 보통 입학 전년도 7~10월 마감. GitHub 서버 접속을 403으로 막아(web_skip) 내 PC에서 local_titles.py 로 제목을 넣는다.
+  list_url: https://www.daad-korea.org/ko/
+  pages: 1
+  row_selector: li.c-news-teaser__navigation-item
+  title_selector: a
+  sub: 유학장학
 - name: 콘테스트코리아 공모전 (아이디어·건축·창업)
   group: 공모전·대외활동
   type: board
@@ -1658,15 +1668,6 @@ sources:
   - 향토
   - 저소득
   - 출신
-- name: DAAD 한국사무소 소식 (독일 유학 장학)
-  group: 외부장학
-  type: board
-  enabled: true
-  note: 독일 대학원 유학 장학(DAAD) 한국사무소 첫 화면 소식. 장학 설명회·모집 안내가 올라온다. 대학원 장학은 보통 입학 전년도 7~10월 마감. GitHub 서버 접속을 403으로 막아(web_skip) 내 PC에서 local_titles.py 로 제목을 넣는다.
-  list_url: https://www.daad-korea.org/ko/
-  pages: 1
-  row_selector: li.c-news-teaser__navigation-item
-  title_selector: a
 - name: KT&G복지재단 자원봉사센터 공지
   group: 봉사활동
   type: board
