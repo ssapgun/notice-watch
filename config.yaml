@@ -886,6 +886,114 @@ sources:
   url: https://www2.daad.de/deutschland/studienangebote/international-programmes/en/detail/8967/
   content_selector: '#content'
   note: GitHub 서버 접속을 403으로 막아 자동 확인을 껐다. 바로가기로 직접 볼 것
+- name: Stanford CEE 대학원 지원 일정
+  group: 해외
+  sub: 미국
+  type: watch
+  enabled: true
+  note: '모듈러(산업화 건설): Jerker Lessing 겸임교수가 CEE324 Industrialized Construction 강의와 Industrialized Construction Forum 을 맡고, CIFE(Martin Fischer)가 오프사이트 시공 연구 (cee.stanford.edu/people/jerker-lessing, cife.stanford.edu). 강구조 연구실은 확인하지 못했다. 가을 입학 연 1회, 마감은 이 페이지에 올라온다(Fall 2026 은 2025-12-02). (근거는 공식 페이지 검색 결과로 확인, 2026-11-24)'
+  url: https://cee.stanford.edu/academics-admissions/graduate-admissions/application-timeline-deadlines
+  keywords:
+  - deadline
+  - Deadline
+  - December
+  - January
+  - February
+  - September
+  - Fall 20
+  - Spring 20
+  - '2027'
+  - '2028'
+- name: UC Berkeley CEE 대학원 입시
+  group: 해외
+  sub: 미국
+  type: watch
+  enabled: true
+  note: '강구조: SEMM 분야 공식 설명에 structural steel 구조물 설계·거동 포함 (ce.berkeley.edu/programs/semm/areas). 모듈러: Iris Tommelein 교수 — 모듈러 오프사이트 시공·택트 계획 (ce.berkeley.edu/people/faculty/tommelein). 2026-11-24 기준 MS·PhD 마감 2026-12-15, MEng 2027-01-06(이 페이지). (근거는 공식 페이지 검색 결과로 확인, 2026-11-24)'
+  url: https://ce.berkeley.edu/grad/admissions
+  keywords:
+  - deadline
+  - Deadline
+  - December
+  - January
+  - February
+  - September
+  - Fall 20
+  - Spring 20
+  - '2027'
+  - '2028'
+- name: Georgia Tech CEE 대학원 입시 FAQ
+  group: 해외
+  sub: 미국
+  type: watch
+  enabled: true
+  note: '강구조: Donald White(강·합성 구조, 강교 안정), Ryan Sherman(강구조·피로·대형 실험), 구조공학·재료 실험실 SEML (ce.gatech.edu 교수 페이지). 마감 가을 12/1·봄 8/1(학과 FAQ, 봄은 주로 박사). 모듈러 연구실은 확인하지 못했다. (근거는 공식 페이지 검색 결과로 확인, 2026-11-24)'
+  url: https://ce.gatech.edu/academics/graduate/faqs
+  keywords:
+  - deadline
+  - Deadline
+  - December
+  - January
+  - February
+  - September
+  - Fall 20
+  - Spring 20
+  - '2027'
+  - '2028'
+- name: UT Austin CAEE 대학원 입시
+  group: 해외
+  sub: 미국
+  type: watch
+  enabled: true
+  note: '강구조: Ferguson 구조공학 실험실(FSEL) — 강구조 등 실대형 실험, Todd Helwig 교수(강구조 안정·실대형 실험) (fsel.engr.utexas.edu, caee.utexas.edu 교수 목록). 마감 가을·여름 12/1, 봄 9/1(이 페이지). 건축공학 대학원도 Civil Engineering 으로 지원. (근거는 공식 페이지 검색 결과로 확인, 2026-11-24)'
+  url: https://caee.utexas.edu/academics/graduate/admissions/
+  keywords:
+  - deadline
+  - Deadline
+  - December
+  - January
+  - February
+  - September
+  - Fall 20
+  - Spring 20
+  - '2027'
+  - '2028'
+- name: UIUC CEE 대학원 입시·마감
+  group: 해외
+  sub: 미국
+  type: watch
+  enabled: true
+  note: '강구조: 학과 구조공학 분야에 강·콘크리트·합성 구조물 연구, Newmark 구조공학 실험실(NSEL, 소장 James LaFave) (cee.illinois.edu/areas/structural-engineering). 장학 고려 권장 마감 봄 9/1·가을 12/1(이 페이지). (근거는 공식 페이지 검색 결과로 확인, 2026-11-24)'
+  url: https://cee.illinois.edu/admissions/graduate/information-deadlines
+  keywords:
+  - deadline
+  - Deadline
+  - December
+  - January
+  - February
+  - September
+  - Fall 20
+  - Spring 20
+  - '2027'
+  - '2028'
+- name: Purdue CCE 대학원 지원 요건
+  group: 해외
+  sub: 미국
+  type: watch
+  enabled: true
+  note: '강구조·모듈러: Amit Varma 교수(Bowen Lab 소장) — 강판 콘크리트 합성 모듈 SpeedCore(공장 제작 후 현장 조립, AISC 설계 지침 2023) (engineering.purdue.edu/CE/People/Faculty/Varma, Purdue 뉴스 2023). 지원 상시, 가을 장학 우선 마감 12/1(대학원 안내). Duolingo 영어 성적 불인정. (근거는 공식 페이지 검색 결과로 확인, 2026-11-24)'
+  url: https://engineering.purdue.edu/CCE/Academics/Graduate/Application-Requirements
+  keywords:
+  - deadline
+  - Deadline
+  - December
+  - January
+  - February
+  - September
+  - Fall 20
+  - Spring 20
+  - '2027'
+  - '2028'
 - name: DAAD 한국사무소 소식 (독일 유학 장학)
   group: 해외
   type: board
@@ -2219,6 +2327,9 @@ links:
 - name: SK하이닉스 DBL스퀘어 (청년 Hy-Five 모집)
   url: https://sharing.skhynix.com
   note: 회원가입 후에만 모집 공고를 볼 수 있어 자동 확인하지 않는다. 청년 Hy-Five 신청 사이트
+- name: Michigan CEE 대학원 (강구조)
+  url: https://www.engin.umich.edu/admissions-aid/graduate-professional/deadlines/
+  note: '학과 사이트가 자동 접속을 403 으로 막아 바로가기만 둔다. 강구조: Jason McCormick 교수(구조공학 실험실 소장, 각형 강관 강구조 시스템) (cee.engin.umich.edu/people/mccormick-jason-p). 마감은 공대 대학원 마감표에서 확인 (근거는 공식 페이지 검색 결과로 확인, 2026-11-24)'
 excluded:
 - 'POSTECH: 건축·토목·구조 학과가 없음 (학과 목록 확인. 가장 가까운 곳이 친환경소재대학원·환경공학부)'
 - 연세대 건축공학과 -> 연세대 건설환경공학과로 교체 (지반 연구실은 건설환경공학과에 있음)
