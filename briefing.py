@@ -69,9 +69,13 @@ def weather(cfg: dict) -> dict:
     f = requests.get("https://api.open-meteo.com/v1/forecast", timeout=20, params={
         **base, "current": "temperature_2m,weather_code",
         "daily": "weather_code,temperature_2m_max,temperature_2m_min,precipitation_probability_max",
-        "hourly": "precipitation_probability,weather_code"}).json()
+        "hourly": "precipitation_probability,weather_code"})
+    f.raise_for_status()   # 장애 때 KeyError 대신 HTTP 상태가 기록되게
+    f = f.json()
     a = requests.get("https://air-quality-api.open-meteo.com/v1/air-quality", timeout=20, params={
-        **base, "hourly": "pm10,pm2_5"}).json()
+        **base, "hourly": "pm10,pm2_5"})
+    a.raise_for_status()
+    a = a.json()
     d, h = f["daily"], f["hourly"]
     # 비·눈 올 가능성이 있는 시간대 (강수확률 50% 이상, 오늘 6시 이후)
     wet = [t[11:13] for t, p in zip(h["time"], h["precipitation_probability"]) if p is not None and p >= 50 and t[11:13] >= "06"]
@@ -195,7 +199,7 @@ def ai_summary(cats: list[dict]) -> list[str]:
               + "\n".join(lines))
     r = requests.post(summarize.API_URL, timeout=60, headers={
         "x-api-key": key, "anthropic-version": "2023-06-01", "content-type": "application/json"},
-        json={"model": summarize.DEFAULT_MODEL, "max_tokens": 400, "messages": [{"role": "user", "content": prompt}]})
+        json={"model": (crawler.load_config().get("summary") or {}).get("model") or summarize.DEFAULT_MODEL, "max_tokens": 400, "messages": [{"role": "user", "content": prompt}]})
     r.raise_for_status()
     text = "".join(b.get("text", "") for b in r.json().get("content", []))
     return [ln[2:].strip() for ln in text.splitlines() if ln.startswith("- ")][:5]

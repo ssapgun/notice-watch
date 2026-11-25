@@ -98,7 +98,7 @@ def visible_counts(cfg: dict, hidden: set[str] | None = None) -> tuple[dict, dic
     out: dict = {}
     by_sub: dict = {}
     with store.lock:
-        rows = store.db.execute("SELECT grp, source, title, title_ko, kind, is_read FROM items").fetchall()
+        rows = store.db.execute("SELECT grp, source, date, title, title_ko, kind, is_read FROM items").fetchall()
     for r in rows:
         if ok(dict(r)):
             unread = 0 if r["is_read"] else 1

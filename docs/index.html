@@ -308,9 +308,9 @@ dialog::backdrop{background:rgba(14,34,54,.45)}
 .webnote{font-size:14.5px;color:var(--pencil);margin-top:2px}
 .kwadd{margin:4px 0 18px;padding:12px 0;border-top:1px solid var(--grid);border-bottom:1px solid var(--grid)}
 .kwadd h3{font-size:15px;margin:0 0 4px}
-.kwrow{display:flex;flex-wrap:wrap;gap:8px 12px;align-items:flex-end;margin-top:8px}
-.kwrow label{display:grid;gap:4px;font-size:14.5px}
-.kwrow input{font:inherit;font-size:16px;padding:6px 9px;border:1px solid var(--ink-2);background:var(--paper);color:var(--ink);min-width:0}
+.kwadd .kwrow{display:flex;flex-wrap:wrap;gap:8px 12px;align-items:flex-end;margin-top:8px}
+.kwadd .kwrow label{display:grid;gap:4px;font-size:14.5px}
+.kwadd .kwrow input{font:inherit;font-size:16px;padding:6px 9px;border:1px solid var(--ink-2);background:var(--paper);color:var(--ink);min-width:0}
 .kwmsg{font-size:14.5px;margin:6px 0 0;color:var(--ink-2)}
 .kwmsg.bad{color:var(--markup)}
 .ghstate{font-size:15px;color:var(--ink-2)}
@@ -1013,10 +1013,17 @@ const baseRead = it => !!readBase && String(it.found_at || "") !== "" && String(
 const starSet = setOf("star");
 const hiddenTopics = setOf("hiddenTopics");
 // 주제(채용·상담 등): crawler.topic_hits 와 같은 규칙
+// 짧은 영문 키워드(AI·CM·OSC 등)는 영단어 일부(Short 의 SH 등)에 걸리지 않게 앞뒤 영문자를 본다 (crawler.kw_in 과 같은 규칙)
+const kwIn = (k, t) => {
+  k = String(k).toLowerCase();
+  return k.length <= 3 && /^[a-z0-9&]+$/.test(k)
+    ? new RegExp(`(?<![a-z])${k.replace(/[.*+?^${}()|[\]\\]/g, "\\$&")}(?![a-z])`).test(t)
+    : t.includes(k);
+};
 function topicHits(it) {
   const t = (it.title + " " + (it.title_ko || "")).toLowerCase();
   return (DATA.topics || []).filter(tp => (!tp.groups || !tp.groups.length || tp.groups.includes(it.grp))
-    && (tp.keywords || []).some(k => t.includes(String(k).toLowerCase()))).map(tp => tp.name);
+    && (tp.keywords || []).some(k => kwIn(k, t))).map(tp => tp.name);
 }
 const shown = it => !hiddenTopics.size || !topicHits(it).some(n => hiddenTopics.has(n));
 const domId = v => /^\d+$/.test(String(v)) ? +v : String(v || "");   // 수집한 글은 숫자 id, 내 PC에서 넣은 글(manual)은 'm…' 문자열 id
@@ -1215,7 +1222,6 @@ function renderTopics(topics, countOf) {
 // 소분류(학교·학회·게시판): 분류를 고르면 그 안에서 다시 고른다
 const subName = s => s.sub || s.name;
 // 소분류: sub_rules 가 있는 분류는 글 제목으로(첫 번째로 맞는 규칙), flat_groups 는 소분류 없음, 나머지는 게시판별
-const kwIn = (k, t) => { k = String(k).toLowerCase(); return k.length <= 3 && /^[a-z0-9&]+$/.test(k) ? new RegExp(`(?<![a-z])${k}(?![a-z])`).test(t) : t.includes(k); };
 function subOfItem(it) {
   const rules = (DATA.sub_rules || {})[it.grp];
   if (rules) { const t = it.title.toLowerCase(), r = rules.find(x => x.keywords.some(k => kwIn(k, t))); return r ? r.name : "기타"; }
@@ -1243,7 +1249,7 @@ function hlHits(it, hl) {
   if (!words.length) return [];
   let t = [it.title, it.title_ko || "", ...(Array.isArray(it.summary) ? it.summary : [])].join(" ").toLowerCase();
   for (const x of (hl.exclude || [])) t = t.split(String(x).toLowerCase()).join(" ");
-  let hits = words.filter(w => t.includes(String(w).toLowerCase()));
+  let hits = words.filter(w => kwIn(w, t));
   hits = hits.filter(w => !hits.some(o => o !== w && String(o).toLowerCase().includes(String(w).toLowerCase())));
   const seen = new Set();
   return hits.filter(w => { const k = String(w).replace(/\s/g, "").toLowerCase(); if (seen.has(k)) return false; seen.add(k); return true; });
@@ -1724,7 +1730,7 @@ async function renderBriefing() {
       if (!r.ok) throw new Error(r.status);
       BRIEF = await r.json();
     } catch (e) {
-      box.innerHTML = `<p class="lead">아직 만든 브리핑이 없다. 매일 아침 6시 40분에 만들어진다 (Actions 탭의 '아침 브리핑'을 손으로 돌려도 된다).</p>`;
+      box.innerHTML = `<p class="lead">아직 만든 브리핑이 없다. 매일 아침 7시 무렵에 만들어진다 (Actions 탭의 '아침 브리핑'을 손으로 돌려도 된다).</p>`;
       return;
     }
   }
@@ -1761,14 +1767,14 @@ function showView(v) {
   });
   try { flushGlimpsed(); } catch (e) {}   // 공지 목록을 떠나면 본 제목은 읽음 (초기화 전 호출은 무시)
   if (DATA) renderSummary();   // 보는 동안 쌓인 읽음 기록을 탭을 옮길 때 숫자에 반영한다
-  if (v === "dash") renderDash();
+  if (v === "dash") { dashSpecForm(); renderDash(); }   // '내 스펙' 탭에서 고친 값을 대시보드 양식에도
   if (v === "notices" && DATA) { orderRead = null; glimpsed.clear(); renderItems(); }
-  if (v === "cal") renderCal();
+  if (v === "cal" && DATA) renderCal();   // 데이터를 불러오기 전(#cal 로 처음 열 때)은 불러온 뒤 applyHash 가 다시 그린다
   if (v === "briefing") renderBriefing();
   if (v === "planner") loadPlanner();
   if (v === "ready") loadReady();
   if (v === "study") loadStudy();
-  if (v === "settings") { $("#repoInput").value = gh.repo; $("#branchInput").value = gh.branch; $("#tokenInput").value = gh.token ? "••••••••" : ""; renderManage(); }
+  if (v === "settings") { $("#repoInput").value = gh.repo; $("#branchInput").value = gh.branch; $("#tokenInput").value = gh.token ? "••••••••" : ""; if (DATA) renderManage(); }
 }
 $("#tabDash").addEventListener("click", () => showView("dash"));
 $("#tabNotices").addEventListener("click", () => showView("notices"));
@@ -1934,9 +1940,9 @@ function collect() {   // crawler.clean_source 와 같은 검사
   const u = src.list_url || src.url;
   if (!/^https?:\/\/[^\s/]+\.[^\s]+$/.test(u)) throw new Error("주소는 http:// 또는 https:// 로 시작하는 전체 주소여야 한다");
   if (t === "board") { src.row_selector ||= "table tbody tr"; src.title_selector ||= "a"; src.pages ||= 1;
-    if (src.pages > 1 && !u.includes("{page}")) throw new Error("2페이지 이상 보려면 주소의 페이지 번호 자리에 {page} 를 넣어야 한다"); }
+    if (src.pages > 1 && !u.includes("{page}") && !u.includes("{offset}")) throw new Error("2페이지 이상 보려면 주소의 페이지 번호 자리에 {page} (또는 글 순번 자리에 {offset}) 를 넣어야 한다"); }
   for (const k of ["link_regex", "ignore_regex"]) if (src[k]) { try { new RegExp(src[k].replace(/\(\?P</g, "(?<")); } catch (e) { throw new Error(`${k} 정규식 오류`); } }
-  for (const k of ["row_selector","title_selector","title_text_selector","date_selector","deadline_selector","remove_in_title","category_selector","content_selector"])
+  for (const k of ["row_selector","title_selector","title_text_selector","date_selector","deadline_selector","remove_in_title","category_selector","content_selector","detail_selector"])
     if (src[k]) { try { document.createDocumentFragment().querySelector(src[k]); } catch (e) { throw new Error(`${k} 의 CSS 선택자 형식이 잘못됐다`); } }
   if (src.name !== editingOld && DATA.sources.some(s => s.name === src.name)) throw new Error(`'${src.name}' 이름이 이미 있다`);
   return Object.fromEntries(ORDER.filter(k => k in src).map(k => [k, src[k]]));
@@ -2412,7 +2418,7 @@ function renderDash() {
   $("#dSpec").innerHTML = (chips.length ? `<div class="spec">${chips.map(c => `<span>${esc(c)}</span>`).join("")}</div>`
       + (awards.length ? `<p class="dnote">수상·활동: ${awards.map(esc).join(" · ")}</p>` : "") : `<p class="dnote bad">입력한 스펙이 없다. 아래 '스펙 입력·수정'을 펼쳐 입력하면 판정이 채워진다.</p>`)
     + (R ? `<div class="vbar" role="img" aria-label="지원 가능 ${ok}, 확인 필요 ${chk}, 조건 미달 ${no}">
-        <i style="width:${ok / total * 100}%;background:var(--st-live)"></i><i style="width:${chk / total * 100}%;background:var(--amber)"></i><i style="width:${no / total * 100}%;background:var(--pencil)"></i></div>
+        <i style="width:${total ? ok / total * 100 : 0}%;background:var(--st-live)"></i><i style="width:${chk / total * 100}%;background:var(--amber)"></i><i style="width:${no / total * 100}%;background:var(--pencil)"></i></div>
       <p class="vlegend"><span>지원 가능 <b>${ok}</b></span><span>확인 필요 <b>${chk}</b></span><span>조건 미달 <b>${no}</b></span><span>전체 ${total}</span></p>
       ${canList.length ? `<ul class="dlist">${canList.map(p => `<li style="grid-template-columns:1fr"><div class="what"><b>${p.url ? `<a href="${esc(httpUrl(p.url))}" target="_blank" rel="noopener">${esc(p.name)}</a>` : esc(p.name)}</b><small>${esc(p.cat)} · ${esc(p.next)}</small></div></li>`).join("")}</ul>` : ""}
       ${need.length && chips.length ? `<p class="dnote">미입력 ${need.length}개 때문에 '확인 필요'가 남아 있다.</p>` : ""}`
@@ -2469,7 +2475,8 @@ const dsMsg = t => { const m = $("#dSpecMsg"); if (m) m.textContent = t; };
 $("#dForm").addEventListener("change", () => {
   const sp = {};
   document.querySelectorAll("#dForm [data-ds]").forEach(el => { if (el.value !== "") sp[el.dataset.ds] = el.value; });
-  sp.skills = [...document.querySelectorAll("#dSkills input:checked")].map(x => x.value);
+  const skBox = $("#dSkills");   // 역량 목록(readiness.json)이 아직 안 그려졌으면 기존 역량을 지우지 않는다
+  sp.skills = skBox ? [...skBox.querySelectorAll("input:checked")].map(x => x.value) : (rdSpec().skills || []);
   store.set("rdSpec", sp); renderDash(); dsMsg("저장했다. 이 브라우저에만 있다.");
 });
 $("#dSpecOut").addEventListener("click", () => {
@@ -2705,13 +2712,17 @@ $("#studyFilter").addEventListener("click", e => {
 
 // ════════ 시작 ════════
 $("#fUnread").checked = ui.unread; $("#fStar").checked = ui.star; $("#fHl").checked = !!ui.hl; $("#fClosed").checked = !!ui.hideClosed; $("#q").value = "";
-if (location.hash === "#notices") showView("notices");
-if (location.hash === "#briefing") showView("briefing");
-if (location.hash === "#planner") showView("planner");
-if (location.hash === "#ready") showView("ready");
-if (location.hash === "#study") showView("study");
+// 주소의 #탭이름 으로 바로 열기. 뒤로 가기(hashchange)에도 따른다
+function applyHash() {
+  const h = location.hash.slice(1);
+  if (["dash", "notices", "cal", "briefing", "planner", "ready", "study", "settings", "manage"].includes(h)) showView(h);
+}
+applyHash();
+addEventListener("hashchange", applyHash);
+// 플래너 체크가 GitHub 에 저장되기 전(1.5초 모아 보내기)에 창을 닫으면 알린다
+addEventListener("beforeunload", e => { if (plOps.length || plBusy) { e.preventDefault(); e.returnValue = ""; } });
 loadWords();
-loadData().then(() => { renderAll(); watchRun(); dashLoadExtra(); }).catch(() => {
+loadData().then(() => { renderAll(); applyHash(); watchRun(); dashLoadExtra(); }).catch(() => {
   $("#dNew").innerHTML = `<p class="dempty">아직 확인 결과가 없다.</p>`;
   $("#list").innerHTML = `<li class="empty"><b>아직 확인 결과가 없다</b>GitHub 저장소의 Actions 탭에서 '공지·입시 확인'을 한 번 실행하면 여기에 결과가 나온다.</li>`;
   $("#progText").textContent = "첫 실행 전";

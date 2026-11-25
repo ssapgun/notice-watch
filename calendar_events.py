@@ -115,7 +115,7 @@ def academic_events(store: crawler.Store, cfg: dict, today: date) -> list[dict]:
     q = ",".join("?" * len(sources))
     with store.lock:
         rows = [dict(r) for r in store.db.execute(
-            f"SELECT source, date, title, url, summary, kind FROM items WHERE source IN ({q})", sources).fetchall()]
+            f"SELECT grp, source, date, title, title_ko, url, summary, kind FROM items WHERE source IN ({q})", sources).fetchall()]
     out, seen = [], set()
     for r in rows:
         if not ok(r) or not any(k in r["title"] for k in kws):

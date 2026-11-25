@@ -611,7 +611,7 @@ def highlight_hits(it: dict, cfg: dict, key: str = "keywords") -> list[str]:
     t = " ".join([str(it.get("title", "")), str(it.get("title_ko") or ""), *map(str, summ)]).lower()
     for x in hl.get("exclude") or []:
         t = t.replace(str(x).lower(), " ")
-    hits = [w for w in words if str(w).lower() in t]
+    hits = [w for w in words if kw_in(w, t)]   # 짧은 영문은 영단어 일부에 걸리지 않게
     # '연구생'과 '학부연구생'처럼 다른 키워드에 포함되는 것은 하나만 남긴다
     hits = [w for w in hits if not any(w != o and str(w).lower() in str(o).lower() for o in hits)]
     norm = {}
@@ -650,7 +650,7 @@ def topic_hits(it: dict, topics: list[dict]) -> list[str]:
     grp = it.get("grp") or it.get("group")
     return [tp["name"] for tp in topics or []
             if (not tp.get("groups") or grp in tp["groups"])
-            and any(str(k).lower() in t for k in tp.get("keywords") or [])]
+            and any(kw_in(k, t) for k in tp.get("keywords") or [])]
 
 
 def visible_filter(cfg: dict, hidden_topics: set[str] | None = None):
