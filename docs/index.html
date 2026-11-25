@@ -1019,6 +1019,7 @@ function topicHits(it) {
     && (tp.keywords || []).some(k => t.includes(String(k).toLowerCase()))).map(tp => tp.name);
 }
 const shown = it => !hiddenTopics.size || !topicHits(it).some(n => hiddenTopics.has(n));
+const domId = v => /^\d+$/.test(String(v)) ? +v : String(v || "");   // 수집한 글은 숫자 id, 내 PC에서 넣은 글(manual)은 'm…' 문자열 id
 const saveSets = () => { store.set("read", [...readSet].slice(-5000)); store.set("star", [...starSet]); };
 // 별표: 같은 게시판의 재공지는 최신 글 하나로 합쳐지고 옛 글의 id 는 reposts 에 남는다. 옛 글에 단 별표도 합쳐진 글에서 보이게 한다
 const isStar = it => starSet.has(it.id) || (it.reposts || []).some(r => starSet.has(r.id));
@@ -1034,7 +1035,7 @@ function syncStarCache() {
     const snap = {id: own, grp: it.grp, source: it.source, date: it.date || "", title: it.title, url: it.url};
     if (JSON.stringify(c[own]) !== JSON.stringify(snap)) { c[own] = snap; ch = true; }
   });
-  [...Object.keys(c)].forEach(k => { if (!starSet.has(+k)) { delete c[k]; ch = true; } });   // 별표를 뗀 글의 사본은 지운다
+  [...Object.keys(c)].forEach(k => { if (!starSet.has(domId(k))) { delete c[k]; ch = true; } });   // 내 PC에서 넣은 글은 'm…' 문자열 id   // 별표를 뗀 글의 사본은 지운다
   if (ch) store.set("starCache", c);
 }
 const goneStars = () => {   // 별표는 남아 있는데 목록에서 내려간 글
@@ -1334,7 +1335,6 @@ function flushGlimpsed() {
   glimpsed.forEach(id => { if (id) readSet.add(id); }); glimpsed.clear(); saveSets();
 }
 addEventListener("pagehide", flushGlimpsed);   // 새로고침·창 닫기
-const domId = v => /^\d+$/.test(String(v)) ? +v : String(v || "");   // 수집한 글은 숫자 id, 내 PC에서 넣은 글(manual)은 'm…' 문자열 id
 const SEEN = {
   list: {rows: "#list li.row.unread", view: "#viewNotices", id: li => domId(li.dataset.id)},
   dash: {rows: "#dNew .nlist li", view: "#viewDash", id: li => domId(((li.querySelector("[data-nid]") || {}).dataset || {}).nid)},
@@ -1436,7 +1436,7 @@ $("#fStar").addEventListener("change", e => { ui.star = e.target.checked; store.
 $("#fHl").addEventListener("change", e => { ui.hl = e.target.checked; store.set("ui", ui); renderItems(); });
 $("#fClosed").addEventListener("change", e => { ui.hideClosed = e.target.checked; store.set("ui", ui); renderItems(); });
 let qt; $("#q").addEventListener("input", e => { clearTimeout(qt); qt = setTimeout(() => { ui.q = e.target.value.trim(); renderItems(); }, 150); });
-$("#readAll").addEventListener("click", () => { DATA.items.filter(it => shown(it) && (!ui.group || it.grp === ui.group) && (!ui.sub || subOfItem(it) === ui.sub)).forEach(it => readSet.add(it.id)); saveSets(); renderAll(); });
+$("#readAll").addEventListener("click", () => { DATA.items.filter(it => shown(it) && (!ui.group || it.grp === ui.group) && (!ui.sub || subOfItem(it) === ui.sub)).forEach(it => readSet.add(it.id)); orderRead = null; saveSets(); renderAll(); });   // '안 읽은 것만' 을 켠 채 눌러도 바로 비워지게
 $("#list").addEventListener("click", e => {
   const row = e.target.closest(".row"); if (!row) return;
   const id = domId(row.dataset.id);
@@ -2342,9 +2342,11 @@ function renderDash() {
   const mine = appliedMap();
   // 방금 담은 일정은 data.json 이 다시 만들어지기 전까지(1~2분) 이 브라우저에 보관한 사본으로 보여 준다
   const cache = store.get("applyCache", {}), have = SERVER_EV, evs = [...(cal.events || [])];
+  const shownIds = new Set(evs.map(e => e.id));   // 방금 담은 일정은 이미 DATA 에 들어 있다. 사본을 한 번 더 넣지 않는다
   let cacheDirty = false;
   for (const [id, ev] of Object.entries(cache)) {
-    if (have.has(id) || calDays(ev.date) < 0) { delete cache[id]; cacheDirty = true; } else evs.push(ev);
+    if (have.has(id) || calDays(ev.date) < 0) { delete cache[id]; cacheDirty = true; }
+    else if (!shownIds.has(id)) { evs.push(ev); shownIds.add(id); }
   }
   if (cacheDirty) store.set("applyCache", cache);
   const up = evs.map(e => ({e, n: calDays(e.date)})).filter(x => x.n >= 0).sort((a, b) => a.n - b.n || (a.e.time || "").localeCompare(b.e.time || ""));

@@ -272,7 +272,21 @@ def main() -> int:
         except Exception as e:
             b["errors"].append(f"ai_summary: {type(e).__name__}: {e}"[:200])
 
-    if args.scheduled or done_today:
+    # 텔레그램을 먼저 보내고, 보낸 경우에만 '오늘 보냄' 표시를 남긴다. 6:57 실행에서 텔레그램이 실패하면 7:10·8:10 예비 실행이 다시 보낸다
+    sent_ok = False
+    if not args.no_telegram and notify.enabled():
+        try:
+            notify.send(telegram_text(b, crawler.load_config().get("site_url", "")))
+            sent_ok = True
+            print("텔레그램 보냄")
+        except Exception as e:
+            b["errors"].append(f"telegram: {type(e).__name__}: {e}"[:200])
+            print(f"[텔레그램 오류] {type(e).__name__}: {e}")
+    elif not args.no_telegram:
+        sent_ok = True   # 토큰이 없으면 보낼 것이 없다. 예약 실행을 여러 번 하지 않게 보낸 것으로 친다
+        print("텔레그램 꺼짐 (토큰 없음)")
+
+    if (args.scheduled and sent_ok) or done_today:
         b["scheduled_done"] = True   # 오늘 예약 실행으로 보냈다는 표시. 설정 수정·손 실행으로 다시 만들어도 유지한다
     OUT.parent.mkdir(parents=True, exist_ok=True)
     text = json.dumps(b, ensure_ascii=False, separators=(",", ":"))
@@ -288,15 +302,6 @@ def main() -> int:
     print(f"브리핑 저장: 뉴스 {n_news}건, 오늘 일정 {len(b['schedule']['today'])}건, 오류 {len(b['errors'])}건")
     for e in b["errors"] + [f"{c['name']} · {x}" for c in b["news"] for x in c.get("errors", [])]:
         print(f"[오류] {e}")
-
-    if not args.no_telegram and notify.enabled():
-        try:
-            notify.send(telegram_text(b, crawler.load_config().get("site_url", "")))
-            print("텔레그램 보냄")
-        except Exception as e:
-            print(f"[텔레그램 오류] {type(e).__name__}: {e}")
-    elif not args.no_telegram:
-        print("텔레그램 꺼짐 (토큰 없음)")
     return 0
 
 

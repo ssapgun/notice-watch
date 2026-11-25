@@ -8,6 +8,7 @@ from __future__ import annotations
 
 import re
 import sys
+import time
 from datetime import datetime
 
 import crawler
@@ -28,7 +29,8 @@ def main() -> int:
         if not src:
             print(f"[건너뜀] sources 에 없는 이름: {name}")
             continue
-        r = crawler.test_source(src)
+        r = crawler.test_source(src, full=True)   # 미리보기용 자르기(25줄) 없이 전부
+        time.sleep(float(cfg.get("delay_seconds", 2)))   # 원칙 2: 요청 사이 대기 (같은 사이트가 연달아 있다)
         if not r.get("ok"):
             print(f"[실패] {name}: {r.get('error') or r.get('warnings')}")
             fresh += [m for m in cfg.get("manual_items") or [] if m.get("source") == name]   # 실패하면 예전 것 유지
