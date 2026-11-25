@@ -773,6 +773,7 @@ h3.dsub small{font-weight:400;color:var(--pencil);font-size:14px;margin-left:6px
       <div class="mcal-day" id="mDay"></div>
     </div>
     <ol class="cal-list" id="calList"></ol>
+    <details class="ufold calpast" id="calPast" hidden><summary>지난 일정 <span class="n">7일 넘게 지난 것 <span id="calPastN"></span></span></summary><ol class="cal-list" id="calPastList"></ol></details>
     <h3>날짜가 아직 없는 일정</h3>
     <div class="utools"><button class="linkbtn" type="button" data-uall="open">모두 펼치기</button><button class="linkbtn" type="button" data-uall="close">모두 접기</button></div>
     <div id="calUndated"></div>
@@ -1450,7 +1451,7 @@ function renderCal() {
   $("#calFilter").innerHTML = ["", ...cats].map(c => `<button type="button" data-c="${esc(c)}" aria-pressed="${c === calCat}">${esc(c || "전체")}</button>`).join("");
   const W = ["일", "월", "화", "수", "목", "금", "토"];
   let month = "";
-  const rows = evs.filter(e => (!calCat || e.category === calCat) && calDays(e.date) >= -7).map(e => {
+  const evRow = e => {
     const n = calDays(e.date), [y, m, d] = e.date.split("-").map(Number);
     const head = `${y}년 ${m}월`;
     const sep = head !== month ? `<li class="cal-month">${head}</li>` : ""; month = head;
@@ -1462,7 +1463,15 @@ function renderCal() {
       <span class="dt">${range}${String(m).padStart(2, "0")}.${String(d).padStart(2, "0")} (${wd})${e.time ? " " + esc(e.time) : ""}</span>
       <div class="what">${evBtn(e)}<span class="ty t-${esc(e.type.replace(/\s/g, ""))}">${esc(e.type)}</span><b>${e.url ? `<a href="${esc(e.url)}" target="_blank" rel="noopener">${esc(e.exam)}</a>` : esc(e.exam)}</b>${e.label ? " " + esc(e.label) : ""}
         ${e.note ? `<small>${esc(e.note)}</small>` : ""}</div></li>`;
-  });
+  };
+  const rows = evs.filter(e => (!calCat || e.category === calCat) && calDays(e.date) >= -7).map(evRow);
+  // 7일 넘게 지난 일정은 맨 아래 '지난 일정' 접이식에 최근 순으로
+  const oldEvs = evs.filter(e => (!calCat || e.category === calCat) && calDays(e.date) < -7).reverse();
+  month = "";
+  const pastRows = oldEvs.map(evRow);
+  $("#calPast").hidden = !oldEvs.length;
+  $("#calPastN").textContent = oldEvs.length ? `${oldEvs.length}건` : "";
+  $("#calPastList").innerHTML = pastRows.join("");
   $("#calList").innerHTML = rows.join("") || `<li class="empty"><b>다가오는 일정이 없다</b>'새 일정 추가'로 넣거나 구글 캘린더 '공지·입시 일정'에 넣는다.</li>`;
   const un = (C.undated || []).filter(u => !calCat || u.category === calCat);
   // 분류별로 접는다. 지난 일정(참고) 카드는 각 분류의 뒤로
@@ -1485,7 +1494,7 @@ function renderCal() {
 }
 const undatedClosed = setOf("undatedClosed");
 document.addEventListener("toggle", e => {
-  const d = e.target; if (!d.classList || !d.classList.contains("ufold")) return;
+  const d = e.target; if (!d.classList || !d.classList.contains("ufold") || !d.dataset.uc) return;   // '지난 일정'(calPast)은 기록하지 않는다
   d.open ? undatedClosed.delete(d.dataset.uc) : undatedClosed.add(d.dataset.uc);
   store.set("undatedClosed", [...undatedClosed]);
 }, true);
