@@ -12,6 +12,7 @@ from __future__ import annotations
 import hashlib
 import json
 import sys
+from datetime import datetime
 from pathlib import Path
 
 import calendar_events
@@ -122,7 +123,7 @@ def main() -> int:
     with store.lock:
         rows = [dict(r) for r in store.db.execute(
             "SELECT id, grp, source, date, title, url, change, kind, found_at, is_read,"
-            " summary, title_ko, sum_mode, sum_state, images FROM items "
+            " summary, title_ko, sum_mode, sum_state, images, deadline FROM items "
             "ORDER BY COALESCE(NULLIF(date,''), substr(found_at,1,10)) DESC, id DESC").fetchall()]
     # 분류는 지금 설정을 따른다 (대상을 다른 분류로 옮기면 예전 글도 함께 옮겨 보인다). 설정에서 지운 대상의 글은 뺀다
     grp_of = {s["name"]: s.get("group", "") for s in cfg["sources"]}
@@ -139,6 +140,16 @@ def main() -> int:
             r.pop("images")
     items = crawler.collapse_reposts(items)[:MAX_ITEMS]   # 같은 게시판 재공지는 하나로
     items = sorted(items + manual_items(cfg), key=lambda r: r["date"] or r["found_at"][:10], reverse=True)
+    for r in items:   # 마감일: 목록 칸에서 뽑아 둔 것이 없으면 제목의 '(~11/20)' 같은 표시에서
+        if not r.get("deadline") and r.get("kind") in ("board", "manual"):
+            base = r.get("date") or (r.get("found_at") or "")[:10]
+            try:
+                b = datetime.strptime(base, "%Y-%m-%d").date() if base else None
+            except ValueError:
+                b = None
+            r["deadline"] = crawler.parse_deadline(r.get("title", ""), b, dday=False) if b else ""
+        if not r.get("deadline"):
+            r.pop("deadline", None)
     payload = {
         "generated_at": crawler.now_str(),
         "last_run": store.get_meta("last_run"),

@@ -53,6 +53,51 @@ def clean(text: str) -> str:
     return re.sub(r"\s+", " ", text or "").strip()
 
 
+_DDAY_RE = re.compile(r"D\s*-\s*(\d{1,3})(?!\d)|D\s*-?\s*day", re.I)
+_TILDE_RE = re.compile(r"[~∼〜]\s*(?:(20\d{2})\s*[.\-/년]\s*)?(\d{1,2})\s*[.\-/월]\s*(\d{1,2})(?!\d)")
+
+
+def _ymd(y: int, m: int, d: int):
+    try:
+        return datetime(y, m, d).date()
+    except ValueError:
+        return None
+
+
+def _near_year(m: int, d: int, base, nearest: bool = False) -> str:
+    """연도 없는 월·일을 날짜로.
+    nearest=False(제목, base=게시일): 게시일보다 2주 넘게 앞서면 다음 해로 본다(12월 글의 '~1/15').
+    nearest=True(목록 칸, base=확인한 날): 확인한 날에 가장 가까운 연도. 이미 끝난 '접수 10.19~10.30' 이 내년으로 가지 않게."""
+    if nearest:
+        cands = [x for x in (_ymd(base.year + k, m, d) for k in (-1, 0, 1)) if x]
+        return min(cands, key=lambda x: abs((x - base).days)).isoformat() if cands else ""
+    dt = _ymd(base.year, m, d)
+    if not dt:
+        return ""
+    if (base - dt).days > 14:
+        dt = _ymd(base.year + 1, m, d) or dt
+    return dt.isoformat()
+
+
+def parse_deadline(text: str, base=None, dday: bool = True, nearest: bool = False) -> str:
+    """목록 칸·제목의 마감 표시에서 마감일(YYYY-MM-DD)을 뽑는다. 못 찾으면 ''.
+    'D-8'·'D-day'(base=확인한 날 기준), '접수 10.19~10.30'·'(~11/20)'·'(~2026.7.10)'(물결표 뒤 마지막 날짜)."""
+    from datetime import date as _date, timedelta as _td
+    base = base or _date.today()
+    t = text or ""
+    m = _DDAY_RE.search(t) if dday else None   # 제목에는 D-n 을 쓰지 않는다('D-30 이벤트' 같은 오인)
+    if m:
+        return (base + _td(days=int(m.group(1) or 0))).isoformat()
+    hits = list(_TILDE_RE.finditer(t))
+    if not hits:
+        return ""
+    y, mo, d = hits[-1].groups()
+    if y:
+        dt = _ymd(int(y), int(mo), int(d))
+        return dt.isoformat() if dt else ""
+    return _near_year(int(mo), int(d), base, nearest)
+
+
 def norm_date(text: str) -> str:
     m = DATE_RE.search(text or "")
     if not m:
@@ -72,7 +117,7 @@ CONFIG_HEADER = """# 공지·입시 감시 설정 파일
 # 저장할 때마다 바로 이전 내용이 config.yaml.bak 에 남는다.
 """
 FIELD_ORDER = ["name", "group", "sub", "type", "enabled", "note", "list_url", "url", "pages", "page_size",
-               "row_selector", "title_selector", "title_text_selector", "date_selector",
+               "row_selector", "title_selector", "title_text_selector", "date_selector", "deadline_selector",
                "remove_in_title", "category_selector", "categories", "link_regex", "link_template",
                "detail_selector", "content_selector", "remove_selectors", "ignore_regex", "keywords",
                "include", "exclude", "require", "render", "wait_selector"]
@@ -145,7 +190,7 @@ def clean_source(raw: dict) -> dict:
             src.pop(k, None)
     else:
         for k in ("pages", "page_size", "row_selector", "title_selector", "title_text_selector", "date_selector",
-                  "remove_in_title", "category_selector", "categories", "link_regex",
+                  "deadline_selector", "remove_in_title", "category_selector", "categories", "link_regex",
                   "link_template", "include", "exclude", "require", "detail_selector"):
             src.pop(k, None)
     for k in ("link_regex", "ignore_regex"):
@@ -154,7 +199,7 @@ def clean_source(raw: dict) -> dict:
                 re.compile(src[k])
             except re.error as e:
                 raise ValueError(f"{k} 정규식 오류: {e}")
-    sel_keys = ("row_selector", "title_selector", "title_text_selector", "date_selector",
+    sel_keys = ("row_selector", "title_selector", "title_text_selector", "date_selector", "deadline_selector",
                 "remove_in_title", "category_selector", "content_selector", "detail_selector")
     probe = BeautifulSoup("<div></div>", "html.parser")
     for k in sel_keys:
@@ -241,7 +286,8 @@ class Store:
         have = {r["name"] for r in self.db.execute("PRAGMA table_info(items)")}
         for col, typ in [("summary", "TEXT"), ("title_ko", "TEXT"), ("sum_mode", "TEXT"),
                          ("sum_state", "TEXT"), ("sum_tries", "INTEGER DEFAULT 0"),
-                         ("sum_error", "TEXT"), ("sum_at", "TEXT"), ("images", "TEXT")]:
+                         ("sum_error", "TEXT"), ("sum_at", "TEXT"), ("images", "TEXT"),
+                         ("deadline", "TEXT")]:
             if col not in have:
                 self.db.execute(f"ALTER TABLE items ADD COLUMN {col} {typ}")
         self.db.commit()
@@ -300,12 +346,16 @@ class Store:
                 (it["key"], it.get("tkey")),
             ).fetchone()
             if dup:
+                if it.get("deadline"):   # 예전에 모은 글도 목록에서 마감일을 처음 알게 되면 채운다
+                    self.db.execute("UPDATE items SET deadline=? WHERE (key=? OR (tkey IS NOT NULL AND tkey=?))"
+                                    " AND COALESCE(deadline,'')=''", (it["deadline"], it["key"], it.get("tkey")))
+                    self.db.commit()
                 return False
             self.db.execute(
-                "INSERT INTO items(key,tkey,grp,source,date,title,url,change,kind,found_at,is_read)"
-                " VALUES(?,?,?,?,?,?,?,?,?,?,?)",
+                "INSERT INTO items(key,tkey,grp,source,date,title,url,change,kind,found_at,is_read,deadline)"
+                " VALUES(?,?,?,?,?,?,?,?,?,?,?,?)",
                 (it["key"], it.get("tkey"), it["group"], it["source"], it["date"], it["title"],
-                 it["url"], it.get("change", ""), it["kind"], now_str(), 1 if mark_read else 0),
+                 it["url"], it.get("change", ""), it["kind"], now_str(), 1 if mark_read else 0, it.get("deadline") or None),
             )
             self.db.commit()
             return True
@@ -492,7 +542,13 @@ def parse_list(html: str, page_url: str, src: dict) -> list[dict]:
                 tag.decompose()
         title = clean(t_el.get_text(" "))
         if title:
-            items.append({"title": title, "date": date, "url": build_link(href, page_url, src)})
+            row_item = {"title": title, "date": date, "url": build_link(href, page_url, src)}
+            if src.get("deadline_selector"):   # 목록 칸의 마감 표시(D-8, 접수 10.19~10.30)
+                dl_el = row.select_one(src["deadline_selector"])
+                dl = parse_deadline(clean(dl_el.get_text(" ")), nearest=True) if dl_el else ""
+                if dl:
+                    row_item["deadline"] = dl
+            items.append(row_item)
     return items
 
 
