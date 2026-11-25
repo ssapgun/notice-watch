@@ -1000,6 +1000,11 @@ const store = {
 const ui = Object.assign({group: "", sub: "", q: "", unread: false, star: false, hl: false}, store.get("ui", {}));
 const setOf = k => { const v = store.get(k, []); return new Set(Array.isArray(v) ? v : []); };   // 저장값이 깨져도(배열이 아니어도) 화면 전체가 멈추지 않게
 const readSet = setOf("read");
+// 새 기기(이 브라우저에 읽음 기록이 아예 없음)로 처음 들어오면, 그때까지 모인 글은 읽음으로 친다(readBase = 처음 본 확인 시각).
+// 읽음 기록은 브라우저마다 따로라, 이게 없으면 새 노트북에서 모든 공지가 새 항목으로 뜬다
+let readBase = store.get("readBase", "");
+const NEW_DEVICE = (() => { try { return localStorage.getItem("read") === null && !readBase; } catch (e) { return false; } })();
+const baseRead = it => !!readBase && String(it.found_at || "") !== "" && String(it.found_at) <= readBase;
 const starSet = setOf("star");
 const hiddenTopics = setOf("hiddenTopics");
 // 주제(채용·상담 등): crawler.topic_hits 와 같은 규칙
@@ -1082,10 +1087,13 @@ async function loadData() {
   const r = await fetch("data/data.json?t=" + Date.now(), {cache: "no-store"});
   if (!r.ok) throw new Error("data.json 없음");
   DATA = await r.json();
+  if (NEW_DEVICE && !readBase) {   // 새 기기 첫 접속: 지금까지 모인 글을 읽음으로
+    readBase = String(DATA.last_run || DATA.generated_at || ""); store.set("readBase", readBase); store.set("read", []);
+  }
   try { syncStarCache(); } catch (e) {}   // 사본 갱신이 실패해도 화면은 계속
   if (typeof SERVER_EV !== "undefined") SERVER_EV = new Set(((DATA.calendar || {}).events || []).map(e => e.id));
 }
-const isUnread = it => !it.is_read && !readSet.has(it.id);
+const isUnread = it => !it.is_read && !readSet.has(it.id) && !baseRead(it);
 
 function nextSlot() {   // 한국 시간 0·6·12·18시 7분
   const now = new Date(), kst = new Date(now.getTime() + (9 * 60 + now.getTimezoneOffset()) * 60000);
@@ -1280,7 +1288,7 @@ function renderItems() {
   const q = ui.q.toLowerCase();
   const sig = JSON.stringify([ui.group, ui.sub, ui.q, ui.unread, ui.star, ui.hl, [...hiddenTopics]]);
   if (!orderRead || sig !== lastSig) orderRead = new Set(readSet);
-  const wasUnread = it => !it.is_read && !orderRead.has(it.id);
+  const wasUnread = it => !it.is_read && !orderRead.has(it.id) && !baseRead(it);
   let items = (ui.star ? [...DATA.items, ...goneStars()] : DATA.items).filter(it => (it._gone || shown(it)) && (!ui.group || it.grp === ui.group) && (!ui.sub || subOfItem(it) === ui.sub)
     && (!q || (it.title + it.source + (it.change || "") + (it.title_ko || "") + (it.summary || []).join(" ")).toLowerCase().includes(q))
     && (!ui.unread || wasUnread(it)) && (!ui.star || isStar(it)) && (!ui.hl || hlHits(it, DATA.highlight).length));
