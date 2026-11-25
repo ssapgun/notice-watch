@@ -765,7 +765,7 @@ def new_session() -> requests.Session:
     return s
 
 
-def test_source(raw: dict) -> dict:
+def test_source(raw: dict, full: bool = False) -> dict:
     """저장하지 않고 한 번 읽어 본다. 기록·사본은 건드리지 않는다."""
     src = clean_source(raw)
     session = new_session()
@@ -789,10 +789,10 @@ def test_source(raw: dict) -> dict:
         shell = looks_like_js_shell(html)
         if shell and not items:
             warn.append("JavaScript 로 내용을 그리는 페이지로 보인다. 이 대상에 render: browser 설정이 필요하다.")
-        return {"ok": bool(items), "kind": "board", "count": len(items), "items": items[:15], "warnings": warn,
+        return {"ok": bool(items), "kind": "board", "count": len(items), "items": items if full else items[:15], "warnings": warn,
                 "js_rendered": shell or "<div id=\"app\"></div>" in html.replace(" ", "")}
     lines = page_lines(html, src)
-    return {"ok": bool(lines), "kind": "watch", "count": len(lines), "lines": lines[:25],
+    return {"ok": bool(lines), "kind": "watch", "count": len(lines), "lines": lines if full else lines[:25],
             "warnings": [] if lines else ["본문을 찾지 못했다. 본문 선택자를 비우거나 바꿔 볼 것."]}
 
 
