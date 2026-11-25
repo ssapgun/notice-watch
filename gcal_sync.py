@@ -1,5 +1,5 @@
 """
-구글 캘린더 양방향 동기화 (GitHub Actions 가 1시간마다, 그리고 웹에서 일정을 고칠 때마다 실행한다)
+구글 캘린더 양방향 동기화 (자동 실행 없음. 웹 '일정' 탭의 '구글 캘린더 동기화' 버튼이나 Actions 의 Run workflow 로만 실행한다)
 
 - 사이트 쪽 원본: schedule.json (+ 학사 공지에서 자동으로 뽑은 기간)
 - 구글 쪽: 전용 캘린더 하나 (GOOGLE_CALENDAR_ID). 서비스 계정(GOOGLE_SERVICE_ACCOUNT, JSON 키)으로 접근한다.
@@ -226,7 +226,7 @@ def sync(sched: dict, auto: list[dict], gc, state: dict, today: date | None = No
                 state.pop(i, None)
                 continue
             if s and not g:
-                if st and date.fromisoformat(s["date"]) >= tmin and st.get("gid"):
+                if st and tmin <= date.fromisoformat(s["date"]) <= tmax and st.get("gid"):   # 조회 범위 밖(800일 넘은 미래)은 지우지 않는다
                     log(f"  구글에 없음 → 사이트 삭제: {s['exam']}")
                     del_site(i)
                     state.pop(i, None)
