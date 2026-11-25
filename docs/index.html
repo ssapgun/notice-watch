@@ -1367,7 +1367,12 @@ function watchSeen(scope) {
   document.querySelectorAll(c.rows).forEach(li => { li.dataset.seenScope = scope; obs.observe(li); });
 }
 function observeSeen() { watchSeen("list"); }
-function renderAll() { renderSummary(); renderItems(); if (typeof renderDash === "function") renderDash(); if (typeof renderStudy === "function" && STUDY) renderStudy(); }
+function renderAll() {
+  renderSummary(); renderItems();
+  if (typeof renderCal === "function" && !$("#viewCal").hidden) renderCal();   // 구글 캘린더 동기화 뒤 다시 불러오면 일정 탭도
+  if (typeof renderDash === "function") renderDash();
+  if (typeof renderStudy === "function" && STUDY) renderStudy();
+}
 $("#pager").addEventListener("click", e => {
   const b = e.target.closest("button[data-p]"); if (!b || b.disabled) return;
   flushGlimpsed();   // 넘긴 쪽에서 본 제목은 읽음
@@ -1928,7 +1933,7 @@ $("#kwSrcWord").addEventListener("keydown", e => { if (e.key === "Enter") { e.pr
 function collect() {   // crawler.clean_source 와 같은 검사
   const t = currentType(), src = {name: "", group: "", type: t, enabled: true};
   if (editingOld) { const old = DATA.sources.find(s => s.name === editingOld); if (old) { src.enabled = old.enabled !== false;
-    for (const k of ["page_size", "render", "wait_selector"]) if (k in old) src[k] = old[k]; } }   // 폼에 없는 값은 유지
+    for (const k of ["page_size", "render", "wait_selector", "deadline_selector"]) if (k in old) src[k] = old[k]; } }   // 폼에 없는 값은 유지
   src[t === "board" ? "list_url" : "url"] = form.elements.url.value.trim();
   FORM_KEYS.forEach(k => {
     const el = form.elements[k], box = el && el.closest("[data-for]"); if (!el || (box && box.dataset.for !== t)) return;
@@ -2125,10 +2130,9 @@ function rdStats(p, sp) {
   parts.push(`어학 보유 ${Math.round(S.filter(s => s.lang).length / n * 100)}%`, `자격증 중앙값 ${median(S.map(s => s.cert || 0))}개`, `대외활동 중앙값 ${median(S.map(s => s.act || 0))}개`);
   return `<p class="rdstat"><b>후기 표본 ${n}명</b> ${parts.join(" · ")}${mine}<small>글을 쓴 사람만 모인 표본이라 실제 합격자 평균이 아니다.</small></p>`;
 }
-function renderReadyForm() {
-  if (!RD) return;
+function renderReadyForm() {   // readiness.json 을 못 불러와도 기본 스펙 칸은 채운다(빈 칸으로 저장돼 지워지지 않게)
   const sp = rdSpec(), have = new Set(sp.skills || []);
-  $("#rdSkills").innerHTML = RD.skills.map(s => `<label><input type="checkbox" value="${esc(s.id)}" ${have.has(s.id) ? "checked" : ""}> ${esc(s.label)}</label>`).join("");
+  if (RD && RD.skills) $("#rdSkills").innerHTML = RD.skills.map(s => `<label><input type="checkbox" value="${esc(s.id)}" ${have.has(s.id) ? "checked" : ""}> ${esc(s.label)}</label>`).join("");
   document.querySelectorAll("#rdForm [data-rd]").forEach(el => { el.value = sp[el.dataset.rd] !== undefined ? sp[el.dataset.rd] : (el.dataset.rd === "scale" ? "4.3" : ""); });
   if (!Object.keys(sp).length) $("#rdSpecBox").open = true;
 }
@@ -2170,7 +2174,8 @@ function renderReady() {
 $("#rdForm").addEventListener("change", () => {
   const sp = {};
   document.querySelectorAll("#rdForm [data-rd]").forEach(el => { if (el.value !== "") sp[el.dataset.rd] = el.value; });
-  sp.skills = [...document.querySelectorAll("#rdSkills input:checked")].map(x => x.value);
+  const skBox = $("#rdSkills");   // 역량 목록이 아직 없으면 기존 역량을 지우지 않는다
+  sp.skills = (RD && RD.skills && skBox && skBox.children.length) ? [...skBox.querySelectorAll("input:checked")].map(x => x.value) : (rdSpec().skills || []);
   store.set("rdSpec", sp); renderReady(); renderCourses();
 });
 $("#viewReady").addEventListener("click", e => {
@@ -2418,7 +2423,7 @@ function renderDash() {
   $("#dSpec").innerHTML = (chips.length ? `<div class="spec">${chips.map(c => `<span>${esc(c)}</span>`).join("")}</div>`
       + (awards.length ? `<p class="dnote">수상·활동: ${awards.map(esc).join(" · ")}</p>` : "") : `<p class="dnote bad">입력한 스펙이 없다. 아래 '스펙 입력·수정'을 펼쳐 입력하면 판정이 채워진다.</p>`)
     + (R ? `<div class="vbar" role="img" aria-label="지원 가능 ${ok}, 확인 필요 ${chk}, 조건 미달 ${no}">
-        <i style="width:${total ? ok / total * 100 : 0}%;background:var(--st-live)"></i><i style="width:${chk / total * 100}%;background:var(--amber)"></i><i style="width:${no / total * 100}%;background:var(--pencil)"></i></div>
+        <i style="width:${total ? ok / total * 100 : 0}%;background:var(--st-live)"></i><i style="width:${total ? chk / total * 100 : 0}%;background:var(--amber)"></i><i style="width:${total ? no / total * 100 : 0}%;background:var(--pencil)"></i></div>
       <p class="vlegend"><span>지원 가능 <b>${ok}</b></span><span>확인 필요 <b>${chk}</b></span><span>조건 미달 <b>${no}</b></span><span>전체 ${total}</span></p>
       ${canList.length ? `<ul class="dlist">${canList.map(p => `<li style="grid-template-columns:1fr"><div class="what"><b>${p.url ? `<a href="${esc(httpUrl(p.url))}" target="_blank" rel="noopener">${esc(p.name)}</a>` : esc(p.name)}</b><small>${esc(p.cat)} · ${esc(p.next)}</small></div></li>`).join("")}</ul>` : ""}
       ${need.length && chips.length ? `<p class="dnote">미입력 ${need.length}개 때문에 '확인 필요'가 남아 있다.</p>` : ""}`
@@ -2428,12 +2433,13 @@ function renderDash() {
 
   // 오늘 공부 (플래너). 계산이 실패해도 대시보드 나머지는 그려지게 한다
   let planHtml = `<p class="dempty">플래너를 불러오지 못했다.</p>`;
-  if (DPL && typeof Planner !== "undefined") {
+  const plData = PL || DPL;   // 플래너 탭에서 체크했으면 그 최신 상태를
+  if (plData && typeof Planner !== "undefined") {
     try {
-      if (!DPL.courses.length) planHtml = `<p class="dempty">등록된 강의가 없다.</p>`;
+      if (!plData.courses.length) planHtml = `<p class="dempty">등록된 강의가 없다.</p>`;
       else {
-        const r = Planner.compute(DPL, today), first = r.days[0], pst = Planner.settingsOf(DPL);
-        const doneCost = DPL.courses.reduce((a, c) => a + c.items.filter(it => it.done === today).reduce((x, it) => x + Planner.costOf(it, c), 0), 0);
+        const r = Planner.compute(plData, today), first = r.days[0], pst = Planner.settingsOf(plData);
+        const doneCost = plData.courses.reduce((a, c) => a + c.items.filter(it => it.done === today).reduce((x, it) => x + Planner.costOf(it, c), 0), 0);
         planHtml = r.warnings.slice(0, 2).map(w => `<p class="dwarn"><b>${w.overdue ? "마감 지남" : "속도 부족"}</b> ${esc(w.courses.join(", "))} · 마감 ${esc(w.deadline)} · ${fmtMin(w.short)} 부족</p>`).join("")
           + `<p class="dnote">${dayLabel(today)} · 남은 계획 ${fmtMin(first.total)}${doneCost ? ` · 오늘 끝낸 분량 ${fmtMin(doneCost)}` : ""}</p>`
           + (first.items.length ? `<ul class="dlist">${first.items.slice(0, 5).map(i => `<li style="grid-template-columns:1fr"><div class="what">${esc(i.title)}<small>${esc(i.course)} · ${fmtMin(i.cost)}${i.late ? " · 마감 지남" : ""}</small></div></li>`).join("")}</ul>${first.items.length > 5 ? `<p class="dnote">외 ${first.items.length - 5}개</p>` : ""}`
@@ -2530,6 +2536,10 @@ let evApply = null;   // 공지에서 '일정에 담기'로 연 입력창이면 
 function dashAfterSave(id, del) {
   const set = appliedMap();
   if (del) { delete set[id]; const c = store.get("applyCache", {}); delete c[id]; store.set("applyCache", c); }
+  else if (!evApply) {   // 이미 담아 둔 일정을 data.json 갱신 전에 다시 고치면 사본도 새 내용으로
+    const c = store.get("applyCache", {}), ev = (DATA.calendar.events || []).find(x => x.id === id);
+    if (c[id] && ev) { c[id] = ev; store.set("applyCache", c); }
+  }
   else if (evApply) {
     set[id] = "관심";
     const ev = (DATA.calendar.events || []).find(x => x.id === id);
@@ -2543,6 +2553,7 @@ function dashAddFromNotice(it) {
   f.elements.exam.value = it.title_ko || it.title;
   f.elements.category.value = it.grp || "";
   f.elements.type.value = "접수 마감";
+  if (it.deadline) f.elements.date.value = it.deadline;   // 목록 칸·제목에서 뽑아 둔 마감일
   f.elements.url.value = /^https?:\/\//.test(it.url || "") ? it.url : "";
   f.elements.note.value = `${it.grp} / ${it.source} 공지${it.date ? " (" + it.date + ")" : ""}에서 담음`;
   $("#evTitle").textContent = "일정에 담기: 마감일을 넣는다";

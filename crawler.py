@@ -54,7 +54,8 @@ def clean(text: str) -> str:
 
 
 _DDAY_RE = re.compile(r"D\s*-\s*(\d{1,3})(?!\d)|D\s*-?\s*day", re.I)
-_TILDE_RE = re.compile(r"[~∼〜]\s*(?:(20\d{2})\s*[.\-/년]\s*)?(\d{1,2})\s*[.\-/월]\s*(\d{1,2})(?!\d)")
+# 날짜 뒤에는 끝·공백·일·요일·괄호·구두점·'까지'·'마감' 만 온다. '~1.5억'·'~4.5점'·'~2.5%' 같은 소수를 날짜로 읽지 않게
+_TILDE_RE = re.compile(r"[~∼〜]\s*(?:(20\d{2})\s*[.\-/년]\s*)?(\d{1,2})\s*[.\-/월]\s*(\d{1,2})(?=$|[\s일월화수목금토.,)\]}·/(~까마])")
 
 
 def _ymd(y: int, m: int, d: int):
@@ -211,7 +212,7 @@ def clean_source(raw: dict) -> dict:
     return {k: src[k] for k in FIELD_ORDER if k in src}
 
 
-KEEP_ON_EDIT = ("page_size", "render", "wait_selector")   # 화면 폼에 없는 값: 수정해도 지우지 않는다
+KEEP_ON_EDIT = ("page_size", "render", "wait_selector", "deadline_selector")   # 화면 폼에 없는 값: 수정해도 지우지 않는다
 
 
 def upsert_source(raw: dict, old_name: str | None) -> dict:

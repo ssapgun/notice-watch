@@ -1,7 +1,7 @@
 """
 일정 캘린더 (시험·공모전·방학 프로그램·학사 기간)
 
-- schedule.json: 날짜가 정해진 일정 (웹 '일정' 탭과 구글 캘린더가 함께 고친다. gcal_sync.py 가 1시간마다 맞춘다).
+- schedule.json: 날짜가 정해진 일정 (웹 '일정' 탭과 구글 캘린더가 함께 고친다. gcal_sync.py 가 '구글 캘린더 동기화' 버튼으로 맞춘다).
 - config.yaml 의 exams: 날짜가 아직 없는 시험·공모전 카드 (status: 상시·미발표·미정).
 - config.yaml 의 academic_calendar: 학사 공지(복학·수강신청·등록 등)에서 기간을 자동으로 뽑아 일정에 더한다.
 - docs/calendar.ics 로 내보내 구글 캘린더에서 'URL로 추가'해 구독할 수 있다.
