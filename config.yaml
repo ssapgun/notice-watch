@@ -7,6 +7,7 @@ auto_check_hours: 6
 max_age_months: 8
 max_age_months_by_group:
   경희대: 3
+  지원 정책: 0
 max_pages: 25
 summary:
   enabled: true
@@ -2183,6 +2184,47 @@ sources:
   title_selector: a.item-link
   title_text_selector: .title .text-inner
   date_selector: .date
+- name: 정부 혜택 (보조금24)
+  group: 지원 정책
+  type: gov24
+  enabled: true
+  note: 행정안전부_대한민국 공공서비스(혜택) 정보 공개 API(공공데이터포털 15113968, 보조금24 원본). 인증키는 GitHub Secret DATA_GO_KR_KEY. 웹페이지를 긁지 않고 공개 API 만 부른다. 지자체 혜택은 regions 의 지역만, birth_year 가 있으면 지원조건의 나이(JA0110~JA0111)로 거른다
+  url: https://www.gov.kr/portal/rcvfvrSvc/main
+  include:
+  - 청년
+  - 대학생
+  - 대학원생
+  - 자격증
+  - 자격시험
+  - 응시료
+  - 학자금
+  - 이자
+  - 전세
+  - 월세
+  - 임차
+  - 내일배움
+  - 직업훈련
+  - 취업
+  - 구직
+  - 장학
+  exclude:
+  - 노인
+  - 어르신
+  - 영유아
+  - 아동
+  - 임산부
+  - 출산
+  - 난임
+  - 농업인
+  - 어업인
+  - 축산
+  - 임업
+  - 소상공인
+  - 장애
+  - 보훈
+  - 한부모
+  - 다문화
+  - 북한이탈
 topics:
 - name: 채용·취업
   groups:
@@ -2447,7 +2489,37 @@ group_folders:
   - 외부장학
   - 봉사활동
   - 자격증
+  - 지원 정책
 sub_rules:
+  지원 정책:
+  - name: 학자금·이자
+    keywords:
+    - 학자금
+    - 이자
+    - 대출
+  - name: 주거
+    keywords:
+    - 전세
+    - 월세
+    - 임차
+    - 주거
+    - 주택
+  - name: 자격증·훈련
+    keywords:
+    - 자격
+    - 응시료
+    - 내일배움
+    - 직업훈련
+  - name: 취업
+    keywords:
+    - 취업
+    - 구직
+    - 일자리
+  - name: 청년·기타
+    keywords:
+    - 청년
+    - 대학
+    - 장학
   공모전·대외활동:
   - name: 해커톤·아이디어톤
     keywords:

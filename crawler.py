@@ -121,8 +121,8 @@ FIELD_ORDER = ["name", "group", "sub", "type", "enabled", "note", "list_url", "u
                "row_selector", "title_selector", "title_text_selector", "date_selector", "deadline_selector",
                "remove_in_title", "category_selector", "categories", "link_regex", "link_template",
                "detail_selector", "content_selector", "remove_selectors", "ignore_regex", "keywords",
-               "include", "exclude", "require", "render", "wait_selector"]
-LIST_FIELDS = {"categories", "keywords", "include", "exclude", "require", "remove_selectors"}
+               "include", "exclude", "require", "render", "wait_selector", "birth_year", "regions"]
+LIST_FIELDS = {"categories", "keywords", "include", "exclude", "require", "remove_selectors", "regions"}
 _config_lock = threading.Lock()
 
 
@@ -155,6 +155,11 @@ def clean_source(raw: dict) -> dict:
                 raise ValueError("페이지 수는 1~10 사이 숫자여야 한다")
         elif k == "enabled":
             v = bool(v)
+        elif k == "birth_year":
+            try:
+                v = int(v) if v not in ("", None) else None
+            except (TypeError, ValueError):
+                raise ValueError("birth_year 는 출생 연도 숫자여야 한다 (예: 2000)")
         elif isinstance(v, str):
             v = v.strip()
         if v in ("", None, []):
@@ -166,8 +171,8 @@ def clean_source(raw: dict) -> dict:
         raise ValueError("이름을 입력해야 한다")
     if not src.get("group"):
         raise ValueError("분류를 입력해야 한다 (예: 일본)")
-    if src["type"] not in ("board", "watch"):
-        raise ValueError("방식은 board 또는 watch 여야 한다")
+    if src["type"] not in ("board", "watch", "gov24"):
+        raise ValueError("방식은 board, watch, gov24 중 하나여야 한다")
     url_key = "list_url" if src["type"] == "board" else "url"
     other = "url" if url_key == "list_url" else "list_url"
     if not src.get(url_key) and src.get(other):  # 방식을 바꿨을 때 주소를 옮겨 준다
@@ -190,10 +195,15 @@ def clean_source(raw: dict) -> dict:
         for k in ("content_selector", "remove_selectors", "ignore_regex", "keywords"):
             src.pop(k, None)
     else:
+        keep = ("include", "exclude") if src["type"] == "gov24" else ()
         for k in ("pages", "page_size", "row_selector", "title_selector", "title_text_selector", "date_selector",
                   "deadline_selector", "remove_in_title", "category_selector", "categories", "link_regex",
                   "link_template", "include", "exclude", "require", "detail_selector"):
-            src.pop(k, None)
+            if k not in keep:
+                src.pop(k, None)
+    if src["type"] != "gov24":
+        src.pop("birth_year", None)
+        src.pop("regions", None)
     for k in ("link_regex", "ignore_regex"):
         if src.get(k):
             try:
@@ -212,7 +222,7 @@ def clean_source(raw: dict) -> dict:
     return {k: src[k] for k in FIELD_ORDER if k in src}
 
 
-KEEP_ON_EDIT = ("page_size", "render", "wait_selector", "deadline_selector")   # 화면 폼에 없는 값: 수정해도 지우지 않는다
+KEEP_ON_EDIT = ("page_size", "render", "wait_selector", "deadline_selector", "birth_year", "regions")   # 화면 폼에 없는 값: 수정해도 지우지 않는다
 
 
 def upsert_source(raw: dict, old_name: str | None) -> dict:
@@ -827,6 +837,14 @@ def test_source(raw: dict, full: bool = False) -> dict:
     src = clean_source(raw)
     session = new_session()
     _robots_cache.clear()
+    if src["type"] == "gov24":   # 공개 API 대상: 화면 미리보기 대신 GitHub 실행 결과로 확인한다
+        try:
+            import benefits
+            items = benefits.crawl_gov24(src, session, 0.5)
+        except Exception as e:
+            return {"ok": False, "error": f"API 를 부르지 못했다: {type(e).__name__}: {e}"[:300]}
+        return {"ok": bool(items), "kind": "board", "count": len(items), "warnings": [],
+                "items": [{k: it[k] for k in ("title", "date", "url")} for it in (items if full else items[:15])]}
     url = page_url(src, 1) if src["type"] == "board" else src["url"]
     if not robots_allows(url, session):
         return {"ok": False, "error": "이 사이트의 robots.txt 가 수집을 금지한다. 추가하지 않는 것이 맞다."}
@@ -934,6 +952,9 @@ def run_crawl(store: Store, cfg: dict, group: str | None = None,
             if src.get("type") == "watch":
                 raw = crawl_watch(src, session)
                 time.sleep(delay)
+            elif src.get("type") == "gov24":   # 정부 공개 API (benefits.py)
+                import benefits
+                raw = benefits.crawl_gov24(src, session, delay)
             else:
                 raw = crawl_board(src, session, delay, cutoff_date(cfg, src.get("group")), max_pages,
                                   None if first_time else store.has_seen,
