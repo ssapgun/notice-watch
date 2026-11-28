@@ -822,7 +822,8 @@ h3.dsub small{font-weight:400;color:var(--pencil);font-size:14px;margin-left:6px
   </section>
 
   <section id="viewReady" class="manage ready" hidden>
-    <p class="pmeta">내 스펙과 수강 과목·성적은 이 기기의 브라우저에만 저장하고 GitHub 에 올리지 않는다. 다른 기기로 옮길 때는 대시보드의 '파일로 내보내기'를 쓴다.</p>
+    <p class="pmeta">내 스펙과 수강 과목·성적은 이 기기의 브라우저에만 저장하고 GitHub 에 올리지 않는다. 휴대폰·다른 노트북에는 아래 파일로 옮긴다.</p>
+    <p class="dtools"><button class="btn" type="button" id="rdFileIn">파일에서 불러오기</button> <button class="btn" type="button" id="rdFileOut">파일로 내보내기</button> <span class="dnote" id="rdFileMsg" role="status"></span></p>
     <details class="pbox" id="rdSpecBox" open><summary>기본 스펙</summary>
       <div class="pform" id="rdForm">
         <label>상태<select data-rd="status"><option value="">미입력</option><option>재학</option><option>휴학</option><option>졸업예정</option><option>졸업</option></select></label>
@@ -2177,7 +2178,7 @@ $("#rdForm").addEventListener("change", () => {
   document.querySelectorAll("#rdForm [data-rd]").forEach(el => { if (el.value !== "") sp[el.dataset.rd] = el.value; });
   const skBox = $("#rdSkills");   // 역량 목록이 아직 없으면 기존 역량을 지우지 않는다
   sp.skills = (RD && RD.skills && skBox && skBox.children.length) ? [...skBox.querySelectorAll("input:checked")].map(x => x.value) : (rdSpec().skills || []);
-  store.set("rdSpec", sp); renderReady(); renderCourses();
+  store.set("rdSpec", sp); keepStorage(); renderReady(); renderCourses();
 });
 $("#viewReady").addEventListener("click", e => {
   const c = e.target.closest("[data-rc]");
@@ -2478,13 +2479,17 @@ function dashSpecForm() {
     + (R && R.skills ? `<div class="pwide"><span>보유 역량·자격</span><div class="rdskills" id="dSkills">${R.skills.map(s => `<label><input type="checkbox" value="${esc(s.id)}" ${have.has(s.id) ? "checked" : ""}> ${esc(s.label)}</label>`).join("")}</div></div>` : "");
   box.querySelectorAll("[data-ds]").forEach(el => { el.value = sp[el.dataset.ds] !== undefined ? sp[el.dataset.ds] : (el.dataset.ds === "scale" ? "4.3" : ""); });
 }
-const dsMsg = t => { const m = $("#dSpecMsg"); if (m) m.textContent = t; };
+const dsMsg = t => { const m = $("#dSpecMsg"); if (m) m.textContent = t; const r = $("#rdFileMsg"); if (r) r.textContent = t; };
+// 휴대폰 브라우저가 저장 공간이 부족할 때 이 사이트 저장값을 지우지 않도록 요청한다 (안 되는 브라우저는 그냥 넘어간다)
+const keepStorage = () => { try { navigator.storage && navigator.storage.persist && navigator.storage.persist(); } catch (e) {} };
+$("#rdFileIn").addEventListener("click", () => $("#dSpecIn").click());
+$("#rdFileOut").addEventListener("click", () => $("#dSpecOut").click());
 $("#dForm").addEventListener("change", () => {
   const sp = {};
   document.querySelectorAll("#dForm [data-ds]").forEach(el => { if (el.value !== "") sp[el.dataset.ds] = el.value; });
   const skBox = $("#dSkills");   // 역량 목록(readiness.json)이 아직 안 그려졌으면 기존 역량을 지우지 않는다
   sp.skills = skBox ? [...skBox.querySelectorAll("input:checked")].map(x => x.value) : (rdSpec().skills || []);
-  store.set("rdSpec", sp); renderDash(); dsMsg("저장했다. 이 브라우저에만 있다.");
+  store.set("rdSpec", sp); keepStorage(); renderDash(); dsMsg("저장했다. 이 브라우저에만 있다.");
 });
 $("#dSpecOut").addEventListener("click", () => {
   const blob = new Blob([JSON.stringify({rdSpec: rdSpec(), rdResults: rdResults(), rdCourses: rdCourses(), applied: appliedMap(), dashKw: kwList()}, null, 1)], {type: "application/json"});
@@ -2511,7 +2516,10 @@ $("#dSpecIn").addEventListener("change", async e => {
       store.set("applied", m);
     }
     if (Array.isArray(j.dashKw)) store.set("dashKw", j.dashKw.filter(x => typeof x === "string" && x.trim()).map(x => x.trim().slice(0, 40)).slice(0, 50));
-    dashSpecForm(); renderDash(); dsMsg("불러왔다. 이 브라우저에 저장했다.");
+    keepStorage(); dashSpecForm(); renderDash();
+    if (!$("#viewReady").hidden) { renderCourses(); renderReadyForm(); renderReady(); }   // 내 스펙 탭에서 불러왔으면 바로 보이게
+    const back = store.get("rdSpec", null);
+    dsMsg(back && Object.keys(back).length ? `불러왔다. 과목 ${rdCourses().length}개와 스펙을 이 브라우저에 저장했다.` : "불러왔지만 이 브라우저가 저장을 막았다. 시크릿 모드나 카카오톡 안 브라우저가 아닌 크롬·사파리에서 열 것.");
   } catch (err) { dsMsg("불러오지 못했다: " + err.message); }
 });
 const ST = ["관심", "지원함", "완료"];
