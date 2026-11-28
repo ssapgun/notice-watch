@@ -27,6 +27,8 @@ jobs:
       # 텔레그램 알림용. 둘 다 있을 때만 보낸다 (WEB_SETUP.md 8번)
       TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
       TELEGRAM_CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}
+      # 정부 혜택(보조금24) 공개 API 인증키 (공공데이터포털). 없으면 그 대상만 오류로 표시하고 나머지는 계속한다
+      DATA_GO_KR_KEY: ${{ secrets.DATA_GO_KR_KEY }}
     steps:
       - uses: actions/checkout@v4
         with:

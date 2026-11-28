@@ -1167,7 +1167,7 @@ function renderSummary() {
     const r = by[s.name] || {};
     const st = !r.last_checked ? "다음 확인 때 처음 확인" : r.last_error ? `<span class="err">${(r.fail_count || 0) >= 3 ? `<b class="warn">${r.fail_count}회 연속 실패</b> · ` : ""}${esc(r.last_error)}</span>` : "정상";
     const url = (s.list_url || s.url || "").replace("{page}", "1").replace("{offset}", "0");
-    return `<tr><td>${esc(s.group)}</td><td><a href="${esc(url)}" target="_blank" rel="noopener">${esc(s.name)}</a></td><td>${s.type === "watch" ? "페이지 변경" : "게시판"}</td><td>${short(r.last_ok)}</td><td>${st}</td></tr>`;
+    return `<tr><td>${esc(s.group)}</td><td><a href="${esc(url)}" target="_blank" rel="noopener">${esc(s.name)}</a></td><td>${s.type === "watch" ? "페이지 변경" : s.type === "gov24" ? "공개 API" : "게시판"}</td><td>${short(r.last_ok)}</td><td>${st}</td></tr>`;
   }).join("");
   if (errs.length) $("#statusBox").open = true;
 }
@@ -1827,7 +1827,7 @@ function renderManage() {
       return `<div class="srow ${on ? "" : "off"}" data-name="${esc(s.name)}">
         <label class="switch"><input type="checkbox" data-act="toggle" ${on ? "checked" : ""} aria-label="${esc(s.name)} 켜기"><span></span></label>
         <div><a class="sname" href="${esc(url)}" target="_blank" rel="noopener">${esc(s.name)}</a>${s.note ? `<span class="snote">${esc(s.note)}</span>` : ""}</div>
-        <div class="skind">${s.type === "watch" ? "페이지 변경" : "게시판"}<br>${state}</div>
+        <div class="skind">${s.type === "watch" ? "페이지 변경" : s.type === "gov24" ? "공개 API" : "게시판"}<br>${state}</div>
         <div class="sact"><button type="button" data-act="up" aria-label="위로">↑</button><button type="button" data-act="down" aria-label="아래로">↓</button><button type="button" data-act="edit">수정</button><button type="button" data-act="del">삭제</button></div>
       </div>`;
     }).join("")}</div>`).join("");
@@ -1878,6 +1878,7 @@ form.querySelectorAll("[name=type]").forEach(r => r.addEventListener("change", s
 const setMsg = (t, bad) => $("#editMsg").innerHTML = t ? `<p class="msg ${bad ? "bad" : ""}">${t}</p>` : "";
 
 function openEditor(src) {
+  if (src && src.type === "gov24") { alert("정부 공개 API 대상이다. 나이·지역·키워드는 config.yaml 에서 직접 고칠 것."); return; }
   editingOld = src ? src.name : null; form.reset();
   $("#editTitle").textContent = src ? "대상 수정" : "새 대상 추가";
   const s = src || {type: "board", group: ui.group || ""};

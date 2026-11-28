@@ -223,7 +223,7 @@ def summarize_pending(store: crawler.Store, cfg: dict, limit: int | None = None,
 def summarize_item(it: dict, src: dict, session: requests.Session, delay: float,
                    api_key: str, model: str) -> dict:
     title = it["title"]
-    if it["kind"] == "watch":  # 페이지 변경: 바뀐 문장을 정리·번역
+    if it["kind"] in ("watch", "gov24"):  # 페이지 변경의 바뀐 문장, 정부 혜택의 API 요약을 정리
         body, images = it.get("change") or "", []
     else:
         url = it["url"]
